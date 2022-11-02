@@ -1,11 +1,11 @@
 <?php
-defined('TYPO3_MODE') || die;
-
+defined('TYPO3') || die;
+$_EXTKEY = "pxa_product_manager";
 call_user_func(
     function ($_EXTKEY) {
         // Register plugin
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-            $_EXTKEY,
+            'pxa_product_manager',
             'Pi1',
             'Product Manager'
         );
@@ -38,7 +38,7 @@ call_user_func(
         }
 
         // Register hooks
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][$_EXTKEY] = \Pixelant\PxaProductManager\Hook\TceMain::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['pxa_product_manager'] = \Pixelant\PxaProductManager\Hook\TceMain::class;
 
         // Add plugin to content element wizard
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
@@ -71,20 +71,20 @@ call_user_func(
         if (TYPO3_MODE === 'BE') {
             // Register BE module
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                'Pixelant.' . $_EXTKEY,
+                'PxaProductManager',
                 'web',          // Main area
                 'mod1',         // Name of the module
                 '',             // Position of the module
                 [
-                    'BackendManager' => 'index, listCategories, listProducts, listOrders, showOrder, deleteOrder, toggleOrderState'
+                    \Pixelant\PxaProductManager\Controller\BackendManagerController::class => 'index, listCategories, listProducts, listOrders, showOrder, deleteOrder, toggleOrderState'
                 ],
                 [          // Additional configuration
                     'access' => 'user,group',
-                    'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/Extension.svg',
-                    'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xml',
+                    'icon' => 'EXT:' . 'pxa_product_manager' . '/Resources/Public/Icons/Extension.svg',
+                    'labels' => 'LLL:EXT:' . 'pxa_product_manager' . '/Resources/Private/Language/locallang_mod.xml',
                 ]
             );
         }
     },
-    $_EXTKEY
+    'pxa_product_manager'
 );

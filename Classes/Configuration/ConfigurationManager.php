@@ -1,4 +1,5 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Configuration;
 
 /*
@@ -26,24 +27,10 @@ use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 class ConfigurationManager extends ExtbaseConfigurationManager
 {
     /**
-     * Initialize
-     */
-    protected function initializeConcreteConfigurationManager()
-    {
-        if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $this->concreteConfigurationManager = $this->objectManager->get(
-                FrontendConfigurationManager::class
-            );
-        } else {
-            $this->concreteConfigurationManager = $this->objectManager->get(
-                BackendConfigurationManager::class
-            );
-        }
-    }
-
-    /**
      * Set the current page ID for BackendConfiguration
+     *
      * @param integer $currentPageId Current page id
+     *
      * @return void
      */
     public function setCurrentPageId(int $currentPageId)
@@ -61,5 +48,17 @@ class ConfigurationManager extends ExtbaseConfigurationManager
     public function isEnvironmentInFrontendMode(): bool
     {
         return $this->environmentService->isEnvironmentInFrontendMode();
+    }
+
+    /**
+     * Initialize
+     */
+    protected function initializeConcreteConfigurationManager(): void
+    {
+        if ($this->environmentService->isEnvironmentInFrontendMode()) {
+            $this->concreteConfigurationManager = $this->objectManager->get(FrontendConfigurationManager::class);
+        } else {
+            $this->concreteConfigurationManager = $this->objectManager->get(BackendConfigurationManager::class);
+        }
     }
 }

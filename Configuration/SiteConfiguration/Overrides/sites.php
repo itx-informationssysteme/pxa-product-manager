@@ -8,8 +8,4 @@ $GLOBALS['SiteConfiguration']['site']['columns']['productSingleViewFallbackPid']
     ],
 ];
 
-$GLOBALS['SiteConfiguration']['site']['types']['0']['showitem'] = str_replace(
-    'base,',
-    'base, productSingleViewFallbackPid, ',
-    $GLOBALS['SiteConfiguration']['site']['types']['0']['showitem']
-);
+$GLOBALS['SiteConfiguration']['site']['types']['0']['showitem'] = str_replace('base,', 'base, productSingleViewFallbackPid, ', $GLOBALS['SiteConfiguration']['site']['types']['0']['showitem']);

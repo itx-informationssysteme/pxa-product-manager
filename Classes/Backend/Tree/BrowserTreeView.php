@@ -37,8 +37,10 @@ class BrowserTreeView extends ElementBrowserPageTreeView
 {
     /**
      * Extend it with folder too
+     *
      * @param int $doktype
      * @param int $uid
+     *
      * @return bool
      */
     // @codingStandardsIgnoreStart

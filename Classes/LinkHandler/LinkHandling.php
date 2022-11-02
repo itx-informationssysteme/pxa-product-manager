@@ -33,6 +33,7 @@ class LinkHandling implements LinkHandlingInterface
      *
      *
      * @param array $parameters
+     *
      * @return string
      */
     public function asString(array $parameters): string
@@ -52,6 +53,7 @@ class LinkHandling implements LinkHandlingInterface
      * resolveHandlerData
      *
      * @param array $data
+     *
      * @return array
      */
     public function resolveHandlerData(array $data): array

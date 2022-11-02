@@ -10,6 +10,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Class SetPageTitleViewHelperTest
+ *
  * @package Pixelant\PxaProductManager\Tests\ViewHelpers
  */
 class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
@@ -19,28 +20,6 @@ class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    protected function setUp()
-    {
-        parent::setUp();
-        $tsfe = $this->getMockBuilder(TypoScriptFrontendController::class)
-                        ->disableOriginalConstructor()
-                        ->disableOriginalClone()
-                        ->getMock();
-        $this->viewHelper = $this->getAccessibleMock(SetPageTitleViewHelper::class, ['buildRenderChildrenClosure']);
-        $this->inject($this->viewHelper, 'renderingContext', $this->createMock(\TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface::class));
-        $this->viewHelper->initializeArguments();
-
-        $GLOBALS['TSFE'] = $tsfe;
-
-        defined('LF') ?: define('LF', chr(10));
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        unset($this->viewHelper, $GLOBALS['TSFE']);
-    }
-
     /**
      * @test
      */
@@ -49,10 +28,7 @@ class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
         $title = 'Custom title of page';
 
         $this->viewHelper->_set('arguments', ['title' => $title]);
-        $this->viewHelper
-            ->expects($this->atLeastOnce())
-            ->method('buildRenderChildrenClosure')
-            ->willReturn(function () {
+        $this->viewHelper->expects($this->atLeastOnce())->method('buildRenderChildrenClosure')->willReturn(function() {
                 return 'test';
             });
         $this->viewHelper->render();
@@ -70,10 +46,7 @@ class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
         $title = '  Custom title of page  ';
 
         $this->viewHelper->_set('arguments', ['title' => $title]);
-        $this->viewHelper
-            ->expects($this->atLeastOnce())
-            ->method('buildRenderChildrenClosure')
-            ->willReturn(function () {
+        $this->viewHelper->expects($this->atLeastOnce())->method('buildRenderChildrenClosure')->willReturn(function() {
                 return 'test';
             });
         $this->viewHelper->render();
@@ -82,5 +55,24 @@ class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
         self::assertEquals($expect, $GLOBALS['TSFE']->altPageTitle);
         self::assertEquals($expect, $GLOBALS['TSFE']->indexedDocTitle);
         $this->assertEquals($expect, GeneralUtility::makeInstance(PageRenderer::class)->getTitle());
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $tsfe = $this->getMockBuilder(TypoScriptFrontendController::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
+        $this->viewHelper = $this->getAccessibleMock(SetPageTitleViewHelper::class, ['buildRenderChildrenClosure']);
+        $this->inject($this->viewHelper, 'renderingContext', $this->createMock(\TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface::class));
+        $this->viewHelper->initializeArguments();
+
+        $GLOBALS['TSFE'] = $tsfe;
+
+        defined('LF') ?: define('LF', chr(10));
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        unset($this->viewHelper, $GLOBALS['TSFE']);
     }
 }

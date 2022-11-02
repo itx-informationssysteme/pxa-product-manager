@@ -3,12 +3,11 @@
 namespace Pixelant\PxaProductManager\Tests\Unit\Validation\Validator;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Pixelant\PxaProductManager\Validation\Validator\EmailValidator;
 use Pixelant\PxaProductManager\Validation\Validator\RequiredValidator;
-use Pixelant\PxaProductManager\Validation\Validator\UrlValidator;
 
 /**
  * Class RequiredValidatorTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Validation\Validator
  */
 class RequiredValidatorTest extends UnitTestCase

@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 
 /**
  * Class ProductLinkBuilderTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\LinkHandler
  */
 class ProductLinkBuilderTest extends UnitTestCase
@@ -22,14 +23,7 @@ class ProductLinkBuilderTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->subject = $this->getAccessibleMock(
-            ProductLinkBuilder::class,
-            ['getTypoScriptFrontendController'],
-            [],
-            '',
-            false,
-            false
-        );
+        $this->subject = $this->getAccessibleMock(ProductLinkBuilder::class, ['getTypoScriptFrontendController'], [], '', false, false);
     }
 
     public function tearDown()
@@ -42,9 +36,7 @@ class ProductLinkBuilderTest extends UnitTestCase
      */
     public function getLinkBuilderPassGiveTypoScriptFrontendController()
     {
-        $this->subject
-            ->expects($this->once())
-            ->method('getTypoScriptFrontendController');
+        $this->subject->expects($this->once())->method('getTypoScriptFrontendController');
 
         $this->subject->_call('getLinkBuilder');
     }
@@ -98,11 +90,7 @@ class ProductLinkBuilderTest extends UnitTestCase
         $site = $this->createMock(Site::class);
 
         $request = $this->createPartialMock(ServerRequest::class, ['getAttribute']);
-        $request
-            ->expects($this->once())
-            ->method('getAttribute')
-            ->with('site')
-            ->willReturn($site);
+        $request->expects($this->once())->method('getAttribute')->with('site')->willReturn($site);
 
         $requestBackup = $GLOBALS['TYPO3_REQUEST'] ?? null;
         $GLOBALS['TYPO3_REQUEST'] = $request;

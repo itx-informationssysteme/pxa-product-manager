@@ -24,17 +24,18 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Link;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Link.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -63,10 +64,7 @@ class LinkTest extends UnitTestCase
         $name = 'name';
         $this->fixture->setName($name);
 
-        self::assertEquals(
-            $name,
-            $this->fixture->getName()
-        );
+        self::assertEquals($name, $this->fixture->getName());
     }
 
     /**
@@ -77,9 +75,6 @@ class LinkTest extends UnitTestCase
         $link = 'link';
         $this->fixture->setLink($link);
 
-        self::assertEquals(
-            $link,
-            $this->fixture->getLink()
-        );
+        self::assertEquals($link, $this->fixture->getLink());
     }
 }

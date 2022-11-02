@@ -32,6 +32,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class Order
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class Order extends AbstractEntity
@@ -116,6 +117,7 @@ class Order extends AbstractEntity
      * Adds a Product
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\Product $product
+     *
      * @return void
      */
     public function addProduct(\Pixelant\PxaProductManager\Domain\Model\Product $product)
@@ -127,6 +129,7 @@ class Order extends AbstractEntity
      * Removes a Product
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\Product $productToRemove The Product to be removed
+     *
      * @return void
      */
     public function removeProduct(\Pixelant\PxaProductManager\Domain\Model\Product $productToRemove)
@@ -148,6 +151,7 @@ class Order extends AbstractEntity
      * Sets the products
      *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelannt\PxaPixelant\Domain\Model\Product> $products
+     *
      * @return void
      */
     public function setProducts(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $products)
@@ -172,19 +176,15 @@ class Order extends AbstractEntity
     }
 
     /**
-     * @return string
+     * Return product uid to quantity array
+     *
+     * @return array
      */
-    public function getSerializedOrderFields(): string
+    public function getProductsQuantity(): array
     {
-        return $this->serializedOrderFields;
-    }
+        $result = unserialize($this->getSerializedProductsQuantity());
 
-    /**
-     * @param string $serializedOrderFields
-     */
-    public function setSerializedOrderFields(string $serializedOrderFields)
-    {
-        $this->serializedOrderFields = $serializedOrderFields;
+        return is_array($result) ? $result : [];
     }
 
     /**
@@ -204,51 +204,13 @@ class Order extends AbstractEntity
     }
 
     /**
-     * Return product uid to quantity array
-     *
-     * @return array
-     */
-    public function getProductsQuantity(): array
-    {
-        $result = unserialize($this->getSerializedProductsQuantity());
-
-        return is_array($result) ? $result : [];
-    }
-
-    /**
      * Save products quantity as serialized string
      *
      * @param array $productsQuantity
      */
     public function setProductsQuantity(array $productsQuantity)
     {
-        $this->setSerializedProductsQuantity(
-            serialize($productsQuantity)
-        );
-    }
-
-    /**
-     * Get un-serialized order fields information
-     *
-     * @return array
-     */
-    public function getOrderFields(): array
-    {
-        $result = unserialize($this->getSerializedOrderFields());
-
-        return is_array($result) ? $result : [];
-    }
-
-    /**
-     * Save order fields as serialized string
-     *
-     * @param array $orderFields
-     */
-    public function setOrderFields(array $orderFields)
-    {
-        $this->setSerializedOrderFields(
-            serialize($orderFields)
-        );
+        $this->setSerializedProductsQuantity(serialize($productsQuantity));
     }
 
     /**
@@ -265,6 +227,7 @@ class Order extends AbstractEntity
      * Sets the externalId
      *
      * @param string $externalId
+     *
      * @return void
      */
     public function setExternalId($externalId)
@@ -290,7 +253,7 @@ class Order extends AbstractEntity
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $type
      */
     public function setOrderField(string $name, $value, string $type = '')
@@ -306,7 +269,46 @@ class Order extends AbstractEntity
     }
 
     /**
+     * Get un-serialized order fields information
+     *
+     * @return array
+     */
+    public function getOrderFields(): array
+    {
+        $result = unserialize($this->getSerializedOrderFields());
+
+        return is_array($result) ? $result : [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getSerializedOrderFields(): string
+    {
+        return $this->serializedOrderFields;
+    }
+
+    /**
+     * @param string $serializedOrderFields
+     */
+    public function setSerializedOrderFields(string $serializedOrderFields)
+    {
+        $this->serializedOrderFields = $serializedOrderFields;
+    }
+
+    /**
+     * Save order fields as serialized string
+     *
+     * @param array $orderFields
+     */
+    public function setOrderFields(array $orderFields)
+    {
+        $this->setSerializedOrderFields(serialize($orderFields));
+    }
+
+    /**
      * @param string $name
+     *
      * @return string
      */
     public function getOrderField(string $name)
@@ -318,6 +320,7 @@ class Order extends AbstractEntity
 
     /**
      * @param string $name
+     *
      * @return void
      */
     public function removeOrderField(string $name)
@@ -355,6 +358,7 @@ class Order extends AbstractEntity
 
     /**
      * Order language uid
+     *
      * @return int
      */
     public function getLanguageUid(): int

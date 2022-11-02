@@ -17,6 +17,21 @@ class RecordEditUrlViewHelper extends AbstractViewHelper
 {
     use CompileWithRenderStatic;
 
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
+        $table = $arguments['table'];
+        $uid = $arguments['uid'];
+
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
+        $url = (string)$uriBuilder->buildUriFromRoute('record_edit', [
+                                                                       'edit[' . $table . '][' . $uid . ']' => 'edit',
+                                                                       'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+                                                                   ]);
+
+        return $url;
+    }
+
     /**
      * Initialize arguments
      *
@@ -26,26 +41,5 @@ class RecordEditUrlViewHelper extends AbstractViewHelper
     {
         $this->registerArgument('uid', 'int', 'Record uid', true);
         $this->registerArgument('table', 'string', 'Table name', false, 'sys_category');
-    }
-
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
-        $table = $arguments['table'];
-        $uid = $arguments['uid'];
-
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-
-        $url = (string)$uriBuilder->buildUriFromRoute(
-            'record_edit',
-            [
-                'edit[' . $table . '][' . $uid . ']' => 'edit',
-                'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
-            ]
-        );
-
-        return $url;
     }
 }

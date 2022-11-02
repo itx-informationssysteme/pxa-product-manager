@@ -10,6 +10,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class SelectBoxFormFieldTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Domain\Model\OrderFormFields
  */
 class SelectBoxFormFieldTest extends UnitTestCase
@@ -75,10 +76,7 @@ class SelectBoxFormFieldTest extends UnitTestCase
 
         $this->fixture->setOptions($objectStorage);
 
-        $this->assertSame(
-            $objectStorage,
-            $this->fixture->getOptions()
-        );
+        $this->assertSame($objectStorage, $this->fixture->getOptions());
     }
 
     /**
@@ -92,10 +90,7 @@ class SelectBoxFormFieldTest extends UnitTestCase
 
         $this->fixture->addOption($option);
 
-        $this->assertEquals(
-            $objectStorage,
-            $this->fixture->getOptions()
-        );
+        $this->assertEquals($objectStorage, $this->fixture->getOptions());
     }
 
     /**
@@ -111,9 +106,6 @@ class SelectBoxFormFieldTest extends UnitTestCase
         $this->fixture->addOption($option);
         $this->fixture->removeOption($option);
 
-        $this->assertEquals(
-            $objectStorage,
-            $this->fixture->getOptions()
-        );
+        $this->assertEquals($objectStorage, $this->fixture->getOptions());
     }
 }

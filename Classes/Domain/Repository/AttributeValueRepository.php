@@ -25,110 +25,90 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 
 /**
  * Class AttributeValueRepository
+ *
  * @package Pixelant\PxaProductManager\Domain\Repository
  */
 class AttributeValueRepository extends Repository
 {
     /**
-     * Help to find in row with list of values (2,3,4) and value 3
-     *
-     * @param QueryInterface $query
-     * @param $field
-     * @param $value
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\OrInterface
-     */
-    protected function createInRowQuery(QueryInterface $query, $field, $value)
-    {
-        return $query->logicalOr([
-            $query->like($field, $value . ',%'),
-            $query->like($field, '%,' . $value . ',%'),
-            $query->like($field, '%,' . $value),
-            $query->equals($field, $value)
-        ]);
-    }
-
-    /**
      * Find attribute value by attribute and its value
      *
-     * @param $attribute
-     * @param array $values
+     * @param        $attribute
+     * @param array  $values
      * @param string $filterConjunction
-     * @param bool $rawResult
+     * @param bool   $rawResult
+     *
      * @return QueryResultInterface|array
      */
-    public function findAttributeValuesByAttributeAndValues(
-        $attribute,
-        array $values,
-        string $filterConjunction = 'or',
-        $rawResult = false
-    ) {
+    public function findAttributeValuesByAttributeAndValues($attribute, array $values, string $filterConjunction = 'or', $rawResult = false)
+    {
         $query = $this->createQuery();
 
-        $query
-            ->getQuerySettings()
-            ->setRespectStoragePage(false);
+        $query->getQuerySettings()->setRespectStoragePage(false);
 
         $valuesConstraints = [];
         foreach ($values as $value) {
             $valuesConstraints[] = $this->createInRowQuery($query, 'value', $value);
         }
 
-        $query->matching(
-            $query->logicalAnd([
-                $query->equals('attribute', $attribute),
-                $filterConjunction === 'and'
-                    ? $query->logicalAnd($valuesConstraints)
-                    : $query->logicalOr($valuesConstraints)
-            ])
-        );
+        $query->matching($query->logicalAnd([
+                                                $query->equals('attribute', $attribute),
+                                                $filterConjunction === 'and' ? $query->logicalAnd($valuesConstraints) : $query->logicalOr($valuesConstraints)
+                                            ]));
 
         return $query->execute($rawResult);
     }
 
     /**
+     * Help to find in row with list of values (2,3,4) and value 3
+     *
+     * @param QueryInterface $query
+     * @param                $field
+     * @param                $value
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\OrInterface
+     */
+    protected function createInRowQuery(QueryInterface $query, $field, $value)
+    {
+        return $query->logicalOr([
+                                     $query->like($field, $value . ',%'),
+                                     $query->like($field, '%,' . $value . ',%'),
+                                     $query->like($field, '%,' . $value),
+                                     $query->equals($field, $value)
+                                 ]);
+    }
+
+    /**
      * Find attribute values by their attribute and option values (higher or lower)
      *
-     * @param $attribute
+     * @param     $attribute
      * @param int $minValue
      * @param int $maxValue
+     *
      * @return QueryResultInterface|array
      */
-    public function findAttributeValuesByAttributeAndMinMaxOptionValues(
-        int $attribute,
-        int $minValue = null,
-        int $maxValue = null
-    ) {
+    public function findAttributeValuesByAttributeAndMinMaxOptionValues(int $attribute, int $minValue = null, int $maxValue = null)
+    {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-            'tx_pxaproductmanager_domain_model_attributevalue'
-        );
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_pxaproductmanager_domain_model_attributevalue');
 
-        $constraints[] = $queryBuilder->expr()->eq(
-            'tx_pxaproductmanager_domain_model_attributevalue.attribute',
-            $queryBuilder->createNamedParameter($attribute, \PDO::PARAM_INT)
-        );
+        $constraints[] = $queryBuilder->expr()->eq('tx_pxaproductmanager_domain_model_attributevalue.attribute', $queryBuilder->createNamedParameter($attribute, \PDO::PARAM_INT));
 
         if ($minValue !== null) {
-            $constraints[] = $queryBuilder->expr()->gte(
-                'option.value',
-                $queryBuilder->createNamedParameter($minValue, \PDO::PARAM_INT)
-            );
+            $constraints[] = $queryBuilder->expr()->gte('option.value', $queryBuilder->createNamedParameter($minValue, \PDO::PARAM_INT));
         }
 
         if ($maxValue !== null) {
-            $constraints[] = $queryBuilder->expr()->lte(
-                'option.value',
-                $queryBuilder->createNamedParameter($maxValue, \PDO::PARAM_INT)
-            );
+            $constraints[] = $queryBuilder->expr()->lte('option.value', $queryBuilder->createNamedParameter($maxValue, \PDO::PARAM_INT));
         }
 
         $result = $queryBuilder

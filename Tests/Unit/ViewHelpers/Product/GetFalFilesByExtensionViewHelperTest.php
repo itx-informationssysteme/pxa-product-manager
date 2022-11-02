@@ -13,6 +13,25 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 class GetFalFilesByExtensionViewHelperTest extends UnitTestCase
 {
 
+    /**
+     * @test
+     */
+    public function getFilesByExtensionNoLimit()
+    {
+        $product = $this->createTestingProduct();
+        $arguments = [
+            'product' => $product,
+            'extension' => 'pdf'
+        ];
+        $mockedRenderingContextInterface = $this->createMock(RenderingContextInterface::class);
+        $closure = function() {
+        };
+
+        $files = GetFalFilesByExtensionViewHelper::renderStatic($arguments, $closure, $mockedRenderingContextInterface);
+
+        $this->assertCount(3, $files);
+    }
+
     protected function createTestingProduct($limit = 0)
     {
         $product = new Product();
@@ -20,23 +39,11 @@ class GetFalFilesByExtensionViewHelperTest extends UnitTestCase
         $i = 0;
 
         foreach (['pdf', 'pdf', 'pdf', 'doc', 'docx'] as $extension) {
-            $mockedFileReference = $this->getAccessibleMock(
-                FileReference::class,
-                ['dummy'],
-                [],
-                '',
-                false
-            );
+            $mockedFileReference = $this->getAccessibleMock(FileReference::class, ['dummy'], [], '', false);
 
-            $mockedOriginalFile = $this->createPartialMock(
-                FileReferenceOriginal::class,
-                ['getExtension']
-            );
+            $mockedOriginalFile = $this->createPartialMock(FileReferenceOriginal::class, ['getExtension']);
 
-            $mockedOriginalFile
-                ->expects(($limit === 0 || $limit > $i) ? $this->once() : $this->never())
-                ->method('getExtension')
-                ->willReturn($extension);
+            $mockedOriginalFile->expects(($limit === 0 || $limit > $i) ? $this->once() : $this->never())->method('getExtension')->willReturn($extension);
 
             $mockedFileReference->_set('originalResource', $mockedOriginalFile);
 
@@ -52,32 +59,6 @@ class GetFalFilesByExtensionViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function getFilesByExtensionNoLimit()
-    {
-        $product = $this->createTestingProduct();
-        $arguments = [
-            'product' => $product,
-            'extension' => 'pdf'
-        ];
-        $mockedRenderingContextInterface = $this->createMock(RenderingContextInterface::class);
-        $closure = function () {
-        };
-
-        $files = GetFalFilesByExtensionViewHelper::renderStatic(
-            $arguments,
-            $closure,
-            $mockedRenderingContextInterface
-        );
-
-        $this->assertCount(
-            3,
-            $files
-        );
-    }
-
-    /**
-     * @test
-     */
     public function getFilesByExtensionWithLimit()
     {
         $limit = 2;
@@ -88,19 +69,12 @@ class GetFalFilesByExtensionViewHelperTest extends UnitTestCase
             'limit' => $limit
         ];
         $mockedRenderingContextInterface = $this->createMock(RenderingContextInterface::class);
-        $closure = function () {
+        $closure = function() {
         };
 
-        $files = GetFalFilesByExtensionViewHelper::renderStatic(
-            $arguments,
-            $closure,
-            $mockedRenderingContextInterface
-        );
+        $files = GetFalFilesByExtensionViewHelper::renderStatic($arguments, $closure, $mockedRenderingContextInterface);
 
-        $this->assertCount(
-            $limit,
-            $files
-        );
+        $this->assertCount($limit, $files);
     }
 
     /**
@@ -114,18 +88,11 @@ class GetFalFilesByExtensionViewHelperTest extends UnitTestCase
             'extension' => 'docx'
         ];
         $mockedRenderingContextInterface = $this->createMock(RenderingContextInterface::class);
-        $closure = function () {
+        $closure = function() {
         };
 
-        $files = GetFalFilesByExtensionViewHelper::renderStatic(
-            $arguments,
-            $closure,
-            $mockedRenderingContextInterface
-        );
+        $files = GetFalFilesByExtensionViewHelper::renderStatic($arguments, $closure, $mockedRenderingContextInterface);
 
-        $this->assertCount(
-            1,
-            $files
-        );
+        $this->assertCount(1, $files);
     }
 }

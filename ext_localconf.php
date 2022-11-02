@@ -1,6 +1,6 @@
 <?php
 defined('TYPO3_MODE') || die;
-
+$_EXTKEY = "pxa_product_manager";
 call_user_func(
     function ($_EXTKEY) {
         // @codingStandardsIgnoreStart

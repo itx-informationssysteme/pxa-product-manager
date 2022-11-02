@@ -1,7 +1,7 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
-return (function () {
+return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
     $llCore = 'LLL:EXT:core/Resources/Private/Language/';
 
@@ -12,7 +12,6 @@ return (function () {
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
             'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
             'sortby' => 'sorting',
             'versioningWS' => true,
             'origUid' => 't3_origuid',
@@ -29,10 +28,6 @@ return (function () {
             'thumbnail' => 'images',
             'iconfile' => 'EXT:pxa_product_manager/Resources/Public/Icons/Svg/product.svg'
         ],
-        // @codingStandardsIgnoreStart
-        'interface' => [
-            'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, slug, sku, price, tax_rate, teaser, description, usp, additional_information, attributes_description, disable_single_view, related_products, images, links, fal_links, sub_products,meta_description, keywords, alternative_title, path_segment, serialized_attributes_values, attribute_values',
-        ],
 
         'types' => [
             '1' => [
@@ -44,7 +39,7 @@ return (function () {
 --div--;' . $ll . 'tx_pxaproductmanager_domain_model_product.tab.relations, related_products, sub_products, accessories, fal_links, links,
 --div--;' . $ll . 'tx_pxaproductmanager_domain_model_product.tab.metadata, meta_description, keywords, alternative_title, path_segment,
 --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, disable_single_view, starttime, endtime'
-// @codingStandardsIgnoreEnd
+                // @codingStandardsIgnoreEnd
             ],
         ],
         'palettes' => [
@@ -71,7 +66,6 @@ return (function () {
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
-                'exclude' => 1,
                 'label' => $llCore . 'locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'select',
@@ -80,8 +74,7 @@ return (function () {
                         ['', 0],
                     ],
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
-                    'foreign_table_where' => 'AND tx_pxaproductmanager_domain_model_product.pid=###CURRENT_PID###' .
-                        ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)',
+                    'foreign_table_where' => 'AND tx_pxaproductmanager_domain_model_product.pid=###CURRENT_PID###' . ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)',
                     'default' => 0
                 ],
             ],
@@ -106,34 +99,31 @@ return (function () {
                 ],
             ],
             'starttime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.starttime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
-                    'default' => 0,
-                    'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
+                    'default' => 0
                 ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'endtime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.endtime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
                     'default' => 0,
                     'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
+                        'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                    ]
                 ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'name' => [
                 'exclude' => 0,
@@ -236,10 +226,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectMultipleSideBySide',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
-                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getRelatedProductsForeignTableWherePid() .
-                        ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' .
-                        ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' .
-                        ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
+                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getRelatedProductsForeignTableWherePid() . ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' . ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' . ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
                     'MM' => 'tx_pxaproductmanager_product_product_mm',
                     'size' => 10,
                     'autoSizeMax' => 30,
@@ -259,195 +246,182 @@ return (function () {
             'images' => [
                 'exclude' => 1,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.images',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                    'images',
-                    [
-                        'appearance' => [
-                            'createNewRelationLinkTitle' =>
-                                'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
-                            'showPossibleLocalizationRecords' => false,
-                            'showRemovedLocalizationRecords' => true,
-                            'showAllLocalizationLink' => false,
-                            'showSynchronizationLink' => false
-                        ],
-                        'foreign_match_fields' => [
-                            'fieldname' => 'images',
-                            'tablenames' => 'tx_pxaproductmanager_domain_model_product',
-                            'table_local' => 'sys_file',
-                        ],
-                        // @codingStandardsIgnoreStart
-                        'overrideChildTca' => [
-                            'types' => [
-                                '0' => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig('images', [
+                                                                                                                  'appearance' => [
+                                                                                                                      'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
+                                                                                                                      'showPossibleLocalizationRecords' => false,
+                                                                                                                      'showRemovedLocalizationRecords' => true,
+                                                                                                                      'showAllLocalizationLink' => false,
+                                                                                                                      'showSynchronizationLink' => false
+                                                                                                                  ],
+                                                                                                                  'foreign_match_fields' => [
+                                                                                                                      'fieldname' => 'images',
+                                                                                                                      'tablenames' => 'tx_pxaproductmanager_domain_model_product',
+                                                                                                                      'table_local' => 'sys_file',
+                                                                                                                  ],
+                                                                                                                  // @codingStandardsIgnoreStart
+                                                                                                                  'overrideChildTca' => [
+                                                                                                                      'types' => [
+                                                                                                                          '0' => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                          ],
+                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                          ],
+                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                          ],
+                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                          ],
+                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                          ],
+                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
+                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ]
-                            ]
-                        ],
-                        // @codingStandardsIgnoreEnd
-                        'behaviour' => [
-                            'allowLanguageSynchronization' => true
-                        ],
-                    ],
-                    $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-                ),
+                                                                                                                          ]
+                                                                                                                      ]
+                                                                                                                  ],
+                                                                                                                  // @codingStandardsIgnoreEnd
+                                                                                                                  'behaviour' => [
+                                                                                                                      'allowLanguageSynchronization' => true
+                                                                                                                  ],
+                                                                                                              ], $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']),
             ],
             \Pixelant\PxaProductManager\Utility\TCAUtility::ATTRIBUTE_FAL_FIELD_NAME => [
                 'exclude' => 0,
                 'label' => '',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                    \Pixelant\PxaProductManager\Utility\TCAUtility::ATTRIBUTE_FAL_FIELD_NAME,
-                    [
-                        'appearance' => [
-                            'createNewRelationLinkTitle' =>
-                                'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
-                            'showPossibleLocalizationRecords' => false,
-                            'showRemovedLocalizationRecords' => true,
-                            'showAllLocalizationLink' => false,
-                            'showSynchronizationLink' => false
-                        ],
-                        'foreign_match_fields' => [
-                            'fieldname' => \Pixelant\PxaProductManager\Utility\TCAUtility::ATTRIBUTE_FAL_FIELD_NAME,
-                            'tablenames' => 'tx_pxaproductmanager_domain_model_product',
-                            'table_local' => 'sys_file',
-                        ],
-                        // @codingStandardsIgnoreStart
-                        'overrideChildTca' => [
-                            'types' => [
-                                '0' => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(\Pixelant\PxaProductManager\Utility\TCAUtility::ATTRIBUTE_FAL_FIELD_NAME, [
+                                                                                                                                                                                  'appearance' => [
+                                                                                                                                                                                      'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
+                                                                                                                                                                                      'showPossibleLocalizationRecords' => false,
+                                                                                                                                                                                      'showRemovedLocalizationRecords' => true,
+                                                                                                                                                                                      'showAllLocalizationLink' => false,
+                                                                                                                                                                                      'showSynchronizationLink' => false
+                                                                                                                                                                                  ],
+                                                                                                                                                                                  'foreign_match_fields' => [
+                                                                                                                                                                                      'fieldname' => \Pixelant\PxaProductManager\Utility\TCAUtility::ATTRIBUTE_FAL_FIELD_NAME,
+                                                                                                                                                                                      'tablenames' => 'tx_pxaproductmanager_domain_model_product',
+                                                                                                                                                                                      'table_local' => 'sys_file',
+                                                                                                                                                                                  ],
+                                                                                                                                                                                  // @codingStandardsIgnoreStart
+                                                                                                                                                                                  'overrideChildTca' => [
+                                                                                                                                                                                      'types' => [
+                                                                                                                                                                                          '0' => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                                                                          ],
+                                                                                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                                                                          ],
+                                                                                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                                                                          ],
+                                                                                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                                                                          ],
+                                                                                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
-                                    'showitem' => '
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
-                            --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                                                                          ],
+                                                                                                                                                                                          \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
+                                                                                                                                                                                              'showitem' => '
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
+                            --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ]
-                            ]
-                        ]
-                    ]
-                // @codingStandardsIgnoreEnd
+                                                                                                                                                                                          ]
+                                                                                                                                                                                      ]
+                                                                                                                                                                                  ]
+                                                                                                                                                                              ]// @codingStandardsIgnoreEnd
                 ),
             ],
             'fal_links' => [
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.fal_links',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                    'fal_links',
-                    [
-                        'behaviour' => [
-                            'allowLanguageSynchronization' => true
-                        ],
-                        'appearance' => [
-                            'createNewRelationLinkTitle' => $ll .
-                                'tx_pxaproductmanager_domain_model_product.fal_links.add_button',
-                            'fileUploadAllowed' => false,
-                        ],
-                        'foreign_match_fields' => [
-                            'fieldname' => 'fal_links',
-                            'tablenames' => 'tx_pxaproductmanager_domain_model_product',
-                            'table_local' => 'sys_file',
-                        ],
-                        'overrideChildTca' => [
-                            'types' => [
-                                '0' => [
-                                    'showitem' => '
+                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig('fal_links', [
+                                                                                                                     'behaviour' => [
+                                                                                                                         'allowLanguageSynchronization' => true
+                                                                                                                     ],
+                                                                                                                     'appearance' => [
+                                                                                                                         'createNewRelationLinkTitle' => $ll . 'tx_pxaproductmanager_domain_model_product.fal_links.add_button',
+                                                                                                                         'fileUploadAllowed' => false,
+                                                                                                                     ],
+                                                                                                                     'foreign_match_fields' => [
+                                                                                                                         'fieldname' => 'fal_links',
+                                                                                                                         'tablenames' => 'tx_pxaproductmanager_domain_model_product',
+                                                                                                                         'table_local' => 'sys_file',
+                                                                                                                     ],
+                                                                                                                     'overrideChildTca' => [
+                                                                                                                         'types' => [
+                                                                                                                             '0' => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
-                                    'showitem' => '
+                                                                                                                             ],
+                                                                                                                             \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                    'showitem' => '
+                                                                                                                             ],
+                                                                                                                             \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
-                                    'showitem' => '
+                                                                                                                             ],
+                                                                                                                             \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
-                                    'showitem' => '
+                                                                                                                             ],
+                                                                                                                             \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
-                                    'showitem' => '
+                                                                                                                             ],
+                                                                                                                             \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
+                                                                                                                                 'showitem' => '
                     --palette--;;basicoverlayPalette,
                     --palette--;;filePalette,
                     '
-                                ]
-                            ]
-                        ]
-                    ]
-                )
+                                                                                                                             ]
+                                                                                                                         ]
+                                                                                                                     ]
+                                                                                                                 ])
             ],
             'links' => [
                 'exclude' => 0,
@@ -474,10 +448,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectMultipleSideBySide',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
-                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getSubProductsForeignTableWherePid() .
-                        ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' .
-                        ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' .
-                        ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
+                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getSubProductsForeignTableWherePid() . ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' . ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' . ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
                     'MM' => 'tx_pxaproductmanager_product_subproducts_product_mm',
                     'size' => 10,
                     'autoSizeMax' => 30,
@@ -588,32 +559,32 @@ return (function () {
                         'types' => [
                             '0' => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.audioOverlayPalette;audioOverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.audioOverlayPalette;audioOverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.videoOverlayPalette;videoOverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.videoOverlayPalette;videoOverlayPalette,
                                 --palette--;;filePalette'
                             ],
                             \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
                                 'showitem' => '
-                                --palette--;LLL:EXT:lang/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
                             ]
                         ],
@@ -684,10 +655,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectMultipleSideBySide',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
-                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getAccessoriesForeignTableWherePid() .
-                        ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' .
-                        ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' .
-                        ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
+                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getAccessoriesForeignTableWherePid() . ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' . ' AND tx_pxaproductmanager_domain_model_product.sys_language_uid IN (-1,0)' . ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
                     'MM' => 'tx_pxaproductmanager_product_accessories_product_mm',
                     'size' => 10,
                     'autoSizeMax' => 30,

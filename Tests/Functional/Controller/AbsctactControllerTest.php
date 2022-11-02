@@ -23,19 +23,6 @@ class AbsctactControllerTest extends FunctionalTestCase
 
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
 
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_attribute.xml');
-        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
-
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $this->categoryRepository = $objectManager->get(CategoryRepository::class);
-        $this->productRepository = $objectManager->get(ProductRepository::class);
-    }
-
     /**
      * @test
      */
@@ -57,23 +44,44 @@ class AbsctactControllerTest extends FunctionalTestCase
             ],
         ];
 
-        $mockedController = $this->getAccessibleMock(
-            AbstractController::class,
-            ['dummy'],
-            [],
-            '',
-            true
-        );
+        $mockedController = $this->getAccessibleMock(AbstractController::class, ['dummy'], [], '', true);
         $mockedController->_set('categoryRepository', $this->categoryRepository);
 
-        $availableOptions = $mockedController->_call(
-            'getAvailableFilteringAttributesOptionsForProducts',
-            $products
-        );
+        $availableOptions = $mockedController->_call('getAvailableFilteringAttributesOptionsForProducts', $products);
 
         $expectOptions = [556, 889, 336];
 
         $this->asserEqualsCustom($expectOptions, $availableOptions);
+    }
+
+    /**
+     * Dummy for serialization
+     *
+     * @return array
+     */
+    protected function getAttributesToValues()
+    {
+        return [
+            1 => '456,789',
+            2 => '556,889',
+            3 => '336,556'
+        ];
+    }
+
+    /**
+     * Custom compare
+     *
+     * @param array $expect
+     * @param array $result
+     */
+    protected function asserEqualsCustom(array $expect, array $result)
+    {
+        $count = count($expect);
+        $this->assertCount($count, $result);
+
+        for ($i = 0; $i < $count; $i++) {
+            $this->assertTrue($expect[$i] === $result[$i]);
+        }
     }
 
     /**
@@ -97,54 +105,26 @@ class AbsctactControllerTest extends FunctionalTestCase
             ],
         ];
 
-        $mockedController = $this->getAccessibleMock(
-            AbstractController::class,
-            ['dummy'],
-            [],
-            '',
-            true
-        );
+        $mockedController = $this->getAccessibleMock(AbstractController::class, ['dummy'], [], '', true);
         $mockedController->_set('categoryRepository', $this->categoryRepository);
 
-        $availableCategories = $mockedController->_call(
-            'getAvailableFilteringCategoriesForProducts',
-            $products
-        );
+        $availableCategories = $mockedController->_call('getAvailableFilteringCategoriesForProducts', $products);
 
         $expectCategories = [4, 5, 6];
 
         $this->asserEqualsCustom($expectCategories, $availableCategories);
     }
 
-    /**
-     * Custom compare
-     * @param array $expect
-     * @param array $result
-     */
-    protected function asserEqualsCustom(array $expect, array $result)
+    protected function setUp()
     {
-        $count = count($expect);
-        $this->assertCount(
-            $count,
-            $result
-        );
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_attribute.xml');
+        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
 
-        for ($i = 0; $i < $count; $i++) {
-            $this->assertTrue($expect[$i] === $result[$i]);
-        }
-    }
+        /** @var ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-    /**
-     * Dummy for serialization
-     *
-     * @return array
-     */
-    protected function getAttributesToValues()
-    {
-        return [
-            1 => '456,789',
-            2 => '556,889',
-            3 => '336,556'
-        ];
+        $this->categoryRepository = $objectManager->get(CategoryRepository::class);
+        $this->productRepository = $objectManager->get(ProductRepository::class);
     }
 }

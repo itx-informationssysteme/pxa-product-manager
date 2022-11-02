@@ -11,6 +11,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 /**
  * Class CategoriesNavigationTreeBuilderTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Navigation
  */
 class CategoriesNavigationTreeBuilderTest extends UnitTestCase
@@ -19,21 +20,6 @@ class CategoriesNavigationTreeBuilderTest extends UnitTestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|AccessibleMockObjectInterface|CategoriesNavigationTreeBuilder
      */
     protected $mockedNavigationBuilder;
-
-    protected function setUp()
-    {
-        $this->mockedNavigationBuilder = $this->getAccessibleMock(
-            CategoriesNavigationTreeBuilder::class,
-            ['dummy'],
-            [],
-            '',
-            false,
-            false
-        );
-
-        $tsfe = new \stdClass();
-        $GLOBALS['TSFE'] = $tsfe;
-    }
 
     /**
      * @test
@@ -69,10 +55,7 @@ class CategoriesNavigationTreeBuilderTest extends UnitTestCase
      */
     public function defaultActiveListisEmptyArray()
     {
-        $this->assertEquals(
-            [],
-            $this->mockedNavigationBuilder->_get('activeList')
-        );
+        $this->assertEquals([], $this->mockedNavigationBuilder->_get('activeList'));
     }
 
     /**
@@ -84,10 +67,7 @@ class CategoriesNavigationTreeBuilderTest extends UnitTestCase
 
         $this->mockedNavigationBuilder->setExcludeCategories($excludeCategories);
 
-        $this->assertEquals(
-            $excludeCategories,
-            $this->mockedNavigationBuilder->getExcludeCategories()
-        );
+        $this->assertEquals($excludeCategories, $this->mockedNavigationBuilder->getExcludeCategories());
     }
 
     /**
@@ -107,10 +87,7 @@ class CategoriesNavigationTreeBuilderTest extends UnitTestCase
     {
         $defaultSorting = ['sorting' => QueryInterface::ORDER_ASCENDING];
 
-        $this->assertEquals(
-            $defaultSorting,
-            $this->mockedNavigationBuilder->getOrderings()
-        );
+        $this->assertEquals($defaultSorting, $this->mockedNavigationBuilder->getOrderings());
     }
 
     /**
@@ -122,10 +99,15 @@ class CategoriesNavigationTreeBuilderTest extends UnitTestCase
 
         $this->mockedNavigationBuilder->setOrderings($sorting);
 
-        $this->assertEquals(
-            $sorting,
-            $this->mockedNavigationBuilder->getOrderings()
-        );
+        $this->assertEquals($sorting, $this->mockedNavigationBuilder->getOrderings());
+    }
+
+    protected function setUp()
+    {
+        $this->mockedNavigationBuilder = $this->getAccessibleMock(CategoriesNavigationTreeBuilder::class, ['dummy'], [], '', false, false);
+
+        $tsfe = new \stdClass();
+        $GLOBALS['TSFE'] = $tsfe;
     }
 
     protected function tearDown()

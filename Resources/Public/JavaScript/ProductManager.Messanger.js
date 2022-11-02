@@ -1,8 +1,8 @@
-(function (w, $) {
+(function(w, $) {
 	const ProductManager = w.ProductManager || {};
 
 	// Use to show meesages on FE
-	ProductManager.Messanger = (function () {
+	ProductManager.Messanger = (function() {
 		/**
 		 * Classes
 		 *
@@ -22,7 +22,6 @@
 			_transitionEvent = null,
 			_activeClass = 'pm-popup-active';
 
-
 		/**
 		 * Create html for message
 		 *
@@ -32,22 +31,22 @@
 		 * @param type
 		 * @private
 		 */
-		const _showMessage = function (message, type, delay, activeClass) {
+		const _showMessage = function(message, type, delay, activeClass) {
 			const popUp = $(_getMessageTemplate(message, type));
 			delay = delay || _delay;
 			activeClass = activeClass || _activeClass;
 
 			$('body').append(popUp);
 
-			setTimeout(function () {
+			setTimeout(function() {
 				popUp.addClass(activeClass);
 
-				setTimeout(function () {
+				setTimeout(function() {
 					popUp
-						.removeClass(activeClass)
-						.one(_determinateTransitionEvent(), function () {
-							$(this).remove();
-						});
+					.removeClass(activeClass)
+					.one(_determinateTransitionEvent(), function() {
+						$(this).remove();
+					});
 				}, delay);
 			}, 100);
 		};
@@ -59,7 +58,7 @@
 		 * @return string
 		 * @private
 		 */
-		const _getTypeClass = function (type) {
+		const _getTypeClass = function(type) {
 			return _availableTypesClasses[type] || '';
 		};
 
@@ -71,7 +70,7 @@
 		 * @return {string}
 		 * @private
 		 */
-		let _getMessageTemplate = function (message, type) {
+		let _getMessageTemplate = function(message, type) {
 			return '<div id="pxa-pm-popup-manager-container"><div id="pxa-pm-popup-manager" class="pm-alert ' + _getTypeClass(type) + '">' +
 				'<div class="media">' +
 				'<div class="media-body"><p class="alert-message">' + message + '</p></div>' +
@@ -84,16 +83,19 @@
 		 *
 		 * @private
 		 */
-		const _determinateTransitionEvent = function () {
-			if (_transitionEvent === null) {
+		const _determinateTransitionEvent = function() {
+			if (_transitionEvent === null)
+			{
 				let el = document.createElement('fake'),
 					transEndEventNames = {
 						'WebkitTransition': 'webkitTransitionEnd',
 						'MozTransition': 'transitionend',
 						'transition': 'transitionend'
 					};
-				for (let t in transEndEventNames) {
-					if (el.style[t] !== undefined) {
+				for (let t in transEndEventNames)
+				{
+					if (el.style[t] !== undefined)
+					{
 						_transitionEvent = transEndEventNames[t];
 					}
 				}
@@ -107,7 +109,7 @@
 		 *
 		 * @param customFunction
 		 */
-		const setMessageTemplateGetter = function (customFunction) {
+		const setMessageTemplateGetter = function(customFunction) {
 			_getMessageTemplate = customFunction;
 		};
 
@@ -117,7 +119,7 @@
 		 * @param delay
 		 * @param activeClass
 		 */
-		const showSuccessMessage = function (message, delay, activeClass) {
+		const showSuccessMessage = function(message, delay, activeClass) {
 			_showMessage(message, 'success', delay, activeClass);
 		};
 
@@ -127,7 +129,7 @@
 		 * @param delay
 		 * @param activeClass
 		 */
-		const showErrorMessage = function (message, delay, activeClass) {
+		const showErrorMessage = function(message, delay, activeClass) {
 			_showMessage(message, 'error', delay, activeClass);
 		};
 
@@ -137,7 +139,7 @@
 		 * @param delay
 		 * @param activeClass
 		 */
-		const showWarningMessage = function (message, delay, activeClass) {
+		const showWarningMessage = function(message, delay, activeClass) {
 			_showMessage(message, 'warning', delay, activeClass);
 		};
 

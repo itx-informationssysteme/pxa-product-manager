@@ -56,7 +56,8 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
      * Get categories by uids list
      *
      * @param array $uids
-     * @param bool $rawResult
+     * @param bool  $rawResult
+     *
      * @return array
      */
     public function findByUidList(array $uids, bool $rawResult = false): array
@@ -64,14 +65,9 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
         if (!empty($uids)) {
             $query = $this->createQuery();
 
-            $query
-                ->getQuerySettings()
-                ->setRespectStoragePage(false)
-                ->setRespectSysLanguage(false);
+            $query->getQuerySettings()->setRespectStoragePage(false)->setRespectSysLanguage(false);
 
-            $query->matching(
-                $query->in('uid', $uids)
-            );
+            $query->matching($query->in('uid', $uids));
 
             return $rawResult ? $query->execute(true) : $query->execute()->toArray();
         }
@@ -84,26 +80,22 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
      * Use in BE module to list categories
      *
      * @param int $pid
+     *
      * @return QueryResultInterface
      */
     public function findCategoriesByPidAndParentIgnoreHidden(int $pid, Category $category = null)
     {
         $query = $this->createQuery();
-        $query->getQuerySettings()
-            ->setRespectStoragePage(false)
-            ->setIgnoreEnableFields(true)
-            ->setEnableFieldsToBeIgnored(['disabled']);
+        $query->getQuerySettings()->setRespectStoragePage(false)->setIgnoreEnableFields(true)->setEnableFieldsToBeIgnored(['disabled']);
 
-        $query->matching(
-            $query->logicalAnd([
-                $query->equals('pid', $pid),
-                $query->equals('parent', $category ?? 0)
-            ])
-        );
+        $query->matching($query->logicalAnd([
+                                                $query->equals('pid', $pid),
+                                                $query->equals('parent', $category ?? 0)
+                                            ]));
 
         $query->setOrderings([
-            'sorting' => QueryInterface::ORDER_ASCENDING
-        ]);
+                                 'sorting' => QueryInterface::ORDER_ASCENDING
+                             ]);
 
         return $query->execute();
     }
@@ -112,16 +104,13 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
      * Get categories root line
      *
      * @param array $idList
-     * @param bool $removeGivenIdListFromResult
+     * @param bool  $removeGivenIdListFromResult
+     *
      * @return array
      */
-    public function getChildrenCategories(
-        array $idList,
-        bool $removeGivenIdListFromResult = false
-    ): array {
-        $categories = $this->getChildrenCategoriesRecursive(
-            $idList
-        );
+    public function getChildrenCategories(array $idList, bool $removeGivenIdListFromResult = false): array
+    {
+        $categories = $this->getChildrenCategoriesRecursive($idList);
 
         if ($removeGivenIdListFromResult) {
             return array_diff($categories, $idList);
@@ -131,11 +120,50 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
     }
 
     /**
+     * Go go children of category
+     *
+     * @param array $categories
+     * @param int   $counter
+     *
+     * @return array
+     */
+    private function getChildrenCategoriesRecursive(array $categories, int $counter = 0): array
+    {
+        $result = [];
+
+        // add start categories to the output too
+        if ($counter === 0) {
+            $result += $categories;
+        }
+
+        $query = $this->createQuery();
+
+        $query->matching($query->in('parent', $categories));
+
+        $childrenCategories = $query->execute(true);
+
+        if (!empty($childrenCategories)) {
+            foreach ($childrenCategories as $childCategory) {
+                $counter++;
+                if ($counter > 10000) {
+                    // loop
+                    return $result;
+                }
+                $subcategories = $this->getChildrenCategoriesRecursive([$childCategory['uid']], $counter);
+                $result = array_merge([$childCategory['uid']], $result, $subcategories);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Find categories by parent category
      * This is mostly used for navigation, so we need possibility to set direction
      *
      * @param mixed $parentCategory
      * @param array $ordering
+     *
      * @return QueryResultInterface
      */
     public function findByParent($parentCategory, array $ordering = [])
@@ -154,6 +182,7 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
      * Get categories uids
      *
      * @param array $productsUids
+     *
      * @return array
      */
     public function getProductsCategoriesUids(array $productsUids): array
@@ -161,82 +190,15 @@ class CategoryRepository extends \TYPO3\CMS\Extbase\Domain\Repository\CategoryRe
         $categories = [];
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-            'sys_category_record_mm'
-        );
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_category_record_mm');
         $queryBuilder->getRestrictions()->removeAll();
 
-        $statement = $queryBuilder
-            ->select('uid_local')
-            ->from('sys_category_record_mm')
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'tablenames',
-                    $queryBuilder->createNamedParameter(
-                        'tx_pxaproductmanager_domain_model_product',
-                        Connection::PARAM_STR
-                    )
-                ),
-                $queryBuilder->expr()->eq(
-                    'fieldname',
-                    $queryBuilder->createNamedParameter(
-                        'categories',
-                        Connection::PARAM_STR
-                    )
-                ),
-                $queryBuilder->expr()->in(
-                    'uid_foreign',
-                    $queryBuilder->createNamedParameter(
-                        $productsUids,
-                        Connection::PARAM_INT_ARRAY
-                    )
-                )
-            )
-            ->execute();
+        $statement = $queryBuilder->select('uid_local')->from('sys_category_record_mm')->where($queryBuilder->expr()->eq('tablenames', $queryBuilder->createNamedParameter('tx_pxaproductmanager_domain_model_product', Connection::PARAM_STR)), $queryBuilder->expr()->eq('fieldname', $queryBuilder->createNamedParameter('categories', Connection::PARAM_STR)), $queryBuilder->expr()->in('uid_foreign', $queryBuilder->createNamedParameter($productsUids, Connection::PARAM_INT_ARRAY)))->execute();
 
         while ($uid = $statement->fetchColumn(0)) {
             $categories[] = $uid;
         }
 
         return array_values(array_unique($categories));
-    }
-
-    /**
-     * Go go children of category
-     *
-     * @param array $categories
-     * @param int $counter
-     * @return array
-     */
-    private function getChildrenCategoriesRecursive(array $categories, int $counter = 0): array
-    {
-        $result = [];
-
-        // add start categories to the output too
-        if ($counter === 0) {
-            $result += $categories;
-        }
-
-        $query = $this->createQuery();
-
-        $query->matching(
-            $query->in('parent', $categories)
-        );
-
-        $childrenCategories = $query->execute(true);
-
-        if (!empty($childrenCategories)) {
-            foreach ($childrenCategories as $childCategory) {
-                $counter++;
-                if ($counter > 10000) {
-                    // loop
-                    return $result;
-                }
-                $subcategories = $this->getChildrenCategoriesRecursive([$childCategory['uid']], $counter);
-                $result = array_merge([$childCategory['uid']], $result, $subcategories);
-            }
-        }
-
-        return $result;
     }
 }

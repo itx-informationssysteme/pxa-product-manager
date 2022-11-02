@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 
 /**
  * Class AbstractControllerTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit
  */
 class AbstractControllerTest extends UnitTestCase
@@ -20,26 +21,14 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function sortQueryResultsByUidListWillSortResultsAccordingToUidList($queryResult, $expectResult, $uidList)
     {
-        $mockedController = $this->getAccessibleMock(
-            AbstractController::class,
-            ['dummy']
-        );
+        $mockedController = $this->getAccessibleMock(AbstractController::class, ['dummy']);
 
-        $mockedQueryResult = $this->getAccessibleMock(
-            QueryResult::class,
-            ['dummy'],
-            [],
-            '',
-            false
-        );
+        $mockedQueryResult = $this->getAccessibleMock(QueryResult::class, ['dummy'], [], '', false);
         $mockedQueryResult->_set('queryResult', $queryResult);
 
         $result = $mockedController->_call('sortQueryResultsByUidList', $mockedQueryResult, $uidList);
 
-        $this->assertEquals(
-            $expectResult,
-            $result
-        );
+        $this->assertEquals($expectResult, $result);
     }
 
     public function dataForSortQueryByUids()
@@ -56,7 +45,10 @@ class AbstractControllerTest extends UnitTestCase
         return [
             'all_product_sorted_by_special_order' => [
                 [
-                    $product1, $product2, $product3, $product4
+                    $product1,
+                    $product2,
+                    $product3,
+                    $product4
                 ],
                 [
                     2 => $product2,
@@ -68,7 +60,9 @@ class AbstractControllerTest extends UnitTestCase
             ],
             'selected_product_sorted_by_special_order' => [
                 [
-                    $product1, $product2, $product4
+                    $product1,
+                    $product2,
+                    $product4
                 ],
                 [
                     2 => $product2,

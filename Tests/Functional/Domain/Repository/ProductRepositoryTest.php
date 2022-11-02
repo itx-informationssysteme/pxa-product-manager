@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class ProductRepositoryTest.php
+ *
  * @package Pixelant\PxaProductManager\Tests\Functional\Domain\Repository
  */
 class ProductRepositoryTest extends FunctionalTestCase
@@ -19,13 +20,6 @@ class ProductRepositoryTest extends FunctionalTestCase
     protected $productRepository;
 
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
-        $this->productRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ProductRepository::class);
-    }
 
     /**
      * @test
@@ -75,5 +69,12 @@ class ProductRepositoryTest extends FunctionalTestCase
         $product = $this->productRepository->findByUid($uid, false);
 
         $this->assertNull($product);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
+        $this->productRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ProductRepository::class);
     }
 }

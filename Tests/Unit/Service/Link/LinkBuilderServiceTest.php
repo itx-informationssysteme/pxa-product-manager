@@ -11,6 +11,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Class LinkBuilderServiceTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Service\Link
  */
 class LinkBuilderServiceTest extends UnitTestCase
@@ -22,14 +23,7 @@ class LinkBuilderServiceTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->subject = $this->getAccessibleMock(
-            LinkBuilderService::class,
-            null,
-            [],
-            '',
-            false,
-            false
-        );
+        $this->subject = $this->getAccessibleMock(LinkBuilderService::class, null, [], '', false, false);
     }
 
     public function tearDown()
@@ -52,11 +46,7 @@ class LinkBuilderServiceTest extends UnitTestCase
     {
         $languageUid = 12;
 
-        $subject = $this->getAccessibleMock(
-            LinkBuilderService::class,
-            null,
-            [$languageUid]
-        );
+        $subject = $this->getAccessibleMock(LinkBuilderService::class, null, [$languageUid]);
 
         $this->assertEquals($languageUid, $subject->_get('languageUid'));
     }
@@ -76,11 +66,7 @@ class LinkBuilderServiceTest extends UnitTestCase
     {
         $tsfe = $this->createMock(TypoScriptFrontendController::class);
 
-        $subject = $this->getAccessibleMock(
-            LinkBuilderService::class,
-            null,
-            [null, $tsfe]
-        );
+        $subject = $this->getAccessibleMock(LinkBuilderService::class, null, [null, $tsfe]);
 
         $this->assertSame($tsfe, $subject->_get('typoScriptFrontendController'));
     }

@@ -7,6 +7,7 @@ use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
 
 /**
  * Class CheckBoxFormField
+ *
  * @package Pixelant\PxaProductManager\Domain\Model\OrderFormFields
  */
 class CheckBoxFormField extends OrderFormField

@@ -70,6 +70,7 @@ class AttributeValue extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the value
      *
      * @param \string $value
+     *
      * @return void
      */
     public function setValue(string $value)
@@ -91,6 +92,7 @@ class AttributeValue extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the attribute
      *
      * @param Attribute $attribute
+     *
      * @return void
      */
     public function setAttribute(Attribute $attribute)
@@ -112,6 +114,7 @@ class AttributeValue extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the product
      *
      * @param Product $product
+     *
      * @return void
      */
     public function setProduct(Product $product)

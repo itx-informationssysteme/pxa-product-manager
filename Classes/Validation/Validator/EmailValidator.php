@@ -7,6 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class EmailValidator
+ *
  * @package Pixelant\PxaProductManager\Validation\Validator
  */
 class EmailValidator extends AbstractValidator
@@ -23,6 +24,7 @@ class EmailValidator extends AbstractValidator
      * Empty field is valid, use required to validator instead
      *
      * @param $value
+     *
      * @return bool
      */
     public function validate($value): bool

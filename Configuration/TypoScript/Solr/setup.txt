@@ -1,82 +1,82 @@
 plugin.tx_solr.index.queue.tx_pxaproductmanager_domain_model_product = 1
 plugin.tx_solr.index.queue.tx_pxaproductmanager_domain_model_product {
-    table = tx_pxaproductmanager_domain_model_product
-    additionalPageIds = {$plugin.tx_pxaproductmanager.persistence.storagePid}
-    fields {
-        title = name
-        subTitle = sku
-        content = SOLR_CONTENT
-        content.field = description
-        description < .content
-        abstract = teaser
+	table = tx_pxaproductmanager_domain_model_product
+	additionalPageIds = {$plugin.tx_pxaproductmanager.persistence.storagePid}
+	fields {
+		title = name
+		subTitle = sku
+		content = SOLR_CONTENT
+		content.field = description
+		description < .content
+		abstract = teaser
 
-        url = USER
-        url {
-            userFunc = Pixelant\PxaProductManager\UserFunction\SolrProductLink->getLink
-            pageUid = {$plugin.tx_pxaproductmanager.settings.pagePid}
-        }
+		url = USER
+		url {
+			userFunc = Pixelant\PxaProductManager\UserFunction\SolrProductLink->getLink
+			pageUid = {$plugin.tx_pxaproductmanager.settings.pagePid}
+		}
 
-        product_name_textS = TEXT
-        product_name_textS.field = name
+		product_name_textS = TEXT
+		product_name_textS.field = name
 
-        product_sku_textS < .product_name_textS
-        product_sku_textS.field = sku
+		product_sku_textS < .product_name_textS
+		product_sku_textS.field = sku
 
-        image_main_url_stringS = USER
-        image_main_url_stringS {
-            userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductMainImagePublicUrl
-        }
+		image_main_url_stringS = USER
+		image_main_url_stringS {
+			userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductMainImagePublicUrl
+		}
 
-        image_thumbnail_url_stringS < .image_main_url_stringS
-        image_thumbnail_url_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductThumbnailImagePublicUrl
+		image_thumbnail_url_stringS < .image_main_url_stringS
+		image_thumbnail_url_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductThumbnailImagePublicUrl
 
-        #image_main_reference_uid_stringS < .image_main_url_stringS
-        #image_main_reference_uid_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductMainImageReferenceUid
+		#image_main_reference_uid_stringS < .image_main_url_stringS
+		#image_main_reference_uid_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductMainImageReferenceUid
 
-        #image_thumbnail_reference_uid_stringS < .image_main_url_stringS
-        #image_thumbnail_reference_uid_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductThumbnailImageReferenceUid
+		#image_thumbnail_reference_uid_stringS < .image_main_url_stringS
+		#image_thumbnail_reference_uid_stringS.userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductThumbnailImageReferenceUid
 
 
-        attribute_values_stringM = SOLR_RELATION
-        attribute_values_stringM {
-            localField = attribute_values
-            multiValue = 1
-        }
+		attribute_values_stringM = SOLR_RELATION
+		attribute_values_stringM {
+			localField = attribute_values
+			multiValue = 1
+		}
 
-        # index single attribute value example
-        #attribute_rsk_stringS = USER
-        #attribute_rsk_stringS {
-        #    userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexSingleAttributeValue->getSingleAttributeValue
-        #    identifier = rsk
-        #}
+		# index single attribute value example
+		#attribute_rsk_stringS = USER
+		#attribute_rsk_stringS {
+		#    userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexSingleAttributeValue->getSingleAttributeValue
+		#    identifier = rsk
+		#}
 
-        category_stringM = SOLR_RELATION
-        category_stringM {
-            localField = categories
-            multiValue = 1
-        }
+		category_stringM = SOLR_RELATION
+		category_stringM {
+			localField = categories
+			multiValue = 1
+		}
 
-        attachments = 1
-        attachments {
-            fields = fal_links
-            fileExtensions = *
-        }
-    }
+		attachments = 1
+		attachments {
+			fields = fal_links
+			fileExtensions = *
+		}
+	}
 }
 
 plugin.tx_solr.search.faceting.facets.type {
-    renderingInstruction {
-        # products
-        tx_pxaproductmanager_domain_model_product = TEXT
-        tx_pxaproductmanager_domain_model_product.value = {LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang.xlf:fe.solr.type_facet_name}
-        tx_pxaproductmanager_domain_model_product.insertData = 1
-    }
+	renderingInstruction {
+		# products
+		tx_pxaproductmanager_domain_model_product = TEXT
+		tx_pxaproductmanager_domain_model_product.value = {LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang.xlf:fe.solr.type_facet_name}
+		tx_pxaproductmanager_domain_model_product.insertData = 1
+	}
 }
 
 plugin.tx_solr {
-    search {
-        query {
-            queryFields := addToList(product_name_textS^60.0, product_sku_textS^60.0)
-        }
-    }
+	search {
+		query {
+			queryFields := addToList(product_name_textS^60.0, product_sku_textS^60.0)
+		}
+	}
 }

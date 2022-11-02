@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class SelectboxFormField
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class SelectBoxFormField extends OrderFormField
@@ -47,6 +48,7 @@ class SelectBoxFormField extends OrderFormField
      * Adds a Option
      *
      * @param Option $option
+     *
      * @return void
      */
     public function addOption(Option $option)
@@ -58,32 +60,12 @@ class SelectBoxFormField extends OrderFormField
      * Removes a Option
      *
      * @param Option $optionToRemove The Option to be removed
+     *
      * @return void
      */
     public function removeOption(Option $optionToRemove)
     {
         $this->options->detach($optionToRemove);
-    }
-
-    /**
-     * Returns the options
-     *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
-     */
-    public function getOptions(): ObjectStorage
-    {
-        return $this->options;
-    }
-
-    /**
-     * Sets the options
-     *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
-     * @return void
-     */
-    public function setOptions(ObjectStorage $options)
-    {
-        $this->options = $options;
     }
 
     /**
@@ -100,5 +82,27 @@ class SelectBoxFormField extends OrderFormField
         }
 
         return '';
+    }
+
+    /**
+     * Returns the options
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     */
+    public function getOptions(): ObjectStorage
+    {
+        return $this->options;
+    }
+
+    /**
+     * Sets the options
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     *
+     * @return void
+     */
+    public function setOptions(ObjectStorage $options)
+    {
+        $this->options = $options;
     }
 }

@@ -17,7 +17,8 @@ class AttributeIdentifierController
      * Convert string for attribute identifier field
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface      $response
+     *
      * @return ResponseInterface
      */
     public function attributeIdentifierConvertAction(ServerRequestInterface $request, ResponseInterface $response)
@@ -26,9 +27,7 @@ class AttributeIdentifierController
         $output = trim($queryParameters['value']);
 
         if (!empty($output)) {
-            $output = GeneralUtility::underscoredToLowerCamelCase(
-                MainUtility::normalizeString($output)
-            );
+            $output = GeneralUtility::underscoredToLowerCamelCase(MainUtility::normalizeString($output));
         }
 
         $response->getBody()->write(json_encode(['success' => true, 'output' => $output]));

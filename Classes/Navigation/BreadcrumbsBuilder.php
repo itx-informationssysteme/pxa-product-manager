@@ -39,6 +39,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class BreadcrumbsBuilder
+ *
  * @package Pixelant\PxaProductManager\Navigation
  */
 class BreadcrumbsBuilder
@@ -80,13 +81,12 @@ class BreadcrumbsBuilder
      * Generate breadcrumbs
      *
      * @param string $content
-     * @param array $configuration
+     * @param array  $configuration
+     *
      * @return array
      */
-    public function buildBreadcrumbs(
-        string $content,
-        array $configuration
-    ): array {
+    public function buildBreadcrumbs(string $content, array $configuration): array
+    {
         $breadcrumbs = [];
         $arguments = GeneralUtility::_GP('tx_pxaproductmanager_pi1');
 
@@ -134,8 +134,9 @@ class BreadcrumbsBuilder
      * Generate link for breadcrumbs
      *
      * @param array $breadcrumbs
-     * @param int $value
-     * @param bool $isProduct
+     * @param int   $value
+     * @param bool  $isProduct
+     *
      * @return string
      */
     protected function buildLink(array $breadcrumbs, int $value, bool $isProduct = false): string

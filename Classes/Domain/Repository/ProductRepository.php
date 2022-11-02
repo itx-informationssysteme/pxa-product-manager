@@ -77,6 +77,7 @@ class ProductRepository extends AbstractDemandRepository
      * Override basic method. Set special ordering for categories if it's not multiple
      *
      * @param DemandInterface|Demand $demand
+     *
      * @return QueryResultInterface
      */
     public function findDemanded(DemandInterface $demand): QueryResultInterface
@@ -85,38 +86,10 @@ class ProductRepository extends AbstractDemandRepository
             return parent::findDemanded($demand);
         } else {
             /** @var QueryBuilder $queryBuilder */
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('sys_category_record_mm');
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_category_record_mm');
             $queryBuilder->getRestrictions()->removeAll();
 
-            $statement = $queryBuilder
-                ->select('uid_foreign')
-                ->from('sys_category_record_mm')
-                ->where(
-                    $queryBuilder->expr()->eq(
-                        'uid_local',
-                        $queryBuilder->createNamedParameter(
-                            $demand->getCategories()[0],
-                            Connection::PARAM_INT
-                        )
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tablenames',
-                        $queryBuilder->createNamedParameter(
-                            'tx_pxaproductmanager_domain_model_product',
-                            Connection::PARAM_STR
-                        )
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'fieldname',
-                        $queryBuilder->createNamedParameter(
-                            'categories',
-                            Connection::PARAM_STR
-                        )
-                    )
-                )
-                ->orderBy('sorting')
-                ->execute();
+            $statement = $queryBuilder->select('uid_foreign')->from('sys_category_record_mm')->where($queryBuilder->expr()->eq('uid_local', $queryBuilder->createNamedParameter($demand->getCategories()[0], Connection::PARAM_INT)), $queryBuilder->expr()->eq('tablenames', $queryBuilder->createNamedParameter('tx_pxaproductmanager_domain_model_product', Connection::PARAM_STR)), $queryBuilder->expr()->eq('fieldname', $queryBuilder->createNamedParameter('categories', Connection::PARAM_STR)))->orderBy('sorting')->execute();
 
             $uidsOrder = '';
             while ($uid = $statement->fetchColumn(0)) {
@@ -135,11 +108,7 @@ class ProductRepository extends AbstractDemandRepository
                 $productsQueryBuilder = $queryParser->convertQueryToDoctrineQueryBuilder($query);
 
                 // add orderings
-                $productsQueryBuilder->add(
-                    'orderBy',
-                    'FIELD(`tx_pxaproductmanager_domain_model_product`.`uid`' . $uidsOrder . ') '
-                    . $demand->getOrderDirection()
-                );
+                $productsQueryBuilder->add('orderBy', 'FIELD(`tx_pxaproductmanager_domain_model_product`.`uid`' . $uidsOrder . ') ' . $demand->getOrderDirection());
 
                 $queryParameters = [];
 
@@ -159,7 +128,7 @@ class ProductRepository extends AbstractDemandRepository
     /**
      * If order is by category need to override basic order function
      *
-     * @param QueryInterface $query
+     * @param QueryInterface         $query
      * @param DemandInterface|Demand $demand
      */
     public function setOrderings(QueryInterface $query, DemandInterface $demand)
@@ -185,6 +154,7 @@ class ProductRepository extends AbstractDemandRepository
      * Find all product with storage or all
      *
      * @param bool $respectStorage
+     *
      * @return QueryResultInterface
      */
     public function findAll($respectStorage = true)
@@ -201,19 +171,16 @@ class ProductRepository extends AbstractDemandRepository
     /**
      * Find products by categories
      *
-     * @param array $categories
-     * @param array $orderings
+     * @param array  $categories
+     * @param array  $orderings
      * @param string $conjunction
-     * @param int $limit
+     * @param int    $limit
+     *
      * @return array|QueryResultInterface
      * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
-    public function findProductsByCategories(
-        array $categories,
-        array $orderings = ['sorting' => QueryInterface::ORDER_ASCENDING],
-        string $conjunction = 'and',
-        int $limit = 0
-    ) {
+    public function findProductsByCategories(array $categories, array $orderings = ['sorting' => QueryInterface::ORDER_ASCENDING], string $conjunction = 'and', int $limit = 0)
+    {
         if (empty($categories)) {
             return [];
         }
@@ -227,13 +194,7 @@ class ProductRepository extends AbstractDemandRepository
             $constraints[] = $query->contains('categories', $category);
         }
 
-        $query->matching(
-            $this->createConstraintFromConstraintsArray(
-                $query,
-                $constraints,
-                $conjunction
-            )
-        );
+        $query->matching($this->createConstraintFromConstraintsArray($query, $constraints, $conjunction));
 
         $query->setOrderings($orderings);
 
@@ -248,26 +209,21 @@ class ProductRepository extends AbstractDemandRepository
     /**
      * Same as findProductsByCategories, but doesn't respect disable field and storage
      *
-     * @param array $categories
+     * @param array  $categories
      * @param string $conjunction
+     *
      * @return array|QueryResultInterface
      * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
-    public function findAllProductsByCategories(
-        array $categories,
-        string $conjunction = 'or'
-    ) {
+    public function findAllProductsByCategories(array $categories, string $conjunction = 'or')
+    {
         if (empty($categories)) {
             return [];
         }
 
         // Find products our own way, because CategoryCollection::load doesn't have options to set the ordering
         $query = $this->createQuery();
-        $query
-            ->getQuerySettings()
-            ->setRespectStoragePage(false)
-            ->setIgnoreEnableFields(true)
-            ->setEnableFieldsToBeIgnored(['disabled']);
+        $query->getQuerySettings()->setRespectStoragePage(false)->setIgnoreEnableFields(true)->setEnableFieldsToBeIgnored(['disabled']);
 
         $constraints = [];
         /** @var Category $category */
@@ -275,13 +231,7 @@ class ProductRepository extends AbstractDemandRepository
             $constraints[] = $query->contains('categories', $category);
         }
 
-        $query->matching(
-            $this->createConstraintFromConstraintsArray(
-                $query,
-                $constraints,
-                $conjunction
-            )
-        );
+        $query->matching($this->createConstraintFromConstraintsArray($query, $constraints, $conjunction));
 
         $query->setOrderings(['sorting' => QueryInterface::ORDER_ASCENDING]);
 
@@ -292,15 +242,14 @@ class ProductRepository extends AbstractDemandRepository
      * Count products for category
      *
      * @param Category $category
+     *
      * @return int
      */
     public function countByCategory(Category $category): int
     {
         $query = $this->createQuery();
 
-        $query->matching(
-            $query->contains('categories', $category)
-        );
+        $query->matching($query->contains('categories', $category));
 
         return $query->count();
     }
@@ -309,6 +258,7 @@ class ProductRepository extends AbstractDemandRepository
      * findProductsByUIds
      *
      * @param array $uids
+     *
      * @return QueryResultInterface|array
      */
     public function findProductsByUids(array $uids = [])
@@ -320,14 +270,9 @@ class ProductRepository extends AbstractDemandRepository
         $query = $this->createQuery();
 
         // Disable language and storage check, because we are using uids
-        $query
-            ->getQuerySettings()
-            ->setRespectSysLanguage(false)
-            ->setRespectStoragePage(false);
+        $query->getQuerySettings()->setRespectSysLanguage(false)->setRespectStoragePage(false);
 
-        $query->matching(
-            $query->in('uid', $uids)
-        );
+        $query->matching($query->in('uid', $uids));
 
         return $query->execute();
     }
@@ -335,8 +280,9 @@ class ProductRepository extends AbstractDemandRepository
     /**
      * Add possibility do disable enable fields when find by uid
      *
-     * @param int $uid
+     * @param int  $uid
      * @param bool $respectEnableFields
+     *
      * @return null|Product
      */
     public function findByUid($uid, bool $respectEnableFields = true)
@@ -350,9 +296,7 @@ class ProductRepository extends AbstractDemandRepository
             $query->getQuerySettings()->setIgnoreEnableFields(true);
         }
 
-        $query->matching(
-            $query->equals('uid', (int)$uid)
-        );
+        $query->matching($query->equals('uid', (int)$uid));
 
         return $query->execute()->getFirst();
     }
@@ -360,8 +304,9 @@ class ProductRepository extends AbstractDemandRepository
     /**
      * Create constraints for all demand options
      *
-     * @param QueryInterface $query
+     * @param QueryInterface         $query
      * @param DemandInterface|Demand $demand
+     *
      * @return array
      */
     protected function createConstraints(QueryInterface $query, DemandInterface $demand): array
@@ -373,25 +318,56 @@ class ProductRepository extends AbstractDemandRepository
         }
 
         if (!empty($demand->getCategories())) {
-            $constraints['categories'] = $this->createCategoryConstraints(
-                $query,
-                $demand->getCategories(),
-                $demand->getCategoryConjunction()
-            );
+            $constraints['categories'] = $this->createCategoryConstraints($query, $demand->getCategories(), $demand->getCategoryConjunction());
         }
 
         if (!empty($demand->getFilters())) {
-            $filterConstraints = $this->createFilteringConstraints(
-                $query,
-                $demand->getFilters(),
-                $demand->getFiltersConjunction()
-            );
+            $filterConstraints = $this->createFilteringConstraints($query, $demand->getFilters(), $demand->getFiltersConjunction());
             if ($filterConstraints !== false) {
                 $constraints['filters'] = $filterConstraints;
             }
         }
 
         return $constraints;
+    }
+
+    /**
+     * Create discontinued constraints
+     *
+     * @param QueryInterface $query
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
+     */
+    protected function createDiscontinuedConstraints(QueryInterface $query)
+    {
+        $constraints = [];
+
+        // include if discontinued isn't set
+        $constraints['ns'] = $query->equals('discontinued', 0);
+        // or discontinued is greater than today
+        $constraints['gt'] = $query->greaterThan('discontinued', new \DateTime('00:00'));
+
+        return $this->createConstraintFromConstraintsArray($query, $constraints, 'or');
+    }
+
+    /**
+     * Create categories constraints
+     *
+     * @param QueryInterface $query
+     * @param array          $categories
+     * @param string         $conjunction
+     *
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
+     */
+    protected function createCategoryConstraints(QueryInterface $query, array $categories, string $conjunction = 'or')
+    {
+        $constraints = [];
+
+        foreach ($categories as $category) {
+            $constraints[] = $query->contains('categories', $category);
+        }
+
+        return $this->createConstraintFromConstraintsArray($query, $constraints, strtolower($conjunction));
     }
 
     /**
@@ -407,9 +383,11 @@ class ProductRepository extends AbstractDemandRepository
      *      [0] => 3
      *  )
      * )
+     *
      * @param QueryInterface $query
-     * @param array $filtersData
-     * @param string $conjunction
+     * @param array          $filtersData
+     * @param string         $conjunction
+     *
      * @return mixed
      */
     protected function createFilteringConstraints(QueryInterface $query, array $filtersData, string $conjunction = 'or')
@@ -429,12 +407,7 @@ class ProductRepository extends AbstractDemandRepository
                 switch ($filter->getType()) {
                     case Filter::TYPE_ATTRIBUTES:
                         $filterConstraints = [];
-                        $attributeValues = $this->attributeValueRepository->findAttributeValuesByAttributeAndValues(
-                            (int)$filterData['attributeUid'],
-                            $filterData['value'],
-                            $filterConjunction,
-                            true
-                        );
+                        $attributeValues = $this->attributeValueRepository->findAttributeValuesByAttributeAndValues((int)$filterData['attributeUid'], $filterData['value'], $filterConjunction, true);
                         if (empty($attributeValues)) {
                             // force no result for filter constraint if no value was found but filter was set on FE
                             $filterConstraints[] = $query->contains('attributeValues', 0);
@@ -445,11 +418,7 @@ class ProductRepository extends AbstractDemandRepository
                         }
 
                         if (!empty($filterConstraints)) {
-                            $constraints[] = $this->createConstraintFromConstraintsArray(
-                                $query,
-                                $filterConstraints,
-                                'or'
-                            );
+                            $constraints[] = $this->createConstraintFromConstraintsArray($query, $filterConstraints, 'or');
                         }
                         break;
                     case Filter::TYPE_CATEGORIES:
@@ -458,15 +427,11 @@ class ProductRepository extends AbstractDemandRepository
                             $categoriesConstraints[] = $query->contains('categories', $value);
                         }
 
-                        $constraints[] = $this->createConstraintFromConstraintsArray(
-                            $query,
-                            $categoriesConstraints,
-                            $filterConjunction
-                        );
+                        $constraints[] = $this->createConstraintFromConstraintsArray($query, $categoriesConstraints, $filterConjunction);
                         break;
                     case Filter::TYPE_ATTRIBUTES_MINMAX:
                         // need to just prebuild array since minmax attribute filter can consist of two inputs
-                        list($value, $rangeType) = $filterData['value'];
+                        [$value, $rangeType] = $filterData['value'];
                         $rangeKey = (int)$filterData['attributeUid'];
 
                         $ranges[$rangeKey][$rangeType] = $value;
@@ -484,11 +449,7 @@ class ProductRepository extends AbstractDemandRepository
             foreach ($ranges as $attributeId => $range) {
                 $rangeConstraints = [];
 
-                $attributeValues = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-                    (int)$attributeId,
-                    isset($range['min']) ? (int)$range['min'] : null,
-                    isset($range['max']) ? (int)$range['max'] : null
-                );
+                $attributeValues = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues((int)$attributeId, isset($range['min']) ? (int)$range['min'] : null, isset($range['max']) ? (int)$range['max'] : null);
 
                 if (empty($attributeValues)) {
                     // force no result for filter constraint if no value was found but filter was set on FE
@@ -500,68 +461,15 @@ class ProductRepository extends AbstractDemandRepository
                 }
 
                 if (!empty($rangeConstraints)) {
-                    $constraints[] = $this->createConstraintFromConstraintsArray(
-                        $query,
-                        $rangeConstraints,
-                        'or'
-                    );
+                    $constraints[] = $this->createConstraintFromConstraintsArray($query, $rangeConstraints, 'or');
                 }
             }
         }
 
         if (!empty($constraints)) {
-            return $this->createConstraintFromConstraintsArray(
-                $query,
-                $constraints,
-                strtolower($conjunction)
-            );
+            return $this->createConstraintFromConstraintsArray($query, $constraints, strtolower($conjunction));
         }
 
         return false;
-    }
-
-    /**
-     * Create categories constraints
-     *
-     * @param QueryInterface $query
-     * @param array $categories
-     * @param string $conjunction
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
-     */
-    protected function createCategoryConstraints(QueryInterface $query, array $categories, string $conjunction = 'or')
-    {
-        $constraints = [];
-
-        foreach ($categories as $category) {
-            $constraints[] = $query->contains('categories', $category);
-        }
-
-        return $this->createConstraintFromConstraintsArray(
-            $query,
-            $constraints,
-            strtolower($conjunction)
-        );
-    }
-
-    /**
-     * Create discontinued constraints
-     *
-     * @param QueryInterface $query
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
-     */
-    protected function createDiscontinuedConstraints(QueryInterface $query)
-    {
-        $constraints = [];
-
-        // include if discontinued isn't set
-        $constraints['ns'] = $query->equals('discontinued', 0);
-        // or discontinued is greater than today
-        $constraints['gt'] = $query->greaterThan('discontinued', new \DateTime('00:00'));
-
-        return $this->createConstraintFromConstraintsArray(
-            $query,
-            $constraints,
-            'or'
-        );
     }
 }

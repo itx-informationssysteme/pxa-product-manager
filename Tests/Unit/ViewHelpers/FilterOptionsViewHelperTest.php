@@ -1,4 +1,5 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Tests\Unit\ViewHelpers;
 
 use Nimut\TestingFramework\TestCase\ViewHelperBaseTestcase;
@@ -11,6 +12,7 @@ use Pixelant\PxaProductManager\ViewHelpers\FilterOptionsViewHelper;
 
 /**
  * Class FilterOptionsViewHelperTest
+ *
  * @package Pixelant\PxaProductManager\Tests\ViewHelpers
  */
 class FilterOptionsViewHelperTest extends ViewHelperBaseTestcase
@@ -24,20 +26,6 @@ class FilterOptionsViewHelperTest extends ViewHelperBaseTestcase
      * @var CategoryRepository
      */
     protected $categoryRepository;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(FilterOptionsViewHelper::class, ['dummy']);
-        $this->categoryRepository = $this->prophesize(CategoryRepository::class);
-        $this->viewHelper->initializeArguments();
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        unset($this->viewHelper, $this->categoryRepository);
-    }
 
     /**
      * @test
@@ -66,7 +54,6 @@ class FilterOptionsViewHelperTest extends ViewHelperBaseTestcase
             ],
         ];
 
-
         $filter->setType(Filter::TYPE_CATEGORIES);
         $filter->setParentCategory($parentCategory);
 
@@ -77,10 +64,7 @@ class FilterOptionsViewHelperTest extends ViewHelperBaseTestcase
 
         $this->categoryRepository->findByParent($parentCategory)->shouldBeCalled();
 
-        self::assertEquals(
-            $expected,
-            $this->viewHelper->render()
-        );
+        self::assertEquals($expected, $this->viewHelper->render());
     }
 
     /**
@@ -115,15 +99,24 @@ class FilterOptionsViewHelperTest extends ViewHelperBaseTestcase
             ],
         ];
 
-
         $filter->setType(Filter::TYPE_ATTRIBUTES);
 
         $this->viewHelper->_set('arguments', ['filter' => $filter]);
 
+        self::assertEquals($expected, $this->viewHelper->render());
+    }
 
-        self::assertEquals(
-            $expected,
-            $this->viewHelper->render()
-        );
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->viewHelper = $this->getAccessibleMock(FilterOptionsViewHelper::class, ['dummy']);
+        $this->categoryRepository = $this->prophesize(CategoryRepository::class);
+        $this->viewHelper->initializeArguments();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        unset($this->viewHelper, $this->categoryRepository);
     }
 }

@@ -1,4 +1,4 @@
-(function (w) {
+(function(w) {
 	const ProductManager = w.ProductManager || {};
 
 	// Init settings
@@ -22,10 +22,11 @@
 		notInListClass: 'inactive-icon',
 		initializationClass: 'ongoing-initialization',
 		loadingClass: 'in-progress',
-		wishListButtonSingleView: '.btn-wish-list-single-view'	
+		wishListButtonSingleView: '.btn-wish-list-single-view'
 	};
 
-	if (ProductManager.settings.wishlistTSSettings) {
+	if (ProductManager.settings.wishlistTSSettings)
+	{
 		ProductManager.settings.wishList = Object.assign(
 			{},
 			ProductManager.settings.wishList,
@@ -49,7 +50,8 @@
 		compareListButtonSingleView: '.btn-compare-list-single-view'
 	};
 
-	if (ProductManager.settings.compareListTSSettings) {
+	if (ProductManager.settings.compareListTSSettings)
+	{
 		ProductManager.settings.compareList = Object.assign(
 			{},
 			ProductManager.settings.compareList,

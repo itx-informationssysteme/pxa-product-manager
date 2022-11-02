@@ -1,9 +1,11 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Hook;
 
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Utility\MainUtility;
+use Pixelant\PxaProductManager\Utility\ProductUtility;
 use Pixelant\PxaProductManager\Utility\TCAUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
@@ -11,7 +13,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use Pixelant\PxaProductManager\Utility\ProductUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 /***************************************************************
@@ -55,9 +56,7 @@ class TceMain
     // @codingStandardsIgnoreStart
     public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, /** @noinspection PhpUnusedParameterInspection */ $reference)
     {// @codingStandardsIgnoreEnd
-        if ($table === 'tx_pxaproductmanager_domain_model_product'
-            && MathUtility::canBeInterpretedAsInteger($id)
-        ) {
+        if ($table === 'tx_pxaproductmanager_domain_model_product' && MathUtility::canBeInterpretedAsInteger($id)) {
             $productData = [];
             $files = [];
 
@@ -86,70 +85,37 @@ class TceMain
     /**
      * Update attributes
      *
-     * @param int $productUid
+     * @param int   $productUid
      * @param array $productData
      * @param array $fieldArray
      */
     protected function updateAttributeValues(int $productUid, array $productData, array $fieldArray)
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-            'tx_pxaproductmanager_domain_model_attributevalue'
-        );
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_pxaproductmanager_domain_model_attributevalue');
 
-        $statement = $queryBuilder
-            ->select('uid', 'value', 'attribute')
-            ->from('tx_pxaproductmanager_domain_model_attributevalue')
-            ->where(
-                $queryBuilder->expr()->eq('product', $queryBuilder->createNamedParameter(
-                    $productUid,
-                    Connection::PARAM_INT
-                )),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(
-                    $fieldArray['sys_language_uid'],
-                    Connection::PARAM_INT
-                ))
-            )
-            ->execute();
+        $statement = $queryBuilder->select('uid', 'value', 'attribute')->from('tx_pxaproductmanager_domain_model_attributevalue')->where($queryBuilder->expr()->eq('product', $queryBuilder->createNamedParameter($productUid, Connection::PARAM_INT)), $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($fieldArray['sys_language_uid'], Connection::PARAM_INT)))->execute();
 
         $existForAttributes = [];
         $processedAttributes = [];
 
         while ($attributeValue = $statement->fetch()) {
             // found attribute
-            if (array_key_exists($attributeValue['attribute'], $productData)
-                && !in_array($attributeValue['attribute'], $processedAttributes)) {
+            if (array_key_exists($attributeValue['attribute'], $productData) && !in_array($attributeValue['attribute'], $processedAttributes)) {
                 $existForAttributes[] = (int)$attributeValue['attribute'];
 
                 if ($attributeValue['value'] != $productData[$attributeValue['attribute']]) {
                     // Update value
-                    $queryBuilder
-                        ->update('tx_pxaproductmanager_domain_model_attributevalue')
-                        ->where(
-                            $queryBuilder->expr()->eq(
-                                'uid',
-                                $queryBuilder->createNamedParameter($attributeValue['uid'])
-                            )
-                        )
-                        ->set('value', $productData[$attributeValue['attribute']])
-                        ->execute();
+                    $queryBuilder->update('tx_pxaproductmanager_domain_model_attributevalue')->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($attributeValue['uid'])))->set('value', $productData[$attributeValue['attribute']])->execute();
                 }
             } else {
                 // remove
-                $queryBuilder
-                    ->delete('tx_pxaproductmanager_domain_model_attributevalue')
-                    ->where(
-                        $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($attributeValue['uid']))
-                    )
-                    ->execute();
+                $queryBuilder->delete('tx_pxaproductmanager_domain_model_attributevalue')->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($attributeValue['uid'])))->execute();
             }
             $processedAttributes[] = $attributeValue['attribute'];
         }
 
-        $needToCreateValuesFor = array_diff(
-            array_keys($productData),
-            $existForAttributes
-        );
+        $needToCreateValuesFor = array_diff(array_keys($productData), $existForAttributes);
 
         if (!empty($needToCreateValuesFor)) {
             $rows = [];
@@ -170,43 +136,37 @@ class TceMain
             }
 
             /** @var Connection $connection */
-            $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(
-                'tx_pxaproductmanager_domain_model_attributevalue'
-            );
-            $connection->bulkInsert(
-                'tx_pxaproductmanager_domain_model_attributevalue',
-                $rows,
-                [
-                    'attribute',
-                    'product',
-                    'value',
-                    'tstamp',
-                    'crdate',
-                    'pid',
-                    't3_origuid',
-                    'l10n_parent',
-                    'sys_language_uid'
-                ],
-                [
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_STR,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT,
-                    \PDO::PARAM_INT
-                ]
-            );
+            $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tx_pxaproductmanager_domain_model_attributevalue');
+            $connection->bulkInsert('tx_pxaproductmanager_domain_model_attributevalue', $rows, [
+                                                                                          'attribute',
+                                                                                          'product',
+                                                                                          'value',
+                                                                                          'tstamp',
+                                                                                          'crdate',
+                                                                                          'pid',
+                                                                                          't3_origuid',
+                                                                                          'l10n_parent',
+                                                                                          'sys_language_uid'
+                                                                                      ], [
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_STR,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT,
+                                        \PDO::PARAM_INT
+                                    ]);
         }
     }
 
     /**
      * Get pid
      *
-     * @param mixed $id Either the record UID or a string if a new record has been created
+     * @param mixed $id         Either the record UID or a string if a new record has been created
      * @param array $fieldArray The record row how it has been inserted into the database
+     *
      * @return int
      */
     protected function getPid($id, $fieldArray = [])
@@ -219,13 +179,7 @@ class TceMain
         // Update of record, get pid from database,
         // id should be integer and not "NEWXXXX" because new records should have pid in $fieldArray
         if (!isset($pid) && MathUtility::canBeInterpretedAsInteger($id)) {
-            $rec = BackendUtility::getRecord(
-                'tx_pxaproductmanager_domain_model_product',
-                $id,
-                'pid',
-                '',
-                false
-            ); // Don't respect delete clause
+            $rec = BackendUtility::getRecord('tx_pxaproductmanager_domain_model_product', $id, 'pid', '', false); // Don't respect delete clause
             if (MathUtility::canBeInterpretedAsInteger($rec['pid'])) {
                 $pid = $rec['pid'];
             }

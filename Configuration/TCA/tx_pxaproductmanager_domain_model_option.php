@@ -1,14 +1,13 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 return [
     'ctrl' => [
-        'title'    => 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_option',
+        'title' => 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_option',
         'label' => 'value',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
-        'dividers2tabs' => true,
         'sortby' => 'sorting',
         'versioningWS' => true,
         'origUid' => 't3_origuid',
@@ -24,9 +23,6 @@ return [
         'hideTable' => 1,
         'searchFields' => 'value,',
         'iconfile' => 'EXT:pxa_product_manager/Resources/Public/Icons/Svg/elipsis.svg'
-    ],
-    'interface' => [
-        'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, value',
     ],
     'types' => [
         '1' => ['showitem' => 'hidden, --palette--;;1'],
@@ -54,7 +50,6 @@ return [
         ],
         'l10n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
-            'exclude' => 1,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
             'config' => [
                 'type' => 'select',
@@ -88,34 +83,31 @@ return [
             ],
         ],
         'starttime' => [
-            'exclude' => 1,
-            'l10n_mode' => 'exclude',
+            'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
                 'eval' => 'datetime,int',
-                'size' => 13,
-                'default' => 0,
-                'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                ],
+                'default' => 0
             ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
         ],
         'endtime' => [
-            'exclude' => 1,
-            'l10n_mode' => 'exclude',
+            'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
                 'eval' => 'datetime,int',
-                'size' => 13,
                 'default' => 0,
                 'range' => [
-                    'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                ],
+                    'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                ]
             ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
         ],
         'value' => [
             'exclude' => 0,

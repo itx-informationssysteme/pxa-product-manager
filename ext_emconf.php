@@ -18,7 +18,6 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'info@pixelant.net',
     'author_company' => 'Pixelant',
     'state' => 'stable',
-    'createDirs' => '',
     'clearCacheOnLoad' => true,
     'version' => '9.9.2',
     'constraints' => [

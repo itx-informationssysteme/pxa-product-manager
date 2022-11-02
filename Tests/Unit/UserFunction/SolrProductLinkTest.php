@@ -9,6 +9,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class SolrProductLinkTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\UserFunction
  */
 class SolrProductLinkTest extends UnitTestCase
@@ -55,17 +56,9 @@ class SolrProductLinkTest extends UnitTestCase
         $this->mockedSolrProductLinkTest->cObj->data = $data;
 
         $mockedLinkBuilder = $this->createMock(LinkBuilderService::class);
-        $mockedLinkBuilder
-            ->expects($this->once())
-            ->method('buildForProduct')
-            ->with($pagePid, $productUid)
-            ->willReturn('');
+        $mockedLinkBuilder->expects($this->once())->method('buildForProduct')->with($pagePid, $productUid)->willReturn('');
 
-        $this->mockedSolrProductLinkTest
-            ->expects($this->once())
-            ->method('getLinkBuilder')
-            ->with($lang)
-            ->willReturn($mockedLinkBuilder);
+        $this->mockedSolrProductLinkTest->expects($this->once())->method('getLinkBuilder')->with($lang)->willReturn($mockedLinkBuilder);
 
         $this->mockedSolrProductLinkTest->getLink('', $params);
     }

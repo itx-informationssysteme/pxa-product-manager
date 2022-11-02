@@ -14,6 +14,7 @@ use TYPO3\CMS\Seo\XmlSitemap\AbstractXmlSitemapDataProvider;
 
 /**
  * Class ProductsXmlSitemapDataProvider
+ *
  * @package Pixelant\PxaProductManager\Seo\XmlSitemap
  */
 class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
@@ -40,9 +41,9 @@ class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
     protected $pageId = null;
 
     /**
-     * @param ServerRequestInterface $request
-     * @param string $key
-     * @param array $config
+     * @param ServerRequestInterface     $request
+     * @param string                     $key
+     * @param array                      $config
      * @param ContentObjectRenderer|null $cObj
      */
     public function __construct(ServerRequestInterface $request, string $key, array $config = [], ContentObjectRenderer $cObj = null)
@@ -60,10 +61,9 @@ class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
      */
     protected function generateItems()
     {
-        list($pids, $lastModifiedField, $sortField) = $this->getConfigFields();
+        [$pids, $lastModifiedField, $sortField] = $this->getConfigFields();
 
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable($this->table);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
 
         $constraints = [];
 
@@ -77,18 +77,13 @@ class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
         $this->addAdditionalWhereConstraint($constraints);
 
         // Do query
-        $queryBuilder->select('*')
-            ->from($this->table);
+        $queryBuilder->select('*')->from($this->table);
 
         if (!empty($constraints)) {
-            $queryBuilder->where(
-                ...$constraints
-            );
+            $queryBuilder->where(...$constraints);
         }
 
-        $rows = $queryBuilder->orderBy($sortField)
-            ->execute()
-            ->fetchAll();
+        $rows = $queryBuilder->orderBy($sortField)->execute()->fetchAll();
 
         foreach ($rows as $row) {
             $this->items[] = [
@@ -99,59 +94,52 @@ class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
     }
 
     /**
-     * Build product item URL
+     * Return configuration fields
      *
-     * @param array $data
      * @return array
      */
-    protected function defineUrl(array $data): array
+    protected function getConfigFields(): array
     {
-        $linkService = $this->getLinkBuilderService();
-        $url = $linkService->buildForProduct($this->pageId, $data['data']['uid'], null, $this->excludeCategories, true);
-
-        if (!empty($url)) {
-            $data['loc'] = $url;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Additional where
-     *
-     * @param array $constraints
-     */
-    protected function addAdditionalWhereConstraint(array &$constraints): void
-    {
-        if (!empty($this->config['additionalWhere'])) {
-            $constraints[] = $this->config['additionalWhere'];
-        }
+        return [
+            GeneralUtility::intExplode(',', $this->config['pid'] ?? '', true),
+            $this->config['lastModifiedField'] ?? 'tstamp',
+            $this->config['sortField'] ?? 'sorting'
+        ];
     }
 
     /**
      * Language field constraint
      *
-     * @param array $constraints
+     * @param array        $constraints
      * @param QueryBuilder $queryBuilder
      */
     protected function addLanguageConstraint(array &$constraints, QueryBuilder $queryBuilder): void
     {
         if (!empty($GLOBALS['TCA'][$this->table]['ctrl']['languageField'])) {
-            $constraints[] = $queryBuilder->expr()->in(
-                $GLOBALS['TCA'][$this->table]['ctrl']['languageField'],
-                [
-                    -1, // All languages
-                    $this->getLanguageId()  // Current language
-                ]
-            );
+            $constraints[] = $queryBuilder->expr()->in($GLOBALS['TCA'][$this->table]['ctrl']['languageField'], [
+                                                                                                                 -1,
+                                                                                                                 // All languages
+                                                                                                                 $this->getLanguageId()
+                                                                                                                 // Current language
+                                                                                                             ]);
         }
+    }
+
+    /**
+     * @return int
+     */
+    protected function getLanguageId(): int
+    {
+        $context = GeneralUtility::makeInstance(Context::class);
+
+        return (int)$context->getPropertyFromAspect('language', 'id');
     }
 
     /**
      * Add storage constraint
      *
-     * @param array $pids
-     * @param array $constraints
+     * @param array        $pids
+     * @param array        $constraints
      * @param QueryBuilder $queryBuilder
      */
     protected function addPidsConstraint(array $pids, array &$constraints, QueryBuilder $queryBuilder): void
@@ -174,26 +162,34 @@ class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvider
     }
 
     /**
-     * Return configuration fields
+     * Additional where
      *
-     * @return array
+     * @param array $constraints
      */
-    protected function getConfigFields(): array
+    protected function addAdditionalWhereConstraint(array &$constraints): void
     {
-        return [
-            GeneralUtility::intExplode(',', $this->config['pid'] ?? '', true),
-            $this->config['lastModifiedField'] ?? 'tstamp',
-            $this->config['sortField'] ?? 'sorting'
-        ];
+        if (!empty($this->config['additionalWhere'])) {
+            $constraints[] = $this->config['additionalWhere'];
+        }
     }
 
     /**
-     * @return int
+     * Build product item URL
+     *
+     * @param array $data
+     *
+     * @return array
      */
-    protected function getLanguageId(): int
+    protected function defineUrl(array $data): array
     {
-        $context = GeneralUtility::makeInstance(Context::class);
-        return (int)$context->getPropertyFromAspect('language', 'id');
+        $linkService = $this->getLinkBuilderService();
+        $url = $linkService->buildForProduct($this->pageId, $data['data']['uid'], null, $this->excludeCategories, true);
+
+        if (!empty($url)) {
+            $data['loc'] = $url;
+        }
+
+        return $data;
     }
 
     /**

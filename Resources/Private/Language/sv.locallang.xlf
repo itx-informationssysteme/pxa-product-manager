@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
     <file source-language="en" datatype="plaintext" original="messages" date="2014-07-02T15:29:57Z"
-          product-name="pxa_product_manager" target-language="sv">
+            product-name="pxa_product_manager" target-language="sv">
         <header/>
         <body>
             <trans-unit id="fe.go_back">

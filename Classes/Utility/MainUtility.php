@@ -40,6 +40,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Class HelperFunctions
+ *
  * @package Pixelant\PxaProductManager\Utility
  */
 class MainUtility
@@ -51,14 +52,86 @@ class MainUtility
      */
     // @codingStandardsIgnoreStart
     protected static $normalizeChars = [
-        'Š' => 'S', 'š' => 's', 'Ð' => 'Dj', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A',
-        'Å' => 'A', 'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I',
-        'Ï' => 'I', 'Ñ' => 'N', 'Ń' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U',
-        'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a',
-        'å' => 'a', 'æ' => 'a', 'ç' => 'c', 'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i',
-        'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ń' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o', 'ù' => 'u',
-        'ú' => 'u', 'û' => 'u', 'ü' => 'u', 'ý' => 'y', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'ƒ' => 'f',
-        'ă' => 'a', 'î' => 'i', 'â' => 'a', 'ș' => 's', 'ț' => 't', 'Ă' => 'A', 'Î' => 'I', 'Â' => 'A', 'Ș' => 'S', 'Ț' => 'T',
+        'Š' => 'S',
+        'š' => 's',
+        'Ð' => 'Dj',
+        'Ž' => 'Z',
+        'ž' => 'z',
+        'À' => 'A',
+        'Á' => 'A',
+        'Â' => 'A',
+        'Ã' => 'A',
+        'Ä' => 'A',
+        'Å' => 'A',
+        'Æ' => 'A',
+        'Ç' => 'C',
+        'È' => 'E',
+        'É' => 'E',
+        'Ê' => 'E',
+        'Ë' => 'E',
+        'Ì' => 'I',
+        'Í' => 'I',
+        'Î' => 'I',
+        'Ï' => 'I',
+        'Ñ' => 'N',
+        'Ń' => 'N',
+        'Ò' => 'O',
+        'Ó' => 'O',
+        'Ô' => 'O',
+        'Õ' => 'O',
+        'Ö' => 'O',
+        'Ø' => 'O',
+        'Ù' => 'U',
+        'Ú' => 'U',
+        'Û' => 'U',
+        'Ü' => 'U',
+        'Ý' => 'Y',
+        'Þ' => 'B',
+        'ß' => 'Ss',
+        'à' => 'a',
+        'á' => 'a',
+        'â' => 'a',
+        'ã' => 'a',
+        'ä' => 'a',
+        'å' => 'a',
+        'æ' => 'a',
+        'ç' => 'c',
+        'è' => 'e',
+        'é' => 'e',
+        'ê' => 'e',
+        'ë' => 'e',
+        'ì' => 'i',
+        'í' => 'i',
+        'î' => 'i',
+        'ï' => 'i',
+        'ð' => 'o',
+        'ñ' => 'n',
+        'ń' => 'n',
+        'ò' => 'o',
+        'ó' => 'o',
+        'ô' => 'o',
+        'õ' => 'o',
+        'ö' => 'o',
+        'ø' => 'o',
+        'ù' => 'u',
+        'ú' => 'u',
+        'û' => 'u',
+        'ü' => 'u',
+        'ý' => 'y',
+        'ý' => 'y',
+        'þ' => 'b',
+        'ÿ' => 'y',
+        'ƒ' => 'f',
+        'ă' => 'a',
+        'î' => 'i',
+        'â' => 'a',
+        'ș' => 's',
+        'ț' => 't',
+        'Ă' => 'A',
+        'Î' => 'I',
+        'Â' => 'A',
+        'Ș' => 'S',
+        'Ț' => 'T',
     ];// @codingStandardsIgnoreEnd
 
     /**
@@ -104,17 +177,15 @@ class MainUtility
      * Remove value from cookie list
      *
      * @param string $name
-     * @param int $value
-     * @param int $maxValues
+     * @param int    $value
+     * @param int    $maxValues
      */
     public static function removeValueFromListCookie(string $name, int $value, int $maxValues = 20)
     {
         // Can't be 0
         $maxValues = $maxValues === 0 ? 20 : $maxValues;
 
-        $cookie = array_key_exists($name, $_COOKIE)
-            ? GeneralUtility::intExplode(',', $_COOKIE[$name], true)
-            : [];
+        $cookie = array_key_exists($name, $_COOKIE) ? GeneralUtility::intExplode(',', $_COOKIE[$name], true) : [];
 
         // If already in array - remove
         if (in_array($value, $cookie)) {
@@ -129,30 +200,22 @@ class MainUtility
             $cookie = array_splice($cookie, 0, $maxValues);
         }
 
-        setcookie(
-            $name,
-            implode(',', $cookie),
-            0,
-            '/',
-            GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY')
-        );
+        setcookie($name, implode(',', $cookie), 0, '/', GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY'));
     }
 
     /**
      * Add value to cookie list
      *
      * @param string $name
-     * @param int $value
-     * @param int $maxValues
+     * @param int    $value
+     * @param int    $maxValues
      */
     public static function addValueToListCookie(string $name, int $value, int $maxValues = 20)
     {
         // Can't be 0
         $maxValues = $maxValues === 0 ? 20 : $maxValues;
 
-        $cookie = array_key_exists($name, $_COOKIE)
-            ? GeneralUtility::intExplode(',', $_COOKIE[$name], true)
-            : [];
+        $cookie = array_key_exists($name, $_COOKIE) ? GeneralUtility::intExplode(',', $_COOKIE[$name], true) : [];
 
         // If already in array - remove old entry
         if (in_array($value, $cookie)) {
@@ -170,18 +233,12 @@ class MainUtility
             $cookie = array_splice($cookie, 0, $maxValues);
         }
 
-
-        setcookie(
-            $name,
-            implode(',', $cookie),
-            0,
-            '/',
-            GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY')
-        );
+        setcookie($name, implode(',', $cookie), 0, '/', GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY'));
     }
 
     /**
      * Clean cookie value
+     *
      * @param string $name
      */
     public static function cleanCookieValue(string $name)
@@ -193,7 +250,8 @@ class MainUtility
      * Parse fluid string
      *
      * @param string $string
-     * @param array $variables
+     * @param array  $variables
+     *
      * @return string
      */
     public static function parseFluidString(string $string, array $variables): string
@@ -237,6 +295,7 @@ class MainUtility
 
     /**
      * @param string $value
+     *
      * @return string
      */
     public static function snakeCasePhraseToWords(string $value): string
@@ -248,16 +307,14 @@ class MainUtility
      * Normalize string removing special characters
      *
      * @param string $string
+     *
      * @return  string Processed string
      */
     public static function normalizeString(string $string): string
     {
         $chConverter = GeneralUtility::makeInstance(CharsetConverter::class);
 
-        return $chConverter->specCharsToASCII(
-            'utf-8',
-            strtr($string, self::$normalizeChars)
-        );
+        return $chConverter->specCharsToASCII('utf-8', strtr($string, self::$normalizeChars));
     }
 
     /**
@@ -268,6 +325,7 @@ class MainUtility
     public static function isFrontendLogin(): bool
     {
         $context = GeneralUtility::makeInstance(Context::class);
+
         return $context->getPropertyFromAspect('frontend.user', 'isLoggedIn', false);
     }
 
@@ -279,6 +337,7 @@ class MainUtility
     public static function isBackendLogin(): bool
     {
         $context = GeneralUtility::makeInstance(Context::class);
+
         return $context->getPropertyFromAspect('backend.user', 'isLoggedIn', false);
     }
 }

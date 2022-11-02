@@ -28,9 +28,22 @@ class ValidatorResolver implements SingletonInterface
     ];
 
     /**
+     * Register new validator or override existing
+     * For use in ext_localconf.php
+     *
+     * @param string $type
+     * @param string $validator
+     */
+    public static function registerValidator(string $type, string $validator)
+    {
+        self::$validatorsRegistry[$type] = $validator;
+    }
+
+    /**
      * Create validator instance
      *
      * @param string $type
+     *
      * @return ValidatorInterface
      */
     public function createValidator(string $type): ValidatorInterface
@@ -43,21 +56,6 @@ class ValidatorResolver implements SingletonInterface
             }
         }
 
-        throw new NoSuchValidatorException(
-            'The validator "' . $type . '" doesn\'t exist or doesn\'t implement ValidatorInterface',
-            1534514683513
-        );
-    }
-
-    /**
-     * Register new validator or override existing
-     * For use in ext_localconf.php
-     *
-     * @param string $type
-     * @param string $validator
-     */
-    public static function registerValidator(string $type, string $validator)
-    {
-        self::$validatorsRegistry[$type] = $validator;
+        throw new NoSuchValidatorException('The validator "' . $type . '" doesn\'t exist or doesn\'t implement ValidatorInterface', 1534514683513);
     }
 }

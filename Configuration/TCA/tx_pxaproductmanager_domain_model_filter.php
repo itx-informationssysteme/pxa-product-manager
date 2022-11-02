@@ -1,7 +1,7 @@
 <?php
 defined('TYPO3_MODE') || die('Access denied.');
 
-return (function () {
+return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
     $llCore = 'LLL:EXT:core/Resources/Private/Language/';
 
@@ -102,34 +102,31 @@ return (function () {
                 ],
             ],
             'starttime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.starttime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
-                    'default' => 0,
-                    'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
+                    'default' => 0
                 ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'endtime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.endtime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
                     'default' => 0,
                     'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
+                        'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                    ]
                 ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
 
             'type' => [
@@ -142,7 +139,10 @@ return (function () {
                     'items' => [
                         ['Categories', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_CATEGORIES],
                         ['Attribute', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES],
-                        ['Attribute min-max (if applicable, require only numeric attribute values)', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES_MINMAX],
+                        [
+                            'Attribute min-max (if applicable, require only numeric attribute values)',
+                            \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES_MINMAX
+                        ],
                     ],
                     'size' => 1,
                     'maxitems' => 1,
@@ -197,10 +197,7 @@ return (function () {
                     'disableNoMatchingValueElement' => true,
                     'renderType' => 'selectSingle',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attribute',
-                    'foreign_table_where' => ' AND tx_pxaproductmanager_domain_model_attribute.type IN ('
-                        . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN . ','
-                        . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' .
-                        ' AND (tx_pxaproductmanager_domain_model_attribute.sys_language_uid = 0 OR tx_pxaproductmanager_domain_model_attribute.l10n_parent = 0) ORDER BY tx_pxaproductmanager_domain_model_attribute.sorting',
+                    'foreign_table_where' => ' AND tx_pxaproductmanager_domain_model_attribute.type IN (' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN . ',' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' . ' AND (tx_pxaproductmanager_domain_model_attribute.sys_language_uid = 0 OR tx_pxaproductmanager_domain_model_attribute.l10n_parent = 0) ORDER BY tx_pxaproductmanager_domain_model_attribute.sorting',
                     'minitems' => 1,
                     'maxitems' => 1,
                 ]

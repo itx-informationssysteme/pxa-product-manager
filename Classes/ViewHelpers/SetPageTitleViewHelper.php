@@ -34,6 +34,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Class SetPageTitleViewHelper
+ *
  * @package Pixelant\PxaProductManager\ViewHelpers
  */
 class SetPageTitleViewHelper extends AbstractViewHelper
@@ -41,31 +42,29 @@ class SetPageTitleViewHelper extends AbstractViewHelper
     use CompileWithRenderStatic;
 
     /**
-     * Initialize arguments
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('title', 'string', 'Optional title', false, '');
-    }
-
-    /**
      * Replace page title
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param array                     $arguments
+     * @param \Closure                  $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
+     *
      * @return mixed|void
      */
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
         $title = empty($arguments['title']) ? $renderChildrenClosure() : $arguments['title'];
         $title = strip_tags(trim($title));
 
         GeneralUtility::makeInstance(PageRenderer::class)->setTitle($title);
         MainUtility::getTSFE()->altPageTitle = $title;
         MainUtility::getTSFE()->indexedDocTitle = $title;
+    }
+
+    /**
+     * Initialize arguments
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('title', 'string', 'Optional title', false, '');
     }
 }

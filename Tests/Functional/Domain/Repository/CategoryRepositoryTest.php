@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class CategoryRepositoryTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Functional\Domain\Repository
  */
 class CategoryRepositoryTest extends FunctionalTestCase
@@ -20,13 +21,6 @@ class CategoryRepositoryTest extends FunctionalTestCase
 
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
 
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../../Fixtures/sys_category.xml');
-        $this->categoryRespository = GeneralUtility::makeInstance(ObjectManager::class)->get(CategoryRepository::class);
-    }
-
     /**
      * @test
      */
@@ -34,10 +28,8 @@ class CategoryRepositoryTest extends FunctionalTestCase
     {
         $result = $this->categoryRespository->getChildrenCategories([1]);
 
-        $this->assertCount(
-            6, // categories in fixture
-            $result
-        );
+        $this->assertCount(6, // categories in fixture
+                           $result);
     }
 
     /**
@@ -47,9 +39,14 @@ class CategoryRepositoryTest extends FunctionalTestCase
     {
         $result = $this->categoryRespository->getChildrenCategories([1], true);
 
-        $this->assertCount(
-            5, // categories in fixture
-            $result
-        );
+        $this->assertCount(5, // categories in fixture
+                           $result);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../../Fixtures/sys_category.xml');
+        $this->categoryRespository = GeneralUtility::makeInstance(ObjectManager::class)->get(CategoryRepository::class);
     }
 }

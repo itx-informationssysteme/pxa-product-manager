@@ -24,20 +24,21 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Image;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Category.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -66,10 +67,7 @@ class CategoryTest extends UnitTestCase
         $parentCategory = new Category();
         $this->fixture->setParent($parentCategory);
 
-        self::assertSame(
-            $parentCategory,
-            $this->fixture->getParent()
-        );
+        self::assertSame($parentCategory, $this->fixture->getParent());
     }
 
     /**
@@ -80,10 +78,7 @@ class CategoryTest extends UnitTestCase
         $altTitle = 'title';
         $this->fixture->setAlternativeTitle($altTitle);
 
-        self::assertEquals(
-            $altTitle,
-            $this->fixture->getAlternativeTitle()
-        );
+        self::assertEquals($altTitle, $this->fixture->getAlternativeTitle());
     }
 
     /**
@@ -94,10 +89,7 @@ class CategoryTest extends UnitTestCase
         $pathSegment = 'pathSegment';
         $this->fixture->setPathSegment($pathSegment);
 
-        self::assertEquals(
-            $pathSegment,
-            $this->fixture->getPathSegment()
-        );
+        self::assertEquals($pathSegment, $this->fixture->getPathSegment());
     }
 
     /**
@@ -108,10 +100,7 @@ class CategoryTest extends UnitTestCase
         $keywords = 'keywords';
         $this->fixture->setKeywords($keywords);
 
-        self::assertEquals(
-            $keywords,
-            $this->fixture->getKeywords()
-        );
+        self::assertEquals($keywords, $this->fixture->getKeywords());
     }
 
     /**
@@ -122,10 +111,7 @@ class CategoryTest extends UnitTestCase
         $metaDescription = 'metaDescription';
         $this->fixture->setMetaDescription($metaDescription);
 
-        self::assertEquals(
-            $metaDescription,
-            $this->fixture->getMetaDescription()
-        );
+        self::assertEquals($metaDescription, $this->fixture->getMetaDescription());
     }
 
     /**
@@ -138,10 +124,7 @@ class CategoryTest extends UnitTestCase
         $image = new Image();
         $this->fixture->setImage($image);
 
-        self::assertSame(
-            $image,
-            $this->fixture->getImage()
-        );
+        self::assertSame($image, $this->fixture->getImage());
     }
 
     /**
@@ -152,10 +135,7 @@ class CategoryTest extends UnitTestCase
         $hidden = false;
         $this->fixture->setHidden($hidden);
 
-        self::assertEquals(
-            $hidden,
-            $this->fixture->getHidden()
-        );
+        self::assertEquals($hidden, $this->fixture->getHidden());
     }
 
     /**
@@ -166,10 +146,7 @@ class CategoryTest extends UnitTestCase
         $deleted = true;
         $this->fixture->setDeleted($deleted);
 
-        self::assertEquals(
-            $deleted,
-            $this->fixture->getDeleted()
-        );
+        self::assertEquals($deleted, $this->fixture->getDeleted());
     }
 
     /**
@@ -179,10 +156,7 @@ class CategoryTest extends UnitTestCase
     {
         $objectStorage = new ObjectStorage();
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributeSets()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributeSets());
     }
 
     /**
@@ -196,10 +170,7 @@ class CategoryTest extends UnitTestCase
         $objectStorageWithOneAttribute->attach($attribute);
         $this->fixture->setAttributeSets($objectStorageWithOneAttribute);
 
-        self::assertSame(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributeSets()
-        );
+        self::assertSame($objectStorageWithOneAttribute, $this->fixture->getAttributeSets());
     }
 
     /**
@@ -213,10 +184,7 @@ class CategoryTest extends UnitTestCase
 
         $this->fixture->addAttributeSet($attribute);
 
-        self::assertEquals(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributeSets()
-        );
+        self::assertEquals($objectStorageWithOneAttribute, $this->fixture->getAttributeSets());
     }
 
     /**
@@ -231,10 +199,7 @@ class CategoryTest extends UnitTestCase
         $this->fixture->addAttributeSet($attribute);
         $this->fixture->removeAttributeSet($attribute);
 
-        self::assertEquals(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributeSets()
-        );
+        self::assertEquals($objectStorageWithOneAttribute, $this->fixture->getAttributeSets());
     }
 
     /**
@@ -245,10 +210,7 @@ class CategoryTest extends UnitTestCase
         $description = 'description';
         $this->fixture->setDescription($description);
 
-        self::assertEquals(
-            $description,
-            $this->fixture->getDescription()
-        );
+        self::assertEquals($description, $this->fixture->getDescription());
     }
 
     /**
@@ -259,10 +221,7 @@ class CategoryTest extends UnitTestCase
         $cardViewTemplate = 'cardViewTemplate';
         $this->fixture->setCardViewTemplate($cardViewTemplate);
 
-        self::assertEquals(
-            $cardViewTemplate,
-            $this->fixture->getCardViewTemplate()
-        );
+        self::assertEquals($cardViewTemplate, $this->fixture->getCardViewTemplate());
     }
 
     /**
@@ -273,10 +232,7 @@ class CategoryTest extends UnitTestCase
         $singleViewTemplate = 'singleViewTemplate';
         $this->fixture->setSingleViewTemplate($singleViewTemplate);
 
-        self::assertEquals(
-            $singleViewTemplate,
-            $this->fixture->getSingleViewTemplate()
-        );
+        self::assertEquals($singleViewTemplate, $this->fixture->getSingleViewTemplate());
     }
 
     /**
@@ -287,10 +243,7 @@ class CategoryTest extends UnitTestCase
         $bannerImage = new \TYPO3\CMS\Extbase\Domain\Model\FileReference();
         $this->fixture->setBannerImage($bannerImage);
 
-        self::assertSame(
-            $bannerImage,
-            $this->fixture->getBannerImage()
-        );
+        self::assertSame($bannerImage, $this->fixture->getBannerImage());
     }
 
     /**
@@ -310,9 +263,6 @@ class CategoryTest extends UnitTestCase
 
         $this->fixture->setSlug($value);
 
-        $this->assertEquals(
-            $value,
-            $this->fixture->getSlug()
-        );
+        $this->assertEquals($value, $this->fixture->getSlug());
     }
 }

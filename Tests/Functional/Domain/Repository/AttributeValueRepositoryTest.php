@@ -16,16 +16,6 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
 
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
 
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_option.xml');
-        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_attributevalue.xml');
-        $this->attributeValueRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(
-            AttributeValueRepository::class
-        );
-    }
-
     /**
      * @test
      */
@@ -33,10 +23,9 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
     {
         $expectUid = 35; // uid of attribute value
 
-        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-            3, // attribute uid
-            27, // min value of option
-            30 // max value of option
+        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(3, // attribute uid
+                                                                                                       27, // min value of option
+                                                                                                       30 // max value of option
         );
 
         $this->assertCount(1, $result);
@@ -48,10 +37,9 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
      */
     public function findingAttributeValueByMinAndMaxOptionsNoResultsFound()
     {
-        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-            3, // attribute uid
-            12, // min value of option
-            27 // max value of option
+        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(3, // attribute uid
+                                                                                                       12, // min value of option
+                                                                                                       27 // max value of option
         );
 
         $this->assertCount(0, $result);
@@ -64,9 +52,8 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
     {
         $expectUid = 35; // uid of attribute value
 
-        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-            3, // attribute uid
-            27 // min value of option
+        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(3, // attribute uid
+                                                                                                       27 // min value of option
         );
 
         $this->assertCount(1, $result);
@@ -80,10 +67,9 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
     {
         $expectUid = 35; // uid of attribute value
 
-        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-            3, // attribute uid
-            null, // min value of option
-            30 // max option
+        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(3, // attribute uid
+                                                                                                       null, // min value of option
+                                                                                                       30 // max option
         );
 
         $this->assertCount(1, $result);
@@ -97,13 +83,20 @@ class AttributeValueRepositoryTest extends FunctionalTestCase
     {
         $expectUid = 35; // uid of attribute value
 
-        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(
-            3, // attribute uid
-            28, // min value of option
-            28 // max option
+        $result = $this->attributeValueRepository->findAttributeValuesByAttributeAndMinMaxOptionValues(3, // attribute uid
+                                                                                                       28, // min value of option
+                                                                                                       28 // max option
         );
 
         $this->assertCount(1, $result);
         $this->assertTrue($expectUid === $result[0]['uid']);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_option.xml');
+        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_attributevalue.xml');
+        $this->attributeValueRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(AttributeValueRepository::class);
     }
 }

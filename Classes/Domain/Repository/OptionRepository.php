@@ -7,6 +7,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class OptionRepository
+ *
  * @package Pixelant\PxaProductManager\Domain\Repository
  */
 class OptionRepository extends Repository

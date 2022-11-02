@@ -34,6 +34,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class AttributeHelperUtility
+ *
  * @package Pixelant\PxaProductManager\Utility
  */
 class AttributeHolderUtility
@@ -62,9 +63,18 @@ class AttributeHolderUtility
     }
 
     /**
+     * Initialize object storage vars
+     */
+    protected function initializeStorage()
+    {
+        $this->attributes = new ObjectStorage();
+        $this->attributeSets = new ObjectStorage();
+    }
+
+    /**
      * Initialize attributes and it sets
      *
-     * @param int $productUid
+     * @param int  $productUid
      * @param bool $onlyMarkedForShowInListing
      */
     public function start(int $productUid, bool $onlyMarkedForShowInListing = false)
@@ -91,12 +101,7 @@ class AttributeHolderUtility
 
                 /** @var Attribute $attribute */
                 foreach ($attributesSet->getAttributes() as $attribute) {
-                    if (!in_array($attribute->getUid(), $uniqueAttributesList, true)
-                        && (
-                            !$onlyMarkedForShowInListing
-                            || $onlyMarkedForShowInListing && $attribute->isShowInAttributeListing()
-                        )
-                    ) {
+                    if (!in_array($attribute->getUid(), $uniqueAttributesList, true) && (!$onlyMarkedForShowInListing || $onlyMarkedForShowInListing && $attribute->isShowInAttributeListing())) {
                         // Make sure to use different instances for different products
                         $attributeClone = clone $attribute;
                         // save to current set
@@ -131,14 +136,5 @@ class AttributeHolderUtility
     public function getAttributeSets(): ObjectStorage
     {
         return $this->attributeSets;
-    }
-
-    /**
-     * Initialize object storage vars
-     */
-    protected function initializeStorage()
-    {
-        $this->attributes = new ObjectStorage();
-        $this->attributeSets = new ObjectStorage();
     }
 }

@@ -10,11 +10,11 @@ use Pixelant\PxaProductManager\Domain\Model\Product;
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\AttributeSet.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -40,10 +40,7 @@ class AttributeValueTest extends UnitTestCase
      */
     public function getValueReturnsInitialValueForString()
     {
-        self::assertEquals(
-            '',
-            $this->fixture->getValue()
-        );
+        self::assertEquals('', $this->fixture->getValue());
     }
 
     /**
@@ -53,10 +50,7 @@ class AttributeValueTest extends UnitTestCase
     {
         $this->fixture->setValue('AttributeValue');
 
-        self::assertEquals(
-            'AttributeValue',
-            $this->fixture->getValue()
-        );
+        self::assertEquals('AttributeValue', $this->fixture->getValue());
     }
 
     /**
@@ -67,10 +61,7 @@ class AttributeValueTest extends UnitTestCase
         $product = new Product();
         $this->fixture->setProduct($product);
 
-        self::assertSame(
-            $product,
-            $this->fixture->getProduct()
-        );
+        self::assertSame($product, $this->fixture->getProduct());
     }
 
     /**
@@ -81,9 +72,6 @@ class AttributeValueTest extends UnitTestCase
         $attribute = new Attribute();
         $this->fixture->setAttribute($attribute);
 
-        self::assertSame(
-            $attribute,
-            $this->fixture->getAttribute()
-        );
+        self::assertSame($attribute, $this->fixture->getAttribute());
     }
 }

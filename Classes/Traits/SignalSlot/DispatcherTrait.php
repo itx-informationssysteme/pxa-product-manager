@@ -22,15 +22,11 @@ trait DispatcherTrait
      *
      * @param string $className
      * @param string $signal
-     * @param array $arguments
+     * @param array  $arguments
      */
     protected function emitSignal(string $className, string $signal, array $arguments): void
     {
-        $this->getSignalSlotDispatcher()->dispatch(
-            $className,
-            $signal,
-            $arguments
-        );
+        $this->getSignalSlotDispatcher()->dispatch($className, $signal, $arguments);
     }
 
     /**
@@ -41,9 +37,7 @@ trait DispatcherTrait
     protected function getSignalSlotDispatcher(): Dispatcher
     {
         if ($this->signalSlotDispatcher === null) {
-            $objectManager = property_exists($this, 'objectManager')
-                ? $this->objectManager
-                : GeneralUtility::makeInstance(ObjectManager::class);
+            $objectManager = property_exists($this, 'objectManager') ? $this->objectManager : GeneralUtility::makeInstance(ObjectManager::class);
 
             $this->signalSlotDispatcher = $objectManager->get(Dispatcher::class);
         }

@@ -24,17 +24,18 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Attribute.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -63,10 +64,7 @@ class AttributeTest extends UnitTestCase
         $name = 'Name';
         $this->fixture->setName($name);
 
-        self::assertEquals(
-            $name,
-            $this->fixture->getName()
-        );
+        self::assertEquals($name, $this->fixture->getName());
     }
 
     /**
@@ -77,10 +75,7 @@ class AttributeTest extends UnitTestCase
         $type = 7;
         $this->fixture->setType($type);
 
-        self::assertEquals(
-            $type,
-            $this->fixture->getType()
-        );
+        self::assertEquals($type, $this->fixture->getType());
     }
 
     /**
@@ -88,10 +83,7 @@ class AttributeTest extends UnitTestCase
      */
     public function getRequiredReturnsInitialForRequired()
     {
-        self::assertEquals(
-            false,
-            $this->fixture->getRequired()
-        );
+        self::assertEquals(false, $this->fixture->getRequired());
     }
 
     /**
@@ -102,22 +94,15 @@ class AttributeTest extends UnitTestCase
         $value = true;
         $this->fixture->setRequired($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getRequired()
-        );
+        self::assertEquals($value, $this->fixture->getRequired());
     }
-
 
     /**
      * @test
      */
     public function getShowInAttributeListingReturnsInitialForShowInAttributeListing()
     {
-        self::assertEquals(
-            false,
-            $this->fixture->getShowInAttributeListing()
-        );
+        self::assertEquals(false, $this->fixture->getShowInAttributeListing());
     }
 
     /**
@@ -128,10 +113,7 @@ class AttributeTest extends UnitTestCase
         $value = true;
         $this->fixture->setShowInAttributeListing($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getShowInAttributeListing()
-        );
+        self::assertEquals($value, $this->fixture->getShowInAttributeListing());
     }
 
     /**
@@ -139,10 +121,7 @@ class AttributeTest extends UnitTestCase
      */
     public function getShowInCompareReturnsInitialForShowInCompare()
     {
-        self::assertEquals(
-            false,
-            $this->fixture->getShowInCompare()
-        );
+        self::assertEquals(false, $this->fixture->getShowInCompare());
     }
 
     /**
@@ -153,10 +132,7 @@ class AttributeTest extends UnitTestCase
         $value = true;
         $this->fixture->setShowInCompare($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getShowInCompare()
-        );
+        self::assertEquals($value, $this->fixture->getShowInCompare());
     }
 
     /**
@@ -167,10 +143,7 @@ class AttributeTest extends UnitTestCase
         $identifier = 'Identifier';
         $this->fixture->setIdentifier($identifier);
 
-        self::assertEquals(
-            $identifier,
-            $this->fixture->getIdentifier()
-        );
+        self::assertEquals($identifier, $this->fixture->getIdentifier());
     }
 
     /**
@@ -179,10 +152,7 @@ class AttributeTest extends UnitTestCase
     public function getOptionsReturnsInitialValueForOption()
     {
         $newObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
-        self::assertEquals(
-            $newObjectStorage,
-            $this->fixture->getOptions()
-        );
+        self::assertEquals($newObjectStorage, $this->fixture->getOptions());
     }
 
     /**
@@ -195,12 +165,9 @@ class AttributeTest extends UnitTestCase
         $objectStorageHoldingExactlyOneOptions->attach($option);
         $this->fixture->setOptions($objectStorageHoldingExactlyOneOptions);
 
-        self::assertSame(
-            $objectStorageHoldingExactlyOneOptions,
-            $this->fixture->getOptions()
-        );
+        self::assertSame($objectStorageHoldingExactlyOneOptions, $this->fixture->getOptions());
     }
-    
+
     /**
      * @test
      */
@@ -211,10 +178,7 @@ class AttributeTest extends UnitTestCase
         $objectStorageHoldingExactlyOneOption->attach($option);
         $this->fixture->addOption($option);
 
-        $this->assertEquals(
-            $objectStorageHoldingExactlyOneOption,
-            $this->fixture->getOptions()
-        );
+        $this->assertEquals($objectStorageHoldingExactlyOneOption, $this->fixture->getOptions());
     }
 
     /**
@@ -229,10 +193,7 @@ class AttributeTest extends UnitTestCase
         $this->fixture->addOption($option);
         $this->fixture->removeOption($option);
 
-        $this->assertEquals(
-            $localObjectStorage,
-            $this->fixture->getOptions()
-        );
+        $this->assertEquals($localObjectStorage, $this->fixture->getOptions());
     }
 
     /**
@@ -243,10 +204,7 @@ class AttributeTest extends UnitTestCase
         $label = 'LabelChecked';
         $this->fixture->setLabelChecked($label);
 
-        self::assertEquals(
-            $label,
-            $this->fixture->getLabelChecked()
-        );
+        self::assertEquals($label, $this->fixture->getLabelChecked());
     }
 
     /**
@@ -257,10 +215,7 @@ class AttributeTest extends UnitTestCase
         $label = 'LabelUnChecked';
         $this->fixture->setLabelUnchecked($label);
 
-        self::assertEquals(
-            $label,
-            $this->fixture->getLabelUnchecked()
-        );
+        self::assertEquals($label, $this->fixture->getLabelUnchecked());
     }
 
     /**
@@ -271,10 +226,7 @@ class AttributeTest extends UnitTestCase
         $defaultLabel = 'DefaultLabel';
         $this->fixture->setDefaultValue($defaultLabel);
 
-        self::assertEquals(
-            $defaultLabel,
-            $this->fixture->getDefaultValue()
-        );
+        self::assertEquals($defaultLabel, $this->fixture->getDefaultValue());
     }
 
     /**
@@ -285,10 +237,7 @@ class AttributeTest extends UnitTestCase
         $value = 'value-of-attribute';
         $this->fixture->setValue($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getValue()
-        );
+        self::assertEquals($value, $this->fixture->getValue());
     }
 
     /**
@@ -299,10 +248,7 @@ class AttributeTest extends UnitTestCase
         $value = [];
         $this->fixture->setValue($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getValue()
-        );
+        self::assertEquals($value, $this->fixture->getValue());
     }
 
     /**
@@ -313,10 +259,7 @@ class AttributeTest extends UnitTestCase
         $label = 'Label';
         $this->fixture->setLabel($label);
 
-        self::assertEquals(
-            $label,
-            $this->fixture->getLabel()
-        );
+        self::assertEquals($label, $this->fixture->getLabel());
     }
 
     /**
@@ -327,10 +270,7 @@ class AttributeTest extends UnitTestCase
         $icon = new \TYPO3\CMS\Extbase\Domain\Model\FileReference();
         $this->fixture->setIcon($icon);
 
-        self::assertSame(
-            $icon,
-            $this->fixture->getIcon()
-        );
+        self::assertSame($icon, $this->fixture->getIcon());
     }
 
     /**

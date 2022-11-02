@@ -1,4 +1,4 @@
-(function (w, $) {
+(function(w, $) {
 	const ProductManager = w.ProductManager || {};
 
 	// Init settings
@@ -8,34 +8,41 @@
 	ProductManager.Main = {
 		listeners: {},
 
-		init: function () {
-			for (let key in ProductManager.settings.events) {
-				if (ProductManager.settings.events.hasOwnProperty(key)) {
+		init: function() {
+			for (let key in ProductManager.settings.events)
+			{
+				if (ProductManager.settings.events.hasOwnProperty(key))
+				{
 					this.listeners[ProductManager.settings.events[key]] = [];
 				}
 			}
 
 			// Main lazy loading
-			if (ProductManager.LazyLoading) {
+			if (ProductManager.LazyLoading)
+			{
 				ProductManager.LazyLoading.init(ProductManager.settings.lazyLoading || {});
 			}
 
 			// If filtering
-			if (ProductManager.Filtering) {
+			if (ProductManager.Filtering)
+			{
 				ProductManager.Filtering.init(ProductManager.settings.filtering || {});
 			}
 
 			// Init wish list
-			if (ProductManager.WishList) {
+			if (ProductManager.WishList)
+			{
 				ProductManager.WishList.init(ProductManager.settings.wishList || {});
 			}
 
 			// Init compare list
-			if (ProductManager.CompareList) {
+			if (ProductManager.CompareList)
+			{
 				ProductManager.CompareList.init(ProductManager.settings.compareList || {});
 			}
 
-			if (ProductManager.settings.latestVisitedProductsWrapper) {
+			if (ProductManager.settings.latestVisitedProductsWrapper)
+			{
 				let $wrapper = $(ProductManager.settings.latestVisitedProductsWrapper);
 				this.loadLatestVisitedProductsTo($wrapper);
 			}
@@ -49,7 +56,7 @@
 		 * @param exdays
 		 * @param disableEncode
 		 */
-		setCookie: function (cName, value, exdays, disableEncode) {
+		setCookie: function(cName, value, exdays, disableEncode) {
 			let exdate = new Date();
 			disableEncode = disableEncode || false;
 
@@ -64,13 +71,15 @@
 		 * @param cName
 		 * @return {string}|{boolean}
 		 */
-		getCookie: function (cName) {
+		getCookie: function(cName) {
 			let i, x, y, ARRcookies = document.cookie.split(';');
-			for (i = 0; i < ARRcookies.length; i++) {
+			for (i = 0; i < ARRcookies.length; i++)
+			{
 				x = ARRcookies[i].substr(0, ARRcookies[i].indexOf('='));
 				y = ARRcookies[i].substr(ARRcookies[i].indexOf('=') + 1);
 				x = x.replace(/^\s+|\s+$/g, '');
-				if (x === cName) {
+				if (x === cName)
+				{
 					return decodeURIComponent(y);
 				}
 			}
@@ -82,7 +91,7 @@
 		 * Encode to b64
 		 * @param str
 		 */
-		utf8_to_b64: function (str) {
+		utf8_to_b64: function(str) {
 			return window.btoa(encodeURIComponent(str));
 		},
 
@@ -92,7 +101,7 @@
 		 * @param str
 		 * @returns {*}
 		 */
-		b64_to_utf8: function (str) {
+		b64_to_utf8: function(str) {
 			return decodeURIComponent(window.atob(str));
 		},
 
@@ -103,7 +112,7 @@
 		 * @param needle
 		 * @return {boolean}
 		 */
-		isInList: function (haystack, needle) {
+		isInList: function(haystack, needle) {
 			return (',' + haystack + ',').indexOf(',' + needle + ',') !== -1;
 		},
 
@@ -113,7 +122,7 @@
 		 * @param flyer
 		 * @param flyingTo
 		 */
-		flyToElement: function (flyer, flyingTo) {
+		flyToElement: function(flyer, flyingTo) {
 			const divider = 3,
 				originalWidth = flyer.width(),
 				flyerClone = flyer.clone();
@@ -139,10 +148,10 @@
 					width: flyer.width() / divider,
 					height: flyer.height() / divider
 				}, 700,
-				function () {
-					flyingTo.fadeOut('fast', function () {
-						flyingTo.fadeIn('fast', function () {
-							flyerClone.fadeOut('fast', function () {
+				function() {
+					flyingTo.fadeOut('fast', function() {
+						flyingTo.fadeIn('fast', function() {
+							flyerClone.fadeOut('fast', function() {
 								flyerClone.remove();
 							});
 						});
@@ -157,19 +166,22 @@
 		 * @param $cartCounters
 		 * @param modifier
 		 */
-		updateCartCounter: function ($mainCartCounter, $cartCounters, modifier) {
+		updateCartCounter: function($mainCartCounter, $cartCounters, modifier) {
 			modifier = modifier || 0;
 
-			if ($mainCartCounter.length === 1) {
+			if ($mainCartCounter.length === 1)
+			{
 				let currentValue = parseInt($mainCartCounter.text().trim());
-				if (isNaN(currentValue)) {
+				if (isNaN(currentValue))
+				{
 					currentValue = 0;
 				}
 
 				let newValue = currentValue + modifier;
 				newValue = newValue > 0 ? newValue : 0;
 
-				if ($cartCounters.length >= 1) {
+				if ($cartCounters.length >= 1)
+				{
 					$cartCounters.text(newValue);
 				}
 			}
@@ -184,7 +196,7 @@
 		 * @param thousands_sep
 		 * @returns {string}
 		 */
-		numberFormat: function (n, decimals, decimal_sep, thousands_sep) {
+		numberFormat: function(n, decimals, decimal_sep, thousands_sep) {
 			let c = isNaN(decimals) ? 2 : Math.abs(decimals), //if decimal is zero we must take it, it means user does not want to show any decimal
 				d = decimal_sep || '.', //if no decimal separator is passed we use the dot as default decimal separator (we MUST use a decimal separator)
 
@@ -210,7 +222,7 @@
 		 * @param key
 		 * @param value
 		 */
-		writeToHash: function (key, value) {
+		writeToHash: function(key, value) {
 			let status = this.readStatusFromHash();
 			status[key] = value;
 
@@ -222,15 +234,19 @@
 		 *
 		 * @returns null|object
 		 */
-		readStatusFromHash: function () {
+		readStatusFromHash: function() {
 			let hash = decodeURIComponent(window.location.hash);
 
-			if (hash.length > 0 && hash.substring(0, 4) === '#pm:') {
+			if (hash.length > 0 && hash.substring(0, 4) === '#pm:')
+			{
 				hash = hash.substring(4);
 
-				try {
+				try
+				{
 					return JSON.parse(hash);
-				} catch (e) {
+				}
+				catch (e)
+				{
 					console.log(e);
 				}
 			}
@@ -243,7 +259,7 @@
 		 *
 		 * @param scroll
 		 */
-		scrollTo: function (scroll) {
+		scrollTo: function(scroll) {
 			$('html, body').animate({
 				scrollTop: scroll
 			}, 200);
@@ -256,12 +272,14 @@
 		 * @param charToRemove
 		 * @returns {*}
 		 */
-		trimChar: function (string, charToRemove) {
-			while (string.charAt(0) === charToRemove) {
+		trimChar: function(string, charToRemove) {
+			while (string.charAt(0) === charToRemove)
+			{
 				string = string.substring(1);
 			}
 
-			while (string.charAt(string.length - 1) === charToRemove) {
+			while (string.charAt(string.length - 1) === charToRemove)
+			{
 				string = string.substring(0, string.length - 1);
 			}
 
@@ -273,14 +291,20 @@
 		 * @param event
 		 * @param callback
 		 */
-		on: function (event, callback) {
-			if (typeof callback === 'function') {
-				if (this.listeners[event]) {
+		on: function(event, callback) {
+			if (typeof callback === 'function')
+			{
+				if (this.listeners[event])
+				{
 					this.listeners[event].push(callback);
-				} else {
+				}
+				else
+				{
 					console.log('On called with invalid event:', event);
 				}
-			} else {
+			}
+			else
+			{
 				console.log('Callback is not a function');
 			}
 		},
@@ -291,12 +315,14 @@
 		 * @param event
 		 * @param data
 		 */
-		trigger: function (event, data) {
-			if (!this.listeners[event]) {
+		trigger: function(event, data) {
+			if (!this.listeners[event])
+			{
 				console.log('Invalid event', event);
 				return;
 			}
-			for (let i = 0; i < this.listeners[event].length; i++) {
+			for (let i = 0; i < this.listeners[event].length; i++)
+			{
 				this.listeners[event][i](data);
 			}
 		},
@@ -307,7 +333,7 @@
 		 * @param key
 		 * @return string
 		 */
-		translate: function (key) {
+		translate: function(key) {
 			return TYPO3.lang[key] || '';
 		},
 
@@ -316,18 +342,20 @@
 		 *
 		 * @param $wrapper
 		 */
-		loadLatestVisitedProductsTo: function ($wrapper) {
-			if ($wrapper.length === 0) {
+		loadLatestVisitedProductsTo: function($wrapper) {
+			if ($wrapper.length === 0)
+			{
 				return false;
 			}
 
 			let currentProductUid = (typeof pxaproductmanager_current_product_uid !== 'undefined') ? pxaproductmanager_current_product_uid : 0;
-			$.get('/?type=201703&tx_pxaproductmanager_pi1%5BexcludeProduct%5D=' + currentProductUid, function (data) {
+			$.get('/?type=201703&tx_pxaproductmanager_pi1%5BexcludeProduct%5D=' + currentProductUid, function(data) {
 				$($wrapper).html(data);
 			});
 
 			// Save current visited
-			if (currentProductUid > 0) {
+			if (currentProductUid > 0)
+			{
 				// Add to list
 				$.get(
 					'/?type=201703&tx_pxaproductmanager_pi1%5Baction%5D=addLatestVisitedProduct&tx_pxaproductmanager_pi1%5Bcontroller%5D=AjaxJson&tx_pxaproductmanager_pi1%5Bproduct%5D=' + currentProductUid
@@ -339,6 +367,6 @@
 	w.ProductManager = ProductManager;
 })(window, $);
 
-$(document).ready(function () {
+$(document).ready(function() {
 	ProductManager.Main.init();
 });

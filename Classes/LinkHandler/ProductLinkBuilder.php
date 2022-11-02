@@ -64,10 +64,11 @@ class ProductLinkBuilder extends AbstractTypolinkBuilder
     /**
      * Generates link to product single view
      *
-     * @param array $linkDetails
+     * @param array  $linkDetails
      * @param string $linkText
      * @param string $target
-     * @param array $conf
+     * @param array  $conf
+     *
      * @return array
      */
     public function build(array &$linkDetails, string $linkText, string $target, array $conf): array
@@ -97,20 +98,6 @@ class ProductLinkBuilder extends AbstractTypolinkBuilder
         }
 
         return [$finalUrl, $linkText, $target];
-    }
-
-    /**
-     * Get link builder
-     *
-     * @return LinkBuilderService
-     */
-    protected function getLinkBuilder(): LinkBuilderService
-    {
-        return GeneralUtility::makeInstance(
-            LinkBuilderService::class,
-            null, // Detect language automatically
-            $this->getTypoScriptFrontendController() // Pass give TypoScriptFrontendController
-        );
     }
 
     /**
@@ -147,30 +134,20 @@ class ProductLinkBuilder extends AbstractTypolinkBuilder
     protected function getSite(): ?Site
     {
         /** @var Site $site */
-        $site = isset($GLOBALS['TYPO3_REQUEST'])
-            ? $GLOBALS['TYPO3_REQUEST']->getAttribute('site')
-            : null;
+        $site = isset($GLOBALS['TYPO3_REQUEST']) ? $GLOBALS['TYPO3_REQUEST']->getAttribute('site') : null;
 
         // Try to find site by record PID
         if ($site === null || $site instanceof NullSite) {
-            $table = $this->mode === self::PRODUCT_MODE
-                ? 'tx_pxaproductmanager_domain_model_product'
-                : 'sys_category';
+            $table = $this->mode === self::PRODUCT_MODE ? 'tx_pxaproductmanager_domain_model_product' : 'sys_category';
 
-            $pid = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getConnectionForTable($table)
-                ->select(
-                    ['pid'],
-                    $table,
-                    ['uid' => $this->recordUid]
-                )
-                ->fetchColumn(0);
+            $pid = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table)->select(['pid'], $table, ['uid' => $this->recordUid])->fetchColumn(0);
 
             if ($pid > 0) {
                 $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
                 try {
                     return $siteFinder->getSiteByPageId((int)$pid);
-                } catch (SiteNotFoundException $exception) {
+                }
+                catch (SiteNotFoundException $exception) {
                     // Just return null
                     return null;
                 }
@@ -178,5 +155,17 @@ class ProductLinkBuilder extends AbstractTypolinkBuilder
         }
 
         return $site;
+    }
+
+    /**
+     * Get link builder
+     *
+     * @return LinkBuilderService
+     */
+    protected function getLinkBuilder(): LinkBuilderService
+    {
+        return GeneralUtility::makeInstance(LinkBuilderService::class, null, // Detect language automatically
+                                            $this->getTypoScriptFrontendController() // Pass give TypoScriptFrontendController
+        );
     }
 }

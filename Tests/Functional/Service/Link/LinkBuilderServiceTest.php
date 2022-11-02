@@ -9,6 +9,7 @@ use Pixelant\PxaProductManager\Service\Link\LinkBuilderService;
 
 /**
  * Class LinkBuilderServiceTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Functional\Service\Link
  */
 class LinkBuilderServiceTest extends FunctionalTestCase
@@ -19,15 +20,6 @@ class LinkBuilderServiceTest extends FunctionalTestCase
      * @var MockObject|LinkBuilderService
      */
     protected $subject = null;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../../Fixtures/sys_category.xml');
-        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
-
-        $this->subject = $this->getAccessibleMock(LinkBuilderService::class, null);
-    }
 
     /**
      * @test
@@ -56,5 +48,14 @@ class LinkBuilderServiceTest extends FunctionalTestCase
         ];
 
         $this->assertEquals($expect, $this->subject->_call('getCategoriesArguments', $categoryUid));
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../../Fixtures/sys_category.xml');
+        $this->importDataSet(__DIR__ . '/../../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
+
+        $this->subject = $this->getAccessibleMock(LinkBuilderService::class, null);
     }
 }

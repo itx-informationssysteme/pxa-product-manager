@@ -8,6 +8,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
  * Class DemandTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\DTO
  */
 class DemandTest extends UnitTestCase
@@ -17,28 +18,17 @@ class DemandTest extends UnitTestCase
      */
     protected $fixture;
 
-    protected function setUp()
-    {
-        $this->fixture = new Demand();
-    }
-
     /**
      * @test
      */
     public function limitCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            0,
-            $this->fixture->getLimit()
-        );
+        $this->assertEquals(0, $this->fixture->getLimit());
         $limit = 5;
         $this->fixture->setLimit($limit);
 
-        $this->assertEquals(
-            $limit,
-            $this->fixture->getLimit()
-        );
+        $this->assertEquals($limit, $this->fixture->getLimit());
     }
 
     /**
@@ -47,18 +37,12 @@ class DemandTest extends UnitTestCase
     public function offSetCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            0,
-            $this->fixture->getOffSet()
-        );
+        $this->assertEquals(0, $this->fixture->getOffSet());
 
         $offeSet = 2;
         $this->fixture->setOffSet($offeSet);
 
-        $this->assertEquals(
-            $offeSet,
-            $this->fixture->getOffSet()
-        );
+        $this->assertEquals($offeSet, $this->fixture->getOffSet());
     }
 
     /**
@@ -72,10 +56,7 @@ class DemandTest extends UnitTestCase
         $storagePid = [5];
         $this->fixture->setStoragePid($storagePid);
 
-        $this->assertEquals(
-            $storagePid,
-            $this->fixture->getStoragePid()
-        );
+        $this->assertEquals($storagePid, $this->fixture->getStoragePid());
     }
 
     /**
@@ -84,18 +65,12 @@ class DemandTest extends UnitTestCase
     public function orderByCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            'name',
-            $this->fixture->getOrderBy()
-        );
+        $this->assertEquals('name', $this->fixture->getOrderBy());
 
         $orderBy = 'test';
         $this->fixture->setOrderBy($orderBy);
 
-        $this->assertEquals(
-            $orderBy,
-            $this->fixture->getOrderBy()
-        );
+        $this->assertEquals($orderBy, $this->fixture->getOrderBy());
     }
 
     /**
@@ -104,18 +79,12 @@ class DemandTest extends UnitTestCase
     public function orderDirectionCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            QueryInterface::ORDER_DESCENDING,
-            $this->fixture->getOrderDirection()
-        );
+        $this->assertEquals(QueryInterface::ORDER_DESCENDING, $this->fixture->getOrderDirection());
 
         $orderDirection = QueryInterface::ORDER_ASCENDING;
         $this->fixture->setOrderDirection($orderDirection);
 
-        $this->assertEquals(
-            $orderDirection,
-            $this->fixture->getOrderDirection()
-        );
+        $this->assertEquals($orderDirection, $this->fixture->getOrderDirection());
     }
 
     /**
@@ -129,10 +98,7 @@ class DemandTest extends UnitTestCase
         $orderByAllowed = 'name,test';
         $this->fixture->setOrderByAllowed($orderByAllowed);
 
-        $this->assertEquals(
-            $orderByAllowed,
-            $this->fixture->getOrderByAllowed()
-        );
+        $this->assertEquals($orderByAllowed, $this->fixture->getOrderByAllowed());
     }
 
     /**
@@ -146,10 +112,7 @@ class DemandTest extends UnitTestCase
         $categories = [123, 321];
         $this->fixture->setCategories($categories);
 
-        $this->assertEquals(
-            $categories,
-            $this->fixture->getCategories()
-        );
+        $this->assertEquals($categories, $this->fixture->getCategories());
     }
 
     /**
@@ -163,10 +126,7 @@ class DemandTest extends UnitTestCase
         $filters = [123, 321];
         $this->fixture->setFilters($filters);
 
-        $this->assertEquals(
-            $filters,
-            $this->fixture->getFilters()
-        );
+        $this->assertEquals($filters, $this->fixture->getFilters());
     }
 
     /**
@@ -175,18 +135,12 @@ class DemandTest extends UnitTestCase
     public function filtersConjunctionCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            'and',
-            $this->fixture->getFiltersConjunction()
-        );
+        $this->assertEquals('and', $this->fixture->getFiltersConjunction());
 
         $filtersConjunction = 'or';
         $this->fixture->setFiltersConjunction($filtersConjunction);
 
-        $this->assertEquals(
-            $filtersConjunction,
-            $this->fixture->getFiltersConjunction()
-        );
+        $this->assertEquals($filtersConjunction, $this->fixture->getFiltersConjunction());
     }
 
     /**
@@ -195,18 +149,17 @@ class DemandTest extends UnitTestCase
     public function categoryConjunctionCanBeSet()
     {
         // default value
-        $this->assertEquals(
-            'or',
-            $this->fixture->getCategoryConjunction()
-        );
+        $this->assertEquals('or', $this->fixture->getCategoryConjunction());
 
         $categoryConjunction = 'and';
         $this->fixture->setCategoryConjunction($categoryConjunction);
 
-        $this->assertEquals(
-            $categoryConjunction,
-            $this->fixture->getCategoryConjunction()
-        );
+        $this->assertEquals($categoryConjunction, $this->fixture->getCategoryConjunction());
+    }
+
+    protected function setUp()
+    {
+        $this->fixture = new Demand();
     }
 
     protected function tearDown()

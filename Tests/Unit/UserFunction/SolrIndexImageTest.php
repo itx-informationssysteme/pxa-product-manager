@@ -11,6 +11,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class SolrIndexImageTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\UserFunction
  */
 class SolrIndexImageTest extends UnitTestCase
@@ -21,22 +22,6 @@ class SolrIndexImageTest extends UnitTestCase
     protected $solrIndexImage;
 
     /**
-     * Setup
-     */
-    protected function setUp()
-    {
-        $this->solrIndexImage = $this->getAccessibleMock(
-            SolrIndexImage::class,
-            ['getProductImages'],
-            [],
-            '',
-            false
-        );
-
-        $this->solrIndexImage->cObj = $this->createMock(ContentObjectRenderer::class);
-    }
-
-    /**
      * @test
      */
     public function getProductImageWillReturnMainImage()
@@ -44,27 +29,25 @@ class SolrIndexImageTest extends UnitTestCase
         $field = 'pxapm_main_image';
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccessibleMockObjectInterface $mainImage */
-        $image = $this->getMockBuilder(FileReference::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getProperty'])
-            ->getMock();
+        $image = $this->getMockBuilder(FileReference::class)->disableOriginalConstructor()->setMethods(['getProperty'])->getMock();
 
-        $image->expects($this->once())
-            ->method('getProperty')
-            ->with($field)
-            ->willReturn(1);
+        $image->expects($this->once())->method('getProperty')->with($field)->willReturn(1);
 
-        $this->solrIndexImage
-            ->expects($this->once())
-            ->method('getProductImages')
-            ->willReturn([$image]);
+        $this->solrIndexImage->expects($this->once())->method('getProductImages')->willReturn([$image]);
 
         $result = $this->solrIndexImage->_call('getProductImage', $field);
 
-        $this->assertSame(
-            $image,
-            $result
-        );
+        $this->assertSame($image, $result);
+    }
+
+    /**
+     * Setup
+     */
+    protected function setUp()
+    {
+        $this->solrIndexImage = $this->getAccessibleMock(SolrIndexImage::class, ['getProductImages'], [], '', false);
+
+        $this->solrIndexImage->cObj = $this->createMock(ContentObjectRenderer::class);
     }
 
     protected function tearDown()

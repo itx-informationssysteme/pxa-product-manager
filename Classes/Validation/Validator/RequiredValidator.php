@@ -5,6 +5,7 @@ namespace Pixelant\PxaProductManager\Validation\Validator;
 
 /**
  * Class RequiredValidator
+ *
  * @package Pixelant\PxaProductManager\Validation\Validator
  */
 class RequiredValidator extends AbstractValidator
@@ -20,6 +21,7 @@ class RequiredValidator extends AbstractValidator
      * Check if string is not empty
      *
      * @param $value
+     *
      * @return bool
      */
     public function validate($value): bool

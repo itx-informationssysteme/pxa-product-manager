@@ -3,31 +3,21 @@
 namespace Pixelant\PxaProductManager\Tests\Utility;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Order;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
-use Pixelant\PxaProductManager\Domain\Model\Category;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Class ProductUtilityTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Utility
  */
 class ProductUtilityTest extends UnitTestCase
 {
-    protected function setUp()
-    {
-        // Simulate cookie list
-        $_COOKIE[ProductUtility::WISH_LIST_COOKIE_NAME] = implode(',', $this->getProductsUids());
-    }
-
-    protected function tearDown()
-    {
-        unset($_COOKIE[ProductUtility::WISH_LIST_COOKIE_NAME]);
-    }
-
     /**
      * @test
      */
@@ -36,10 +26,7 @@ class ProductUtilityTest extends UnitTestCase
         $expected = $this->getProductsUids();
         $result = ProductUtility::getWishList();
 
-        $this->assertEquals(
-            $expected,
-            $result
-        );
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -51,10 +38,7 @@ class ProductUtilityTest extends UnitTestCase
         $expected = [];
         $result = ProductUtility::getWishList();
 
-        $this->assertEquals(
-            $expected,
-            $result
-        );
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -65,9 +49,7 @@ class ProductUtilityTest extends UnitTestCase
         $product = new Product();
         $product->_setProperty('uid', 3);
 
-        $this->assertTrue(
-            ProductUtility::isProductInWishList($product)
-        );
+        $this->assertTrue(ProductUtility::isProductInWishList($product));
     }
 
     /**
@@ -78,9 +60,7 @@ class ProductUtilityTest extends UnitTestCase
         $product = new Product();
         $product->_setProperty('uid', 4);
 
-        $this->assertFalse(
-            ProductUtility::isProductInWishList($product)
-        );
+        $this->assertFalse(ProductUtility::isProductInWishList($product));
     }
 
     /**
@@ -90,9 +70,7 @@ class ProductUtilityTest extends UnitTestCase
     {
         $product = 3;
 
-        $this->assertTrue(
-            ProductUtility::isProductInWishList($product)
-        );
+        $this->assertTrue(ProductUtility::isProductInWishList($product));
     }
 
     /**
@@ -102,19 +80,7 @@ class ProductUtilityTest extends UnitTestCase
     {
         $product = 4;
 
-        $this->assertFalse(
-            ProductUtility::isProductInWishList($product)
-        );
-    }
-
-    /**
-     * Simulate products uids
-     *
-     * @return array
-     */
-    protected function getProductsUids()
-    {
-        return [1, 2, 3];
+        $this->assertFalse(ProductUtility::isProductInWishList($product));
     }
 
     /**
@@ -161,22 +127,13 @@ class ProductUtilityTest extends UnitTestCase
             ]
         ];
 
-        $category = $this->getMockBuilder(Category::class)
-            ->setMethods(['getUid'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->getMockBuilder(Category::class)->setMethods(['getUid'])->disableOriginalConstructor()->getMock();
         $category->method('getUid')->will(self::returnValue(33));
         $product->addCategory($category);
 
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)
-            ->setMethods(['getSettings'])
-            ->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)
-            ->setMethods(['getConfiguration'])
-            ->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)
-            ->setMethods(array('isEnvironmentInFrontendMode'))
-            ->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);
@@ -189,33 +146,21 @@ class ProductUtilityTest extends UnitTestCase
         $launched->modify('-13 days');
         $product->setLaunched($launched);
 
-        self::assertEquals(
-            55,
-            ProductUtility::getCalculatedCustomSorting($product)
-        );
+        self::assertEquals(55, ProductUtility::getCalculatedCustomSorting($product));
 
         // Check that customSorting is calculated correctly when not "isNew"
         $launched = new \DateTime();
         $launched->modify('-14 days');
         $product->setLaunched($launched);
 
-        self::assertEquals(
-            33,
-            ProductUtility::getCalculatedCustomSorting($product)
-        );
+        self::assertEquals(33, ProductUtility::getCalculatedCustomSorting($product));
 
         // Check that customSorting is calculated with multiple categories and not "isNew"
-        $category = $this->getMockBuilder(Category::class)
-            ->setMethods(['getUid'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->getMockBuilder(Category::class)->setMethods(['getUid'])->disableOriginalConstructor()->getMock();
         $category->method('getUid')->will(self::returnValue(44));
         $product->addCategory($category);
 
-        self::assertEquals(
-            77,
-            ProductUtility::getCalculatedCustomSorting($product)
-        );
+        self::assertEquals(77, ProductUtility::getCalculatedCustomSorting($product));
 
         // Check that customSorting is calculated with multiple categories and "isNew"
         $launched = new \DateTime();
@@ -224,10 +169,7 @@ class ProductUtilityTest extends UnitTestCase
 
         $product->addCategory($category);
 
-        self::assertEquals(
-            99,
-            ProductUtility::getCalculatedCustomSorting($product)
-        );
+        self::assertEquals(99, ProductUtility::getCalculatedCustomSorting($product));
     }
 
     /**
@@ -314,5 +256,26 @@ class ProductUtilityTest extends UnitTestCase
         $expect = (($price1 * ($taxRate / 100)) * $quantity1) + (($price2 * ($taxRate / 100)) * $quantity2);
 
         $this->assertEquals($expect, ProductUtility::calculateOrderTotalTax($order));
+    }
+
+    protected function setUp()
+    {
+        // Simulate cookie list
+        $_COOKIE[ProductUtility::WISH_LIST_COOKIE_NAME] = implode(',', $this->getProductsUids());
+    }
+
+    /**
+     * Simulate products uids
+     *
+     * @return array
+     */
+    protected function getProductsUids()
+    {
+        return [1, 2, 3];
+    }
+
+    protected function tearDown()
+    {
+        unset($_COOKIE[ProductUtility::WISH_LIST_COOKIE_NAME]);
     }
 }

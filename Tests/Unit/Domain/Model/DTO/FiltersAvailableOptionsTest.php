@@ -8,6 +8,7 @@ use Pixelant\PxaProductManager\Domain\Model\DTO\FiltersAvailableOptions;
 
 /**
  * Class FiltersAvailableOptionsTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\DTO
  */
 class FiltersAvailableOptionsTest extends UnitTestCase
@@ -16,18 +17,6 @@ class FiltersAvailableOptionsTest extends UnitTestCase
      * @var FiltersAvailableOptions
      */
     protected $subject = null;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->subject = new FiltersAvailableOptions();
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        unset($this->subject);
-    }
 
     /**
      * @test
@@ -123,5 +112,17 @@ class FiltersAvailableOptionsTest extends UnitTestCase
         $this->subject->setAvailableAttributesForFilter($filterUid, $attributes);
 
         $this->assertEquals($expect, $this->subject->getAvailableAttributes());
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->subject = new FiltersAvailableOptions();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        unset($this->subject);
     }
 }

@@ -10,6 +10,7 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 
 /**
  * Class PaginateViewHelper
+ *
  * @package Pixelant\PxaProductManager\ViewHelpers\Widget
  */
 class PaginateViewHelper extends AbstractWidgetViewHelper
@@ -22,30 +23,28 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     /**
      * @param PaginateController $controller
      */
-    public function injectPaginateController(
-        PaginateController $controller
-    ) {
+    public function injectPaginateController(PaginateController $controller)
+    {
         $this->controller = $controller;
     }
 
     /**
      * Initialize arguments.
      *
-     * @api
      * @throws \TYPO3Fluid\Fluid\Core\ViewHelper\Exception
+     * @api
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerArgument('objects', 'mixed', 'Object', true);
         $this->registerArgument('as', 'string', 'as', true);
-        $this->registerArgument(
-            'configuration',
-            'array',
-            'configuration',
-            false,
-            ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99]
-        );
+        $this->registerArgument('configuration', 'array', 'configuration', false, [
+                                                   'itemsPerPage' => 10,
+                                                   'insertAbove' => false,
+                                                   'insertBelow' => true,
+                                                   'maximumNumberOfLinks' => 99
+                                               ]);
     }
 
     /**
@@ -61,6 +60,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
             throw new \UnexpectedValueException('Supplied file object type ' . get_class($objects) . ' must be QueryResultInterface or ObjectStorage or be an array.', 1454510731);
             // @codingStandardsIgnoreEnd
         }
+
         return $this->initiateSubRequest();
     }
 }

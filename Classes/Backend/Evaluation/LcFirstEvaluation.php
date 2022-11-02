@@ -5,6 +5,7 @@ namespace Pixelant\PxaProductManager\Backend\Evaluation;
 
 /**
  * Class LcFirstEvaluation
+ *
  * @package Pixelant\PxaProductManager\Backend\Evaluation
  */
 class LcFirstEvaluation
@@ -24,7 +25,8 @@ class LcFirstEvaluation
      *
      * @param string $value The field value to be evaluated
      * @param string $is_in The "is_in" value of the field configuration from TCA
-     * @param bool $set Boolean defining if the value is written to the database or not.
+     * @param bool   $set   Boolean defining if the value is written to the database or not.
+     *
      * @return string Evaluated field value
      */
     public function evaluateFieldValue($value, $is_in, &$set)
@@ -36,6 +38,7 @@ class LcFirstEvaluation
      * Server-side validation/evaluation on opening the record
      *
      * @param array $parameters Array with key 'value' containing the field value from the database
+     *
      * @return string Evaluated field value
      */
     public function deevaluateFieldValue(array $parameters)

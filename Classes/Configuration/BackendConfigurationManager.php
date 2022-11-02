@@ -1,4 +1,5 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Configuration;
 
 /*
@@ -23,7 +24,9 @@ class BackendConfigurationManager extends ExtbaseBackendConfigurationManager
 {
     /**
      * Set the current page ID
+     *
      * @param integer $currentPageId Current page id
+     *
      * @return void
      */
     public function setCurrentPageId(int $currentPageId)

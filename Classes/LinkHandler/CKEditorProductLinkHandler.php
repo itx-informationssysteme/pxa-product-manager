@@ -27,6 +27,7 @@ namespace Pixelant\PxaProductManager\LinkHandler;
 
 /**
  * Class CKEditorProductLinkHandler
+ *
  * @package Pixelant\PxaProductManager\LinkHandler
  */
 class CKEditorProductLinkHandler extends AbstractCKEditorLinkHandler

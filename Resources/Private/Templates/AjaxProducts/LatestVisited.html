@@ -1,32 +1,32 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ppm="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers" data-namespace-typo3-fluid="true">
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ppm="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers">
 
-<f:layout name="Ajax" />
+<f:layout name="Ajax"/>
 
 <f:section name="main">
-    <f:for each="{latestVisitedProducts}" as="p">
-        <div class="col-md-3">
-            <f:if condition="{product.disableSingleView}">
-                <f:then>
-                    <f:render section="product" arguments="{product: p}"/>
-                </f:then>
-                <f:else>
-                    <ppm:link.link pageUid="{settings.pagePid}" product="{p}">
-                        <f:render section="product" arguments="{product: p}"/>
-                    </ppm:link.link>
-                </f:else>
-            </f:if>
-        </div>
-    </f:for>
+	<f:for as="p" each="{latestVisitedProducts}">
+		<div class="col-md-3">
+			<f:if condition="{product.disableSingleView}">
+				<f:then>
+					<f:render arguments="{product: p}" section="product"/>
+				</f:then>
+				<f:else>
+					<ppm:link.link pageUid="{settings.pagePid}" product="{p}">
+						<f:render arguments="{product: p}" section="product"/>
+					</ppm:link.link>
+				</f:else>
+			</f:if>
+		</div>
+	</f:for>
 </f:section>
 
 <f:section name="product">
-    <div class="item">
-        <f:render partial="Product/ListImage" arguments="{image: product.thumbnail, title: product.name}"/>
-        <div class="item-body">
-            <div class="item-title">
-                <h4>{product.name}</h4>
-            </div>
-        </div>
-    </div>
+	<div class="item">
+		<f:render arguments="{image: product.thumbnail, title: product.name}" partial="Product/ListImage"/>
+		<div class="item-body">
+			<div class="item-title">
+				<h4>{product.name}</h4>
+			</div>
+		</div>
+	</div>
 </f:section>
 </html>

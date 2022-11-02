@@ -1,8 +1,8 @@
-(function (w, $) {
+(function(w, $) {
 	const ProductManager = w.ProductManager || {};
 
 	// Compare list
-	ProductManager.CompareList = (function () {
+	ProductManager.CompareList = (function() {
 		/**
 		 * Main settings
 		 */
@@ -27,7 +27,7 @@
 		 *
 		 * @param settings
 		 */
-		const init = function (settings) {
+		const init = function(settings) {
 			_initVars(settings);
 
 			_loadList();
@@ -39,7 +39,7 @@
 		 * @param listSettings
 		 * @private
 		 */
-		const _initVars = function (listSettings) {
+		const _initVars = function(listSettings) {
 			settings = listSettings;
 
 			$buttons = $(listSettings.buttonIdentifier + '.' + listSettings.loadingClass);
@@ -53,24 +53,26 @@
 		 *
 		 * @private
 		 */
-		const _loadList = function () {
+		const _loadList = function() {
 			ajaxLoadingInProgress = true;
 
 			$.ajax({
 				url: settings.listUrl,
 				dataType: 'json'
-			}).done(function (data) {
-				for (let i in data.compareList) {
-					if (data.compareList.hasOwnProperty(i)) {
+			}).done(function(data) {
+				for (let i in data.compareList)
+				{
+					if (data.compareList.hasOwnProperty(i))
+					{
 						productsList.push(data.compareList[i]);
 					}
 				}
 
 				initButtons($buttons);
 				ProductManager.Main.updateCartCounter($mainCartCounter, $cartCounters, productsList.length);
-			}).fail(function (jqXHR, textStatus) {
+			}).fail(function(jqXHR, textStatus) {
 				console.log('Request failed: ' + textStatus);
-			}).always(function () {
+			}).always(function() {
 				ajaxLoadingInProgress = false;
 			});
 		};
@@ -81,44 +83,49 @@
 		 * @param button
 		 * @private
 		 */
-		const _toggleWishListAjaxAction = function (button) {
+		const _toggleWishListAjaxAction = function(button) {
 			ajaxLoadingInProgress = true;
 
 			let parentToRemove = button.data('delete-parent-on-remove'),
 				productUid = parseInt(button.data('product-uid')),
 				uri = button.data('ajax-uri');
 
-			if (parentToRemove) {
+			if (parentToRemove)
+			{
 				parentToRemove = button.parents(parentToRemove);
 			}
 
 			button
-				.addClass(settings.loadingClass)
-				.prop('disabled', true);
+			.addClass(settings.loadingClass)
+			.prop('disabled', true);
 
 			$.ajax({
 				url: uri,
 				dataType: 'json'
-			}).done(function (data) {
-				if (data.success) {
+			}).done(function(data) {
+				if (data.success)
+				{
 					button
-						.toggleClass(settings.inListClass)
-						.toggleClass(settings.notInListClass)
-						.removeClass(settings.loadingClass)
-						.prop('disabled', false)
-						.find(settings.compareListButtonSingleView).text(data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'))
-						.attr('title', data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'));
+					.toggleClass(settings.inListClass)
+					.toggleClass(settings.notInListClass)
+					.removeClass(settings.loadingClass)
+					.prop('disabled', false)
+					.find(settings.compareListButtonSingleView).text(data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'))
+					.attr('title', data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'));
 
-					if ($mainCart.length === 1 && data.inList) {
+					if ($mainCart.length === 1 && data.inList)
+					{
 						let itemImg = $('[data-fly-image="' + productUid + '"]');
 
-						if (itemImg.length === 1 && settings.enableFlyToCartAnimation) {
+						if (itemImg.length === 1 && settings.enableFlyToCartAnimation)
+						{
 							ProductManager.Main.flyToElement(itemImg, $mainCart);
 						}
 					}
 
-					if (parentToRemove.length === 1) {
-						parentToRemove.fadeOut('fast', function () {
+					if (parentToRemove.length === 1)
+					{
+						parentToRemove.fadeOut('fast', function() {
 							parentToRemove.remove();
 						});
 					}
@@ -137,10 +144,10 @@
 						}
 					}
 				);
-			}).fail(function (jqXHR, textStatus) {
+			}).fail(function(jqXHR, textStatus) {
 				ProductManager.Messanger.showErrorMessage('Request failed: ' + textStatus);
 				console.log('Request failed: ' + textStatus);
-			}).always(function () {
+			}).always(function() {
 				ajaxLoadingInProgress = false;
 			});
 		};
@@ -151,35 +158,39 @@
 		 * @param $buttons
 		 * @public
 		 */
-		const initButtons = function ($buttons) {
-			$buttons.on('click', function (e) {
+		const initButtons = function($buttons) {
+			$buttons.on('click', function(e) {
 				e.preventDefault();
 
-				if (!ajaxLoadingInProgress) {
+				if (!ajaxLoadingInProgress)
+				{
 					_toggleWishListAjaxAction($(this));
 				}
 			});
 
-			$buttons.each(function () {
+			$buttons.each(function() {
 				let button = $(this),
 					productUid = parseInt(button.data('product-uid')),
 					text = '',
 					className = '';
 
-				if (ProductManager.Main.isInList(productsList.join(), productUid)) {
+				if (ProductManager.Main.isInList(productsList.join(), productUid))
+				{
 					text = button.data('remove-from-list-text');
 					className = settings.inListClass;
-				} else {
+				}
+				else
+				{
 					text = button.data('add-to-list-text');
 					className = settings.notInListClass;
 				}
 
 				button
-					.attr('title', text)
-					.removeClass(settings.loadingClass)
-					.removeClass(settings.initializationClass)
-					.addClass(className)
-					.find(settings.compareListButtonSingleView).text(text);
+				.attr('title', text)
+				.removeClass(settings.loadingClass)
+				.removeClass(settings.initializationClass)
+				.addClass(className)
+				.find(settings.compareListButtonSingleView).text(text);
 			});
 		};
 
@@ -188,7 +199,7 @@
 		 *
 		 * @return string
 		 */
-		const getSettings = function () {
+		const getSettings = function() {
 			return settings;
 		};
 
