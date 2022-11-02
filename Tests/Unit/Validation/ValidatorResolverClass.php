@@ -8,6 +8,7 @@ use Pixelant\PxaProductManager\Validation\ValidatorResolver;
 
 /**
  * Class ValidatorResolverClass
+ *
  * @package Pixelant\PxaProductManager\Tests\Validation
  */
 class ValidatorResolverClass extends UnitTestCase
@@ -40,10 +41,7 @@ class ValidatorResolverClass extends UnitTestCase
         $defaultValidators = $reflectionProperty->getValue();
         $expect = $defaultValidators + ['test' => 'SomeTestClass::class'];
 
-        ValidatorResolver::registerValidator(
-            'test',
-            'SomeTestClass::class'
-        );
+        ValidatorResolver::registerValidator('test', 'SomeTestClass::class');
 
         $this->assertEquals($expect, $reflectionProperty->getValue());
     }

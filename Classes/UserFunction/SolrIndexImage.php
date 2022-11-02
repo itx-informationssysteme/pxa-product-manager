@@ -10,6 +10,7 @@ use TYPO3\CMS\Frontend\Resource\FileCollector;
 
 /**
  * Class SolrIndexImage
+ *
  * @package Pixelant\PxaProductManagerImport\UserFunction
  */
 class SolrIndexImage
@@ -32,6 +33,51 @@ class SolrIndexImage
         }
 
         return '';
+    }
+
+    /**
+     * Get product image
+     *
+     * @param string $imageField
+     *
+     * @return FileReference|null
+     */
+    protected function getProductImage(string $imageField)
+    {
+        /**
+         * Example conf
+         *  page.3 = USER
+         *   page.3 {
+         *       userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductImageReferenceUid
+         *   }
+         */
+        $images = $this->getProductImages();
+        if (!empty($images)) {
+            /** @var FileReference $image */
+            foreach ($images as $image) {
+                if ((bool)$image->getProperty($imageField)) {
+                    return $image;
+                }
+            }
+
+            return $images[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * Product images
+     *
+     * @return FileReference[]
+     */
+    public function getProductImages(): array
+    {
+        /** @var FileCollector $fileCollector */
+        $fileCollector = GeneralUtility::makeInstance(FileCollector::class);
+        $fileCollector->addFilesFromRelation('tx_pxaproductmanager_domain_model_product', 'images', $this->cObj->data);
+
+        return $fileCollector->getFiles();
     }
 
     /**
@@ -109,52 +155,5 @@ class SolrIndexImage
         }
 
         return implode(',', $imagesPaths);
-    }
-
-    /**
-     * Get product image
-     *
-     * @param string $imageField
-     * @return FileReference|null
-     */
-    protected function getProductImage(string $imageField)
-    {
-        /**
-         * Example conf
-         *  page.3 = USER
-         *   page.3 {
-         *       userFunc = Pixelant\PxaProductManager\UserFunction\SolrIndexImage->getProductImageReferenceUid
-         *   }
-         */
-        $images = $this->getProductImages();
-        if (!empty($images)) {
-            /** @var FileReference $image */
-            foreach ($images as $image) {
-                if ((bool)$image->getProperty($imageField)) {
-                    return $image;
-                }
-            }
-
-            return $images[0];
-        }
-
-        return null;
-    }
-
-    /**
-     * Product images
-     *
-     * @return FileReference[]
-     */
-    public function getProductImages(): array
-    {
-        /** @var FileCollector $fileCollector */
-        $fileCollector = GeneralUtility::makeInstance(FileCollector::class);
-        $fileCollector->addFilesFromRelation(
-            'tx_pxaproductmanager_domain_model_product',
-            'images',
-            $this->cObj->data
-        );
-        return $fileCollector->getFiles();
     }
 }

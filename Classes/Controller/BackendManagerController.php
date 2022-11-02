@@ -27,6 +27,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  * Class BackendManagerController
+ *
  * @package Pixelant\PxaProductManager\Controller
  */
 class BackendManagerController extends ActionController
@@ -61,6 +62,12 @@ class BackendManagerController extends ActionController
      * @var OrderRepository
      */
     protected $orderRepository = null;
+    /**
+     * Current page
+     *
+     * @var int
+     */
+    protected $pid = 0;
 
     /**
      * @param ProductRepository $productRepository
@@ -87,29 +94,6 @@ class BackendManagerController extends ActionController
     }
 
     /**
-     * Current page
-     *
-     * @var int
-     */
-    protected $pid = 0;
-
-    /**
-     * Set up the doc header properly here
-     *
-     * @param ViewInterface $view
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        /** @var BackendTemplateView $view */
-        parent::initializeView($view);
-
-        // create select box menu
-        $this->createMenu();
-        $this->createButtons();
-    }
-
-    /**
      * Initialize basic vars
      */
     public function initializeAction()
@@ -123,12 +107,22 @@ class BackendManagerController extends ActionController
      */
     public function indexAction()
     {
-        $activeOrdersCount = $this->orderRepository
-            ->findActive(
-                $this->getTreeListArrayForPid($this->pid)
-            )
-            ->count();
+        $activeOrdersCount = $this->orderRepository->findActive($this->getTreeListArrayForPid($this->pid))->count();
         $this->view->assign('activeOrdersCount', $activeOrdersCount);
+    }
+
+    /**
+     * Get array of recursive pids
+     *
+     * @param int $pid
+     *
+     * @return array
+     */
+    protected function getTreeListArrayForPid(int $pid): array
+    {
+        $queryGenerator = $this->objectManager->get(QueryGenerator::class);
+
+        return GeneralUtility::intExplode(',', $queryGenerator->getTreeList($pid, 99, 0, 1));
     }
 
     /**
@@ -147,11 +141,7 @@ class BackendManagerController extends ActionController
             $tabs = $this->settings['listOrders']['tabs']['list'] ?: [];
 
             if (!is_array($tabs) || empty($tabs)) {
-                $this->addFlashMessage(
-                    $this->translate('be.no_tabs'),
-                    $this->translate('be.error'),
-                    FlashMessage::ERROR
-                );
+                $this->addFlashMessage($this->translate('be.no_tabs'), $this->translate('be.error'), FlashMessage::ERROR);
             }
 
             foreach ($tabs as $tab) {
@@ -166,37 +156,33 @@ class BackendManagerController extends ActionController
             }
 
             $this->view->assignMultiple([
-                'listOrders' => $listOrders ?? [],
-                'ordersCount' => $orderCount,
-                'tabsOrders' => $tabsOrders,
-                'backUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
-                'activeTab' => $activeTab,
-                'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
-            ]);
+                                            'listOrders' => $listOrders ?? [],
+                                            'ordersCount' => $orderCount,
+                                            'tabsOrders' => $tabsOrders,
+                                            'backUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
+                                            'activeTab' => $activeTab,
+                                            'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
+                                        ]);
         }
     }
 
     /**
      * Show action
      *
-     * @param int $order
+     * @param int    $order
      * @param string $backUrl
      */
     public function showOrderAction(int $order, string $backUrl = '')
     {
         $order = $this->orderRepository->findByIdIgnoreHidden($order);
 
-        $this->view
-            ->assign('totalPrice', ProductUtility::calculateOrderTotalPrice($order, true))
-            ->assign('totalTax', ProductUtility::calculateOrderTotalTax($order, true))
-            ->assign('backUrl', $backUrl)
-            ->assign('order', $order);
+        $this->view->assign('totalPrice', ProductUtility::calculateOrderTotalPrice($order, true))->assign('totalTax', ProductUtility::calculateOrderTotalTax($order, true))->assign('backUrl', $backUrl)->assign('order', $order);
     }
 
     /**
      * Toggle order state like: hidden, complete
      *
-     * @param int $order
+     * @param int    $order
      * @param string $state
      * @param string $backUrl
      */
@@ -219,7 +205,7 @@ class BackendManagerController extends ActionController
     /**
      * delete
      *
-     * @param int $order
+     * @param int    $order
      * @param string $activeTab
      */
     public function deleteOrderAction(int $order, string $activeTab = 'new')
@@ -238,46 +224,25 @@ class BackendManagerController extends ActionController
     public function listCategoriesAction(Category $category = null)
     {
         if ($this->pid > 0) {
-            $categories = $this->categoryRepository->findCategoriesByPidAndParentIgnoreHidden(
-                $this->pid,
-                $category
-            );
+            $categories = $this->categoryRepository->findCategoriesByPidAndParentIgnoreHidden($this->pid, $category);
 
             $this->view->assignMultiple([
-                'categories' => $categories,
-                'products' => $this->getCategoriesWithProducts($categories),
-                'categoriesPositions' => $this->generatePositionsArray($categories->toArray()),
-                'activeCategory' => $category,
-                'newRecordUrl' => $this->buildNewRecordUrl('sys_category', $category),
-                'categoryBreadCrumbs' => $this->buildCategoryBreadCrumbs($category),
-                'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
-            ]);
+                                            'categories' => $categories,
+                                            'products' => $this->getCategoriesWithProducts($categories),
+                                            'categoriesPositions' => $this->generatePositionsArray($categories->toArray()),
+                                            'activeCategory' => $category,
+                                            'newRecordUrl' => $this->buildNewRecordUrl('sys_category', $category),
+                                            'categoryBreadCrumbs' => $this->buildCategoryBreadCrumbs($category),
+                                            'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
+                                        ]);
         }
-    }
-
-    /**
-     * List category products
-     *
-     * @param Category $category
-     */
-    public function listProductsAction(Category $category)
-    {
-        $products = $this->productRepository->findAllProductsByCategories([$category]);
-
-        $this->view->assignMultiple([
-            'products' => $products,
-            'activeCategory' => $category,
-            'productsPositions' => $this->generatePositionsArray($products),
-            'newRecordUrl' => $this->buildNewRecordUrl('tx_pxaproductmanager_domain_model_product', $category),
-            'categoryBreadCrumbs' => $this->buildCategoryBreadCrumbs($category),
-            'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
-        ]);
     }
 
     /**
      * Get categories uid to products array
      *
      * @param QueryResultInterface|array $categories
+     *
      * @return array
      */
     protected function getCategoriesWithProducts($categories): array
@@ -293,50 +258,10 @@ class BackendManagerController extends ActionController
     }
 
     /**
-     * Get categories bread crumbs
-     *
-     * @param Category|null $category
-     * @return array
-     */
-    protected function buildCategoryBreadCrumbs(Category $category = null): array
-    {
-        $result = [];
-
-        while ($category !== null) {
-            $result[] = $category;
-            $category = $category->getParent();
-        }
-
-        return array_reverse($result);
-    }
-
-    /**
-     * New record url
-     * @param string $table
-     * @param Category|null $category
-     * @return string
-     */
-    protected function buildNewRecordUrl(string $table, Category $category = null): string
-    {
-        $urlParameters = [
-            'edit[' . $table . '][' . $this->pid . ']' => 'new',
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
-        ];
-
-        if ($category !== null) {
-            $field = $table === 'sys_category' ? 'parent' : 'categories';
-            $urlParameters['overrideVals'][$table][$field] = $category->getUid();
-        }
-
-        $uriBuilder = GeneralUtility::makeInstance(BackendUriBuilder::class);
-
-        return (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
-    }
-
-    /**
      * Generate array of positions uids to sort records
      *
      * @param array|QueryResultInterface $records
+     *
      * @return array
      */
     protected function generatePositionsArray($records): array
@@ -363,6 +288,86 @@ class BackendManagerController extends ActionController
     }
 
     /**
+     * New record url
+     *
+     * @param string        $table
+     * @param Category|null $category
+     *
+     * @return string
+     */
+    protected function buildNewRecordUrl(string $table, Category $category = null): string
+    {
+        $urlParameters = [
+            'edit[' . $table . '][' . $this->pid . ']' => 'new',
+            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+        ];
+
+        if ($category !== null) {
+            $field = $table === 'sys_category' ? 'parent' : 'categories';
+            $urlParameters['overrideVals'][$table][$field] = $category->getUid();
+        }
+
+        $uriBuilder = GeneralUtility::makeInstance(BackendUriBuilder::class);
+
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
+    }
+
+    /**
+     * Get categories bread crumbs
+     *
+     * @param Category|null $category
+     *
+     * @return array
+     */
+    protected function buildCategoryBreadCrumbs(Category $category = null): array
+    {
+        $result = [];
+
+        while ($category !== null) {
+            $result[] = $category;
+            $category = $category->getParent();
+        }
+
+        return array_reverse($result);
+    }
+
+    /**
+     * List category products
+     *
+     * @param Category $category
+     */
+    public function listProductsAction(Category $category)
+    {
+        $products = $this->productRepository->findAllProductsByCategories([$category]);
+
+        $this->view->assignMultiple([
+                                        'products' => $products,
+                                        'activeCategory' => $category,
+                                        'productsPositions' => $this->generatePositionsArray($products),
+                                        'newRecordUrl' => $this->buildNewRecordUrl('tx_pxaproductmanager_domain_model_product', $category),
+                                        'categoryBreadCrumbs' => $this->buildCategoryBreadCrumbs($category),
+                                        'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
+                                    ]);
+    }
+
+    /**
+     * Set up the doc header properly here
+     *
+     * @param ViewInterface $view
+     *
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        /** @var BackendTemplateView $view */
+        parent::initializeView($view);
+
+        // create select box menu
+        $this->createMenu();
+        $this->createButtons();
+    }
+
+    /**
      * create BE menu
      *
      * @return void
@@ -385,10 +390,7 @@ class BackendManagerController extends ActionController
             ];
 
             foreach ($actions as $action => $label) {
-                $item = $menu->makeMenuItem()
-                    ->setTitle($this->translate($label))
-                    ->setHref($uriBuilder->reset()->uriFor($action, [], 'BackendManager'))
-                    ->setActive($this->request->getControllerActionName() === $action);
+                $item = $menu->makeMenuItem()->setTitle($this->translate($label))->setHref($uriBuilder->reset()->uriFor($action, [], 'BackendManager'))->setActive($this->request->getControllerActionName() === $action);
                 $menu->addMenuItem($item);
             }
 
@@ -414,36 +416,29 @@ class BackendManagerController extends ActionController
             switch ($this->request->getControllerActionName()) {
                 case 'listCategories':
                 case 'listOrders':
-                    $buttons[] = $buttonBar->makeLinkButton()
-                        ->setHref($uriBuilder->reset()->uriFor('index'))
-                        ->setTitle($this->translate('be.go_back'))
-                        ->setIcon($iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
+                    $buttons[] = $buttonBar->makeLinkButton()->setHref($uriBuilder->reset()->uriFor('index'))->setTitle($this->translate('be.go_back'))->setIcon($iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
                     break;
                 case 'showOrder':
                     try {
                         $backUrl = $this->request->getArgument('backUrl');
-                    } catch (NoSuchArgumentException $exception) {
+                    }
+                    catch (NoSuchArgumentException $exception) {
                         $backUrl = $uriBuilder->reset()->uriFor('listOrders');
                     }
 
                     // It might be empty in arguments
                     $backUrl = $backUrl ?: $uriBuilder->reset()->uriFor('listOrders');
 
-                    $buttons[] = $buttonBar->makeLinkButton()
-                        ->setHref($backUrl)
-                        ->setTitle($this->translate('be.go_back'))
-                        ->setIcon($iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
+                    $buttons[] = $buttonBar->makeLinkButton()->setHref($backUrl)->setTitle($this->translate('be.go_back'))->setIcon($iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
 
                     try {
                         $orderUid = $this->request->getArgument('order');
                         $order = $this->orderRepository->findByIdIgnoreHidden($orderUid);
                         if (!$order->isComplete()) {
-                            $buttons[] = $buttonBar->makeLinkButton()
-                                ->setHref($uriBuilder->reset()->uriFor('markComplete', ['order' => $order]))
-                                ->setTitle($this->translate('be.complete_order'))
-                                ->setIcon($iconFactory->getIcon('actions-check', Icon::SIZE_SMALL));
+                            $buttons[] = $buttonBar->makeLinkButton()->setHref($uriBuilder->reset()->uriFor('markComplete', ['order' => $order]))->setTitle($this->translate('be.complete_order'))->setIcon($iconFactory->getIcon('actions-check', Icon::SIZE_SMALL));
                         }
-                    } catch (NoSuchArgumentException $exception) {
+                    }
+                    catch (NoSuchArgumentException $exception) {
                     }
                     break;
             }
@@ -452,17 +447,5 @@ class BackendManagerController extends ActionController
                 $buttonBar->addButton($button, ButtonBar::BUTTON_POSITION_LEFT);
             }
         }
-    }
-
-    /**
-     * Get array of recursive pids
-     *
-     * @param int $pid
-     * @return array
-     */
-    protected function getTreeListArrayForPid(int $pid): array
-    {
-        $queryGenerator = $this->objectManager->get(QueryGenerator::class);
-        return GeneralUtility::intExplode(',', $queryGenerator->getTreeList($pid, 99, 0, 1));
     }
 }

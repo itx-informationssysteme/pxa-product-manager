@@ -78,6 +78,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Adds a Attribute
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\Attribute $attribute
+     *
      * @return void
      */
     public function addAttribute(\Pixelant\PxaProductManager\Domain\Model\Attribute $attribute)
@@ -89,6 +90,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Removes a Attribute
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\Attribute $attributeToRemove The Attribute to be removed
+     *
      * @return void
      */
     public function removeAttribute(\Pixelant\PxaProductManager\Domain\Model\Attribute $attributeToRemove)
@@ -97,6 +99,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     // @codingStandardsIgnoreStart
+
     /**
      * Returns the attributes
      *
@@ -111,6 +114,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the attributes
      *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute> $attributes
+     *
      * @return void
      */
     public function setAttributes(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $attributes)
@@ -133,6 +137,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the name
      *
      * @param \string $name
+     *
      * @return void
      */
     public function setName($name)

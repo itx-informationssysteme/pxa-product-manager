@@ -7,18 +7,12 @@ use Pixelant\PxaProductManager\Utility\ProductUtility;
 
 /**
  * Class ProductUtilityTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Functional\Utility
  */
 class ProductUtilityTest extends FunctionalTestCase
 {
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
-        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
-    }
 
     /**
      * @test
@@ -27,10 +21,7 @@ class ProductUtilityTest extends FunctionalTestCase
     {
         $price = 12345.56;
 
-        $this->assertEquals(
-            '12 345.56',
-            ProductUtility::formatPrice($price)
-        );
+        $this->assertEquals('12 345.56', ProductUtility::formatPrice($price));
     }
 
     /**
@@ -53,10 +44,7 @@ class ProductUtilityTest extends FunctionalTestCase
             $resultList[] = $category->getUid();
         }
 
-        $this->assertEquals(
-            $expectListAndOrder,
-            implode(',', $resultList)
-        );
+        $this->assertEquals($expectListAndOrder, implode(',', $resultList));
     }
 
     /**
@@ -79,9 +67,13 @@ class ProductUtilityTest extends FunctionalTestCase
             $resultList[] = $category->getUid();
         }
 
-        $this->assertEquals(
-            $expectListAndOrder,
-            implode(',', $resultList)
-        );
+        $this->assertEquals($expectListAndOrder, implode(',', $resultList));
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
+        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
     }
 }

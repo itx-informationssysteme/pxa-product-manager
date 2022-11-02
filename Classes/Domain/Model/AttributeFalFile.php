@@ -7,6 +7,7 @@ use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 
 /**
  * Class AttributeFalFile
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class AttributeFalFile extends FileReference

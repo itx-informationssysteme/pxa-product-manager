@@ -7,6 +7,7 @@ use Pixelant\PxaProductManager\Validation\Validator\EmailValidator;
 
 /**
  * Class EmailValidatorTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Validation\Validator
  */
 class EmailValidatorTest extends UnitTestCase

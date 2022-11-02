@@ -1,4 +1,5 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Domain\Repository;
 
 /***************************************************************
@@ -37,6 +38,7 @@ class FilterRepository extends Repository
      * Uids array
      *
      * @param array $uids
+     *
      * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
     public function findByUidList(array $uids)
@@ -47,14 +49,9 @@ class FilterRepository extends Repository
 
         $query = $this->createQuery();
         // when looking by uid need to disable sys_language to find translated record.
-        $query
-            ->getQuerySettings()
-            ->setRespectStoragePage(false)
-            ->setRespectSysLanguage(false);
+        $query->getQuerySettings()->setRespectStoragePage(false)->setRespectSysLanguage(false);
 
-        $query->matching(
-            $query->in('uid', $uids)
-        );
+        $query->matching($query->in('uid', $uids));
 
         return $query->execute();
     }

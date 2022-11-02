@@ -25,6 +25,7 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\Category;
@@ -34,7 +35,7 @@ use Pixelant\PxaProductManager\Domain\Model\Filter;
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Filter.
  *
  * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
 class FilterTest extends UnitTestCase
@@ -62,10 +63,7 @@ class FilterTest extends UnitTestCase
         $type = 1;
         $this->fixture->setType($type);
 
-        self::assertEquals(
-            $type,
-            $this->fixture->getType()
-        );
+        self::assertEquals($type, $this->fixture->getType());
     }
 
     /**
@@ -76,10 +74,7 @@ class FilterTest extends UnitTestCase
         $name = 'name';
         $this->fixture->setName($name);
 
-        self::assertEquals(
-            $name,
-            $this->fixture->getName()
-        );
+        self::assertEquals($name, $this->fixture->getName());
     }
 
     /**
@@ -90,10 +85,7 @@ class FilterTest extends UnitTestCase
         $category = new Category();
         $this->fixture->setParentCategory($category);
 
-        self::assertSame(
-            $category,
-            $this->fixture->getParentCategory()
-        );
+        self::assertSame($category, $this->fixture->getParentCategory());
     }
 
     /**
@@ -104,10 +96,7 @@ class FilterTest extends UnitTestCase
         $attribute = new Attribute();
         $this->fixture->setAttribute($attribute);
 
-        self::assertSame(
-            $attribute,
-            $this->fixture->getAttribute()
-        );
+        self::assertSame($attribute, $this->fixture->getAttribute());
     }
 
     /**
@@ -118,9 +107,6 @@ class FilterTest extends UnitTestCase
         $label = 'label';
         $this->fixture->setLabel($label);
 
-        self::assertEquals(
-            $label,
-            $this->fixture->getLabel()
-        );
+        self::assertEquals($label, $this->fixture->getLabel());
     }
 }

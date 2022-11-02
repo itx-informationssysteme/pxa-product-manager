@@ -24,17 +24,18 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Option;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Option.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -63,9 +64,6 @@ class OptionTest extends UnitTestCase
         $value = 'value';
         $this->fixture->setValue($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getValue()
-        );
+        self::assertEquals($value, $this->fixture->getValue());
     }
 }

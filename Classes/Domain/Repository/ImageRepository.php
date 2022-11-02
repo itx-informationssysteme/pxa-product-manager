@@ -1,4 +1,5 @@
 <?php
+
 namespace Pixelant\PxaProductManager\Domain\Repository;
 
 /***************************************************************
@@ -28,6 +29,7 @@ use TYPO3\CMS\Core\Resource\FileRepository;
 
 /**
  * Class ImageRepository
+ *
  * @package Pixelant\PxaProductManager\Domain\Repository
  */
 class ImageRepository extends FileRepository

@@ -5,6 +5,7 @@ namespace Pixelant\PxaProductManager\Domain\Model\DTO;
 
 /**
  * Class FiltersAvailableOptions
+ *
  * @package Pixelant\PxaProductManager\Domain\Model\DTO
  */
 class FiltersAvailableOptions implements \JsonSerializable
@@ -41,22 +42,12 @@ class FiltersAvailableOptions implements \JsonSerializable
     /**
      * Set available filter categories for certain filter from demand
      *
-     * @param int $filterUid
+     * @param int   $filterUid
      * @param array $categories
      */
     public function setAvailableCategoriesForFilter(int $filterUid, array $categories)
     {
         $this->availableCategories[$filterUid] = $categories;
-    }
-
-    /**
-     * Set available categories
-     *
-     * @param array $availableCategories
-     */
-    public function setAvailableCategories(array $availableCategories)
-    {
-        $this->availableCategories = $availableCategories;
     }
 
     /**
@@ -68,13 +59,13 @@ class FiltersAvailableOptions implements \JsonSerializable
     }
 
     /**
-     * Set available attributes
+     * Set available categories
      *
-     * @param array $availableAttributes
+     * @param array $availableCategories
      */
-    public function setAvailableAttributes(array $availableAttributes)
+    public function setAvailableCategories(array $availableCategories)
     {
-        $this->availableAttributes = $availableAttributes;
+        $this->availableCategories = $availableCategories;
     }
 
     /**
@@ -90,7 +81,7 @@ class FiltersAvailableOptions implements \JsonSerializable
     /**
      * Set available filter attribute options for filter from demand
      *
-     * @param int $filterUid
+     * @param int   $filterUid
      * @param array $availableAttributes
      */
     public function setAvailableAttributesForFilter(int $filterUid, array $availableAttributes)
@@ -107,6 +98,29 @@ class FiltersAvailableOptions implements \JsonSerializable
     }
 
     /**
+     * Set available attributes
+     *
+     * @param array $availableAttributes
+     */
+    public function setAvailableAttributes(array $availableAttributes)
+    {
+        $this->availableAttributes = $availableAttributes;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @link  https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
      * Cast to array
      *
      * @return array
@@ -117,17 +131,5 @@ class FiltersAvailableOptions implements \JsonSerializable
             'availableCategories' => $this->availableCategories,
             'availableAttributes' => $this->availableAttributes
         ];
-    }
-
-    /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

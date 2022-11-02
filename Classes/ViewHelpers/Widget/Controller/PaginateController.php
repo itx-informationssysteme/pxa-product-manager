@@ -5,6 +5,7 @@ namespace Pixelant\PxaProductManager\ViewHelpers\Widget\Controller;
 
 /**
  * Class PaginateController
+ *
  * @package Pixelant\PxaProductManager\ViewHelpers\Widget\Controller
  */
 class PaginateController extends \TYPO3\CMS\Fluid\ViewHelpers\Widget\Controller\PaginateController

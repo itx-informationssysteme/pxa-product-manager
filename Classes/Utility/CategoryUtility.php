@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Utility;
 
-use Pixelant\PxaProductManager\Domain\Model\Attribute;
-use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 
@@ -36,8 +34,10 @@ class CategoryUtility
 {
     /**
      * Generate array of categories
-     * @param $idList
+     *
+     * @param      $idList
      * @param bool $removeGivenIdListFromResult
+     *
      * @return array|mixed
      */
     public static function getCategoriesRootLine(array $idList, bool $removeGivenIdListFromResult = false): array
@@ -68,8 +68,9 @@ class CategoryUtility
      * Get all parents of category in ascending order
      *
      * @param Category $category
-     * @param array $results
-     * @param int $level
+     * @param array    $results
+     * @param int      $level
+     *
      * @return array
      */
     public static function getParentCategories(Category $category, array $results = [], int $level = 0): array
@@ -85,12 +86,9 @@ class CategoryUtility
             $parentMet = array_key_exists($parent->getUid(), $results);
 
             if ($parentMet && (TYPO3_MODE === 'BE' || MainUtility::isBackendLogin())) {
-                throw new \RuntimeException(
-                // @codingStandardsIgnoreStart
-                    'Same parent with UID "' . $parent->getUid() . '" was met second time, that should never happen. Check you categories relation.',
-                    // @codingStandardsIgnoreEnd
-                    1527151818303
-                );
+                throw new \RuntimeException(// @codingStandardsIgnoreStart
+                    'Same parent with UID "' . $parent->getUid() . '" was met second time, that should never happen. Check you categories relation.', // @codingStandardsIgnoreEnd
+                    1527151818303);
             }
 
             if ($parent->getUid() !== $category->getUid() && !$parentMet) {

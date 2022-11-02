@@ -88,27 +88,18 @@ class ProductController extends AbstractController
      */
     public function listAction()
     {
-        $category = $this->determinateCategory(
-            MainUtility::getActiveCategoryFromRequest()
-        );
+        $category = $this->determinateCategory(MainUtility::getActiveCategoryFromRequest());
 
         if ($category) {
             /** @var Category[] $subCategories */
-            $subCategories = $this->categoryRepository->findByParent(
-                $category,
-                $this->getOrderingsForCategories()
-            )->toArray();
+            $subCategories = $this->categoryRepository->findByParent($category, $this->getOrderingsForCategories())->toArray();
 
             // Exclude categories without products if enabled
             if (count($subCategories) > 0 && (bool)$this->settings['navigationHideCategoriesWithoutProducts']) {
-                $subCategories = array_filter(
-                    $subCategories,
-                    function ($subCategory) {
-                        // Show category in case it has subcategories or products
-                        return $subCategory->getSubCategories()->count() > 0
-                            || $this->productRepository->countByCategory($subCategory) > 0;
-                    }
-                );
+                $subCategories = array_filter($subCategories, function($subCategory) {
+                    // Show category in case it has subcategories or products
+                    return $subCategory->getSubCategories()->count() > 0 || $this->productRepository->countByCategory($subCategory) > 0;
+                });
             }
 
             if (count($subCategories) === 0 || $this->settings['showCategoriesWithProducts']) {
@@ -119,9 +110,9 @@ class ProductController extends AbstractController
             }
 
             $this->view->assignMultiple([
-                'subCategories' => $subCategories,
-                'category' => $category
-            ]);
+                                            'subCategories' => $subCategories,
+                                            'category' => $category
+                                        ]);
         }
 
         // add navigation if enabled in list view
@@ -133,27 +124,74 @@ class ProductController extends AbstractController
     }
 
     /**
+     * Create demand object
+     *
+     * @param array  $settings
+     * @param string $class
+     *
+     * @return Demand
+     */
+    protected function createDemandFromSettings(array $settings, string $class = null): DemandInterface
+    {
+        $class = $class ?? (!empty($settings['demandClass']) ? $settings['demandClass'] : 'Pixelant\\PxaProductManager\\Domain\\Model\\DTO\\Demand');
+
+        /** @var Demand $demand */
+        $demand = GeneralUtility::makeInstance($class);
+        if (!$demand instanceof Demand) {
+            throw new \UnexpectedValueException(sprintf(// @codingStandardsIgnoreStart
+                                                    'Demand object must instance of "Pixelant\\PxaProductManager\\Domain\\Model\\DTO\\Demand", but instance of "%s" given.', // @codingStandardsIgnoreEnd
+                                                    $class), 1539161115399);
+        }
+
+        if (!empty($settings['demandCategories'])) {
+            $demand->setCategories($settings['demandCategories']);
+        }
+        if (!empty($settings['allowedCategoriesMode'])) {
+            $demand->setCategoryConjunction($settings['allowedCategoriesMode']);
+        }
+        if (isset($settings['limit'])) {
+            $demand->setLimit((int)$settings['limit']);
+        }
+        if (isset($settings['offSet'])) {
+            $demand->setOffSet((int)$settings['offSet']);
+        }
+        if (isset($settings['filters']) && is_array($settings['filters'])) {
+            $demand->setFilters($settings['filters']);
+        }
+        if (!empty($settings['includeDiscontinued'])) {
+            $demand->setIncludeDiscontinued((bool)$settings['includeDiscontinued']);
+        }
+
+        // set orderings
+        if (!empty($settings['orderProductBy'])) {
+            $demand->setOrderBy($settings['orderProductBy']);
+        }
+        if (!empty($settings['orderProductDirection'])) {
+            $demand->setOrderDirection($settings['orderProductDirection']);
+        }
+        if (!empty($settings['orderByAllowed'])) {
+            $demand->setOrderByAllowed($settings['orderByAllowed']);
+        }
+
+        $this->emitSignal(__CLASS__, 'AfterDemandCreationBeforeReturn', [$demand, $settings]);
+
+        return $demand;
+    }
+
+    /**
      * lazy view action
      *
      * @return void
      */
     public function lazyListAction()
     {
-        $this->settings['demandCategories'] = $this->getDemandCategories(
-            GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true),
-            GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true)
-        );
+        $this->settings['demandCategories'] = $this->getDemandCategories(GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true), GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true));
 
         $demand = $this->createDemandFromSettings($this->settings);
 
         if (!empty($this->settings['filters'])) {
             $filtersUids = GeneralUtility::intExplode(',', $this->settings['filters'], true);
-            $filters = $this->sortQueryResultsByUidList(
-                $this->filterRepository->findByUidList(
-                    $filtersUids
-                ),
-                $filtersUids
-            );
+            $filters = $this->sortQueryResultsByUidList($this->filterRepository->findByUidList($filtersUids), $filtersUids);
 
             if ($this->hideFilterOptionsNoResult()) {
                 $filtersAvailableOptions = $this->createFiltersAvailableOptions($demand);
@@ -169,19 +207,51 @@ class ProductController extends AbstractController
         }
 
         $this->view->assignMultiple([
-            'demandCategories' => implode(',', $this->settings['demandCategories']),
-            'ajaxUrl' => $this->getLazyLoadingUrl(),
-            'storagePid' => $storagePid ?? '',
-            'lazyLoadingStop' => ($limit === 0 || $limit >= $countResults) ? 1 : 0,
-            'filters' => $filters ?? [],
-            'filtersAvailableOptions' => $filtersAvailableOptions ?? []
-        ]);
+                                        'demandCategories' => implode(',', $this->settings['demandCategories']),
+                                        'ajaxUrl' => $this->getLazyLoadingUrl(),
+                                        'storagePid' => $storagePid ?? '',
+                                        'lazyLoadingStop' => ($limit === 0 || $limit >= $countResults) ? 1 : 0,
+                                        'filters' => $filters ?? [],
+                                        'filtersAvailableOptions' => $filtersAvailableOptions ?? []
+                                    ]);
+    }
+
+    /**
+     * Count results for demand
+     *
+     * @param Demand $demand
+     *
+     * @return int
+     */
+    protected function countDemanded(Demand $demand)
+    {
+        // Count all products
+        // reset limit
+        $demand = clone($demand);
+        $demand->setOffSet(0);
+        $demand->setLimit(0);
+
+        return $this->productRepository->countByDemand($demand);
+    }
+
+    /**
+     * Url for Ajax lazy loading
+     *
+     * @return string
+     */
+    protected function getLazyLoadingUrl()
+    {
+        $uri = $this->controllerContext->getUriBuilder();
+        $uri->reset()->setTargetPageUid(MainUtility::getTSFE()->id)->setTargetPageType($this->settings['lazyLoading']['pageType'])->setCreateAbsoluteUri(true);
+
+        return $uri->buildFrontendUri();
     }
 
     /**
      * action show
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\Product $product
+     *
      * @return void
      */
     public function showAction(Product $product = null)
@@ -196,10 +266,7 @@ class ProductController extends AbstractController
         // No product found handling
         if ($product !== null) {
             // Add constant with current product UID to header
-            GeneralUtility::makeInstance(PageRenderer::class)->addJsInlineCode(
-                'pxaproductmanager_current_product_uid',
-                'const pxaproductmanager_current_product_uid=' . $product->getUid()
-            );
+            GeneralUtility::makeInstance(PageRenderer::class)->addJsInlineCode('pxaproductmanager_current_product_uid', 'const pxaproductmanager_current_product_uid=' . $product->getUid());
 
             // check if categories have a custom single view template set
             if ($product->getCategories()->count() > 0) {
@@ -215,26 +282,140 @@ class ProductController extends AbstractController
             }
 
             // add navigation if enabled in list view
-            if ($this->settings['showNavigationListView']
-                && !$this->settings['hideNavigationListViewOnDetailMode']
-            ) {
+            if ($this->settings['showNavigationListView'] && !$this->settings['hideNavigationListViewOnDetailMode']) {
                 $this->view->assign('treeData', $this->getNavigationTree());
             }
 
             // if product have more than one category - build canonical url to main (first) category
-            if ((int)$this->settings['disableProductCanonicalUrl'] === 0
-                && $product->getCategories()->count() > 1
-            ) {
+            if ((int)$this->settings['disableProductCanonicalUrl'] === 0 && $product->getCategories()->count() > 1) {
                 $this->buildProductCanonicalUrl($product);
             }
 
             $this->view->assignMultiple([
-                'product' => $product,
-                'additionalButtons' => $this->getProductAdditionalButtons($product, []),
-                'category' => MainUtility::getActiveCategoryFromRequest()
-            ]);
+                                            'product' => $product,
+                                            'additionalButtons' => $this->getProductAdditionalButtons($product, []),
+                                            'category' => MainUtility::getActiveCategoryFromRequest()
+                                        ]);
         } else {
             $this->handleNoProductFoundError();
+        }
+    }
+
+    /**
+     * Get preview product if argument exist
+     *
+     * @return null|Product
+     */
+    protected function getPreviewProduct()
+    {
+        if ($this->request->hasArgument('product_preview')) {
+            $productPreview = (int)$this->request->getArgument('product_preview');
+            if ($productPreview > 0) {
+                if (isset($this->settings['showHiddenRecords']) && (int)$this->settings['showHiddenRecords'] === 1) {
+                    $this->allowHiddenRecords();
+                    $product = $this->productRepository->findByUid($productPreview, false);
+                } else {
+                    $product = $this->productRepository->findByUid($productPreview);
+                }
+            }
+        }
+
+        return $product ?? null;
+    }
+
+    /**
+     * Allow hidden content
+     */
+    protected function allowHiddenRecords()
+    {
+        $context = GeneralUtility::makeInstance(Context::class);
+        /** @var VisibilityAspect $visibilityAspect */
+        $visibilityAspect = $context->getAspect('visibility');
+
+        $newVisibilityAspect = GeneralUtility::makeInstance(VisibilityAspect::class, $visibilityAspect->includeHiddenPages(), true, $visibilityAspect->includeDeletedRecords());
+
+        $context->setAspect('visibility', $newVisibilityAspect);
+    }
+
+    /**
+     * Add canonical url for product single view
+     * Make sure any other plugin adding it
+     *
+     * @param Product $product
+     */
+    protected function buildProductCanonicalUrl(Product $product)
+    {
+        $url = $this->linkBuilderService->buildForProduct($this->settings['pageUid'] ?: MainUtility::getTSFE()->id, $product, $product->getFirstCategory(), false, true // absolute
+        );
+
+        // add only absolute links
+        if (!empty($url)) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $this->response->addAdditionalHeaderData('<link rel="canonical" href="' . $url . '">');
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param array   $buttons
+     *
+     * @return array
+     */
+    protected function getProductAdditionalButtons(Product $product, array $buttons = []): array
+    {
+        /**
+         * Generate additional buttons
+         * Should an array that follows this structure
+         * [
+         *     [
+         *         'name' => 'Do something',
+         *         'link' => 'https://www.example.com',
+         *         'classes' => [],
+         *         'order' => '100'
+         *     ],
+         *     [
+         *         'name' => 'Buy',
+         *         'link' => 'https://www.test.net',
+         *         'classes' => ['beauty', 'clarence'],
+         *         'order' => '20'
+         *     ],
+         * ]
+         *
+         * name - button text
+         * link - button link
+         * classes - array of additional button classes
+         * order - used to specify buttons order
+         */
+
+        // Add a signal slot so other extension could add additional buttons
+        $this->emitSignal(__CLASS__, 'BeforeProcessingAdditionalButtons', [$product, &$buttons]);
+
+        // Process
+        foreach ($buttons as &$button) {
+            $button['classes'] = empty($button['classes']) ? '' : implode(' ', $button['classes']);
+        }
+        unset($button);
+
+        // Sort
+        usort($buttons, function($a, $b) {
+            return $a['order'] - $b['order'];
+        });
+
+        return $buttons;
+    }
+
+    /**
+     * Error handling if no product entry is found
+     *
+     * @return void
+     */
+    protected function handleNoProductFoundError()
+    {
+        // If configured, show custom message instead of standard 404
+        if ((int)$this->settings['enableMessageInsteadOfPage404'] !== 0) {
+            $this->forward('notFound');
+        } else {
+            $this->forward('notFound');
         }
     }
 
@@ -250,14 +431,14 @@ class ProductController extends AbstractController
      * Wish list of products
      *
      * @param bool $sendOrder
+     *
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function wishListAction(bool $sendOrder = false)
     {
         // Select the checkout system to use
-        $checkoutToUse = $this->settings['wishList']['checkoutSystem']
-            ?: ConfigurationUtility::getExtManagerConfigurationByPath('checkoutSystem') ?: 'default';
+        $checkoutToUse = $this->settings['wishList']['checkoutSystem'] ?: ConfigurationUtility::getExtManagerConfigurationByPath('checkoutSystem') ?: 'default';
 
         $checkOutSystems = ConfigurationUtility::getCheckoutSystems();
         $checkout = $checkOutSystems[$checkoutToUse] ?: $checkOutSystems['default'];
@@ -268,9 +449,7 @@ class ProductController extends AbstractController
         // If order form enabled
         if ($this->isOrderFormAllowed()) {
             /** @var OrderConfiguration $orderConfiguration */
-            $orderConfiguration = $this->orderConfigurationRepository->findByUid(
-                (int)$this->settings['orderFormConfiguration']
-            );
+            $orderConfiguration = $this->orderConfigurationRepository->findByUid((int)$this->settings['orderFormConfiguration']);
 
             $this->view->assign('orderConfiguration', $orderConfiguration);
 
@@ -279,9 +458,7 @@ class ProductController extends AbstractController
                     $orderProducts = $this->request->getArgument('orderProducts');
                     if ($orderConfiguration->isEnabledReplaceWithFeUserFields()) {
                         // If replace FE user fields, there still might be some free answer inputs
-                        $values = $this->request->hasArgument('orderFields')
-                            ? $this->request->getArgument('orderFields')
-                            : [];
+                        $values = $this->request->hasArgument('orderFields') ? $this->request->getArgument('orderFields') : [];
                     } else {
                         // Don't do check if argument exist. It's always required if values not replaced
                         // with FE user fields
@@ -289,14 +466,12 @@ class ProductController extends AbstractController
                     }
 
                     if ($this->validateOrderFields($orderConfiguration, $values)) {
-                        $order = $this->createAndSaveOrder(
-                            $orderConfiguration,
-                            $this->getOrderProductsQuantityForSerialization($orderProducts)
-                        );
+                        $order = $this->createAndSaveOrder($orderConfiguration, $this->getOrderProductsQuantityForSerialization($orderProducts));
                         $this->sendOrderEmail($order, $orderConfiguration);
                         $this->redirect('finishOrder');
                     }
-                } catch (NoSuchArgumentException $exception) {
+                }
+                catch (NoSuchArgumentException $exception) {
                     // orderProducts and orderFields are required to send email
                 }
             }
@@ -309,244 +484,11 @@ class ProductController extends AbstractController
         }
 
         $this->view->assignMultiple([
-            'checkout' => $checkout,
-            'products' => $this->getProductsFromCookieList(ProductUtility::WISH_LIST_COOKIE_NAME),
-            'orderProducts' => $orderState ?? [],
-            'sendOrder' => $sendOrder
-        ]);
-    }
-
-    /**
-     * Finish order text
-     * Show some successful texts
-     */
-    public function finishOrderAction()
-    {
-        ProductUtility::cleanOngoingOrderInfo();
-    }
-
-    /**
-     * Compare list cart
-     */
-    public function compareListCartAction()
-    {
-        // Nothing to do. Products are counted by JS to make action cacheable
-    }
-
-    /**
-     * Compare list of products
-     */
-    public function comparePreViewAction()
-    {
-        $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME)
-            ?? [];
-
-        $this->view->assign(
-            'products',
-            $this->getProductByUidsList($compareList)
-        );
-    }
-
-    /**
-     * Create compare view for products
-     */
-    public function compareViewAction()
-    {
-        $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME)
-            ?? [];
-
-        $products = $this->getProductByUidsList($compareList);
-        $productAttributeSets = [];
-
-        /** @var Product $product */
-        foreach ($products as $product) {
-            /** @var AttributeSet $attributesGroupedBySet */
-            foreach ($product->getAttributesGroupedBySets() as $attributesGroupedBySet) {
-                if (!array_key_exists($attributesGroupedBySet->getUid(), $productAttributeSets)) {
-                    $productAttributeSets[$attributesGroupedBySet->getUid()] = [
-                        'attributeSet' => $attributesGroupedBySet
-                    ];
-                }
-            }
-        }
-
-        foreach ($productAttributeSets as &$attributeSet) {
-            $attributeSet['attributesListDiff'] = $this->generateAttributesDiffDataForProducts(
-                $products,
-                $attributeSet['attributeSet']
-            );
-        }
-
-        $this->view
-            ->assign(
-                'products',
-                $this->getProductByUidsList($compareList)
-            )
-            ->assign(
-                'diffData',
-                $productAttributeSets
-            );
-    }
-
-    /**
-     * promotion list action
-     *
-     * @return void
-     */
-    public function promotionListAction()
-    {
-        $this->settings['demandCategories'] = $this->getDemandCategories(
-            GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true)
-        );
-
-        $demand = $this->createDemandFromSettings($this->settings);
-
-        $products = $this->productRepository->findDemanded($demand);
-
-        $this->view->assign('products', $products);
-    }
-
-    /**
-     * No found page
-     */
-    public function notFoundAction()
-    {
-    }
-
-    /**
-     * action grouped list
-     *
-     * @return void
-     */
-    public function groupedListAction()
-    {
-        $groupedList = [];
-        $excludeCategories = GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true);
-
-        $category = $this->determinateCategory(
-            MainUtility::getActiveCategoryFromRequest()
-        );
-
-        if ($category !== null) {
-            // if showCategoriesWithProducts, display products in just this category, not recursive
-            if ($this->settings['showCategoriesWithProducts']) {
-                $this->settings['demandCategories'] = [$category->getUid()];
-
-                $demand = $this->createDemandFromSettings($this->settings);
-                $products = $this->productRepository->findDemanded($demand);
-            }
-
-            /** @var QueryResultInterface $subCategories */
-            $subCategories = $this->categoryRepository->findByParent(
-                $category,
-                $this->getOrderingsForCategories()
-            );
-
-            if ($subCategories->count() > 0) {
-                $groupedListIndex = 0;
-                $duplicateCategories = [];
-
-                foreach ($subCategories as $index => $subCategory) {
-                    $subCategoryUid = $subCategory->getUid();
-
-                    if (in_array($subCategoryUid, $excludeCategories, true)) {
-                        // excluded category, unset
-                        array_push($duplicateCategories, $index);
-                    } else {
-                        $subCategoryCategories = $this->categoryRepository->findByParent(
-                            $subCategory
-                        );
-
-                        // if category doesn't have any sub categories, fetch products
-                        if ($subCategoryCategories->count() === 0) {
-                            $this->settings['demandCategories'] = [$subCategoryUid];
-                            $demand = $this->createDemandFromSettings($this->settings);
-                            $subCategoryProducts = $this->productRepository->findDemanded($demand);
-
-                            if ($subCategoryProducts->count() > 0) {
-                                // if category has products it will be displayed differently,
-                                // remove from "browse" categories
-                                array_push($duplicateCategories, $index);
-                                // add to grouped list instead
-                                $groupedList[$groupedListIndex]['category'] = $subCategory;
-                                $groupedList[$groupedListIndex]['products'] = $subCategoryProducts;
-                                $groupedList[$groupedListIndex]['categoryAttributes'] = 0;
-                                if ($subCategoryProducts->count() > 0) {
-                                    $groupedList[$groupedListIndex]['categoryAttributes'] =
-                                        $subCategoryProducts->current()->getAttributes()->count();
-                                }
-                                $groupedListIndex++;
-                            }
-                        }
-                    }
-                }
-
-                // remove dublicate categories (added to groupedList)
-                if (!empty($duplicateCategories)) {
-                    foreach ($duplicateCategories as $index) {
-                        unset($subCategories[$index]);
-                    }
-                }
-            }
-
-            $this->view->assignMultiple([
-                'category' => $category,
-                'products' => $products ?? [],
-                'subCategories' => $subCategories,
-            ]);
-        }
-
-        $this->view->assign('groupedList', $groupedList ?? []);
-    }
-
-    /**
-     * List of custom products
-     *
-     * @return void
-     */
-    public function customProductsListAction()
-    {
-        $mode = $this->settings['customProductsList']['mode'];
-        $products = [];
-
-        // Products mode
-        if ($mode === 'products') {
-            $productsList = GeneralUtility::trimExplode(
-                ',',
-                $this->settings['customProductsList']['productsToShow'],
-                true
-            );
-            $products = $this->getProductByUidsList($productsList);
-        }
-
-        // Category mode
-        if ($mode === 'category') {
-            $categories = GeneralUtility::trimExplode(
-                ',',
-                $this->settings['customProductsList']['productsCategories'],
-                true
-            );
-            $this->view->assign('categories', $this->categoryRepository->findByUidList($categories));
-
-            // Get products
-            if (!empty($this->settings['customProductsList']['productsToShowWithinCategories'])) {
-                $productsList = GeneralUtility::trimExplode(
-                    ',',
-                    $this->settings['customProductsList']['productsToShowWithinCategories'],
-                    true
-                );
-                $products = $this->getProductByUidsList($productsList);
-            } else {
-                $products = $this->productRepository->findProductsByCategories(
-                    $categories,
-                    ['tstamp' => QueryInterface::ORDER_DESCENDING],
-                    'or',
-                    (int)$this->settings['limit']
-                );
-            }
-        }
-
-        $this->view->assign('products', $products);
+                                        'checkout' => $checkout,
+                                        'products' => $this->getProductsFromCookieList(ProductUtility::WISH_LIST_COOKIE_NAME),
+                                        'orderProducts' => $orderState ?? [],
+                                        'sendOrder' => $sendOrder
+                                    ]);
     }
 
     /**
@@ -563,6 +505,7 @@ class ProductController extends AbstractController
 
     /**
      * Check if user is logged in. Wrapper for tests
+     *
      * @return bool
      */
     protected function isUserLoggedIn()
@@ -571,137 +514,11 @@ class ProductController extends AbstractController
     }
 
     /**
-     * Send emails with order
-     *
-     * @param Order $order
-     * @param OrderConfiguration $orderConfiguration
-     * @return void
-     */
-    protected function sendOrderEmail(Order $order, OrderConfiguration $orderConfiguration)
-    {
-        $adminTemplate = $this->settings['wishList']['orderForm']['adminEmailTemplatePath'] ?? '';
-        $userTemplate = $this->settings['wishList']['orderForm']['userEmailTemplatePath'] ?? '';
-
-        /** @var OrderMailService $orderMailService */
-        $orderMailService = GeneralUtility::makeInstance(OrderMailService::class);
-        $orderMailService
-            ->setSenderName($this->settings['email']['senderName'])
-            ->setSenderEmail($this->settings['email']['senderEmail']);
-
-        // Send email to admins
-        if (!empty($orderConfiguration->getAdminEmails())) {
-            $orderMailService
-                ->generateMailBody($adminTemplate, $order)
-                ->setSubject($this->translate('fe.adminEmail.orderForm.subject'))
-                ->setReceivers($orderConfiguration->getAdminEmailsArray())
-                ->send();
-        }
-
-
-        // Send email to user if enabled
-        if ($orderConfiguration->isEnabledEmailToUser()) {
-            $email = $orderConfiguration->getUserEmailFromFormFields();
-            if (!empty($email)) {
-                $orderMailService
-                    ->generateMailBody($userTemplate, $order)
-                    ->setSubject($this->translate('fe.userEmail.orderForm.subject'))
-                    ->setReceivers([$email])
-                    ->send();
-            }
-        }
-    }
-
-    /**
-     * Save order
-     *
-     * @param OrderConfiguration $orderConfiguration
-     * @param array $orderProducts
-     * @return Order
-     */
-    protected function createAndSaveOrder(OrderConfiguration $orderConfiguration, array $orderProducts): Order
-    {
-        $order = $this->objectManager->get(Order::class);
-
-        $order->setOrderFields($this->getOrderFormFieldsForSerialization($orderConfiguration));
-
-        $products = $this->productRepository->findProductsByUids(array_keys($orderProducts));
-        /** @var Product $product */
-        foreach ($products as $product) {
-            $order->addProduct($product);
-            $pid = $product->getPid();
-        }
-
-        $productsQuantityData = ProductUtility::orderProductsToProductQuantityData($orderProducts, $products);
-
-        $order->setProductsQuantity($productsQuantityData);
-
-        if ($orderConfiguration->getFrontendUser() !== null) {
-            $order->setFeUser($orderConfiguration->getFrontendUser());
-        }
-
-        if (isset($pid)) {
-            $order->setPid($pid);
-        }
-
-        $this->emitSignal(
-            __CLASS__,
-            'AfterOrderCreatedBeforeSaving',
-            [$order, $productsQuantityData, $orderProducts, $orderConfiguration, $this]
-        );
-
-        $this->orderRepository->add($order);
-
-        return $order;
-    }
-
-    /**
-     * Prepare order fields for serialization
-     *
-     * @param OrderConfiguration $orderConfiguration
-     * @return array
-     */
-    protected function getOrderFormFieldsForSerialization(OrderConfiguration $orderConfiguration): array
-    {
-        $orderFields = [];
-        /** @var OrderFormField $formField */
-        foreach ($orderConfiguration->getFormFields() as $formField) {
-            $orderFields[$formField->getName()] = [
-                'value' => $formField->getValueAsText(),
-                'type' => $formField->getType(),
-                'label' => $formField->getLabel()
-            ];
-        }
-
-        return $orderFields;
-    }
-
-    /**
-     * Prepare order products for serialization
-     *
-     * @param array $orderProducts
-     * @return array
-     */
-    protected function getOrderProductsQuantityForSerialization(array $orderProducts): array
-    {
-        $processedOrderProducts = [];
-
-        foreach ($orderProducts as $productUid => $productQuantity) {
-            $productUid = (int)$productUid;
-            $productQuantity = (int)$productQuantity;
-
-            if ($productUid && $productQuantity) {
-                $processedOrderProducts[$productUid] = $productQuantity;
-            }
-        }
-
-        return $processedOrderProducts;
-    }
-
-    /**
      * Return false if fields fail validation. Also will add error messages to fields configuration
      *
      * @param OrderConfiguration $orderConfiguration
-     * @param array $values
+     * @param array              $values
+     *
      * @return bool
      */
     protected function validateOrderFields(OrderConfiguration $orderConfiguration, array $values): bool
@@ -731,10 +548,245 @@ class ProductController extends AbstractController
     }
 
     /**
+     * @return ValidatorResolver
+     */
+    protected function getValidatorResolver(): ValidatorResolver
+    {
+        return GeneralUtility::makeInstance(ValidatorResolver::class);
+    }
+
+    /**
+     * Save order
+     *
+     * @param OrderConfiguration $orderConfiguration
+     * @param array              $orderProducts
+     *
+     * @return Order
+     */
+    protected function createAndSaveOrder(OrderConfiguration $orderConfiguration, array $orderProducts): Order
+    {
+        $order = $this->objectManager->get(Order::class);
+
+        $order->setOrderFields($this->getOrderFormFieldsForSerialization($orderConfiguration));
+
+        $products = $this->productRepository->findProductsByUids(array_keys($orderProducts));
+        /** @var Product $product */
+        foreach ($products as $product) {
+            $order->addProduct($product);
+            $pid = $product->getPid();
+        }
+
+        $productsQuantityData = ProductUtility::orderProductsToProductQuantityData($orderProducts, $products);
+
+        $order->setProductsQuantity($productsQuantityData);
+
+        if ($orderConfiguration->getFrontendUser() !== null) {
+            $order->setFeUser($orderConfiguration->getFrontendUser());
+        }
+
+        if (isset($pid)) {
+            $order->setPid($pid);
+        }
+
+        $this->emitSignal(__CLASS__, 'AfterOrderCreatedBeforeSaving', [
+                                       $order,
+                                       $productsQuantityData,
+                                       $orderProducts,
+                                       $orderConfiguration,
+                                       $this
+                                   ]);
+
+        $this->orderRepository->add($order);
+
+        return $order;
+    }
+
+    /**
+     * Prepare order fields for serialization
+     *
+     * @param OrderConfiguration $orderConfiguration
+     *
+     * @return array
+     */
+    protected function getOrderFormFieldsForSerialization(OrderConfiguration $orderConfiguration): array
+    {
+        $orderFields = [];
+        /** @var OrderFormField $formField */
+        foreach ($orderConfiguration->getFormFields() as $formField) {
+            $orderFields[$formField->getName()] = [
+                'value' => $formField->getValueAsText(),
+                'type' => $formField->getType(),
+                'label' => $formField->getLabel()
+            ];
+        }
+
+        return $orderFields;
+    }
+
+    /**
+     * Prepare order products for serialization
+     *
+     * @param array $orderProducts
+     *
+     * @return array
+     */
+    protected function getOrderProductsQuantityForSerialization(array $orderProducts): array
+    {
+        $processedOrderProducts = [];
+
+        foreach ($orderProducts as $productUid => $productQuantity) {
+            $productUid = (int)$productUid;
+            $productQuantity = (int)$productQuantity;
+
+            if ($productUid && $productQuantity) {
+                $processedOrderProducts[$productUid] = $productQuantity;
+            }
+        }
+
+        return $processedOrderProducts;
+    }
+
+    /**
+     * Send emails with order
+     *
+     * @param Order              $order
+     * @param OrderConfiguration $orderConfiguration
+     *
+     * @return void
+     */
+    protected function sendOrderEmail(Order $order, OrderConfiguration $orderConfiguration)
+    {
+        $adminTemplate = $this->settings['wishList']['orderForm']['adminEmailTemplatePath'] ?? '';
+        $userTemplate = $this->settings['wishList']['orderForm']['userEmailTemplatePath'] ?? '';
+
+        /** @var OrderMailService $orderMailService */
+        $orderMailService = GeneralUtility::makeInstance(OrderMailService::class);
+        $orderMailService->setSenderName($this->settings['email']['senderName'])->setSenderEmail($this->settings['email']['senderEmail']);
+
+        // Send email to admins
+        if (!empty($orderConfiguration->getAdminEmails())) {
+            $orderMailService->generateMailBody($adminTemplate, $order)->setSubject($this->translate('fe.adminEmail.orderForm.subject'))->setReceivers($orderConfiguration->getAdminEmailsArray())->send();
+        }
+
+        // Send email to user if enabled
+        if ($orderConfiguration->isEnabledEmailToUser()) {
+            $email = $orderConfiguration->getUserEmailFromFormFields();
+            if (!empty($email)) {
+                $orderMailService->generateMailBody($userTemplate, $order)->setSubject($this->translate('fe.userEmail.orderForm.subject'))->setReceivers([$email])->send();
+            }
+        }
+    }
+
+    /**
+     * Get list of products by cookie list
+     *
+     * @param string $cookieName
+     * @param int    $excludeProduct
+     * @param int    $limit
+     *
+     * @return array
+     */
+    protected function getProductsFromCookieList($cookieName, int $excludeProduct = 0, int $limit = 0)
+    {
+        $productUids = array_key_exists($cookieName, $_COOKIE) ? GeneralUtility::intExplode(',', $_COOKIE[$cookieName], true) : [];
+
+        $products = $this->getProductByUidsList($productUids, $excludeProduct);
+
+        if ($limit && count($products) > $limit) {
+            $products = array_slice($products, 0, $limit);
+        }
+
+        return $products;
+    }
+
+    /**
+     * Get product by uids list in same order
+     *
+     * @param array $productsUids
+     * @param int   $excludeProduct
+     *
+     * @return array
+     */
+    protected function getProductByUidsList(array $productsUids, int $excludeProduct = 0)
+    {
+        // remove product from list
+        if ($excludeProduct && in_array($excludeProduct, $productsUids)) {
+            $keys = array_keys($productsUids, $excludeProduct);
+            foreach ($keys as $key) {
+                unset($productsUids[$key]);
+            }
+        }
+
+        $products = $this->productRepository->findProductsByUids($productsUids);
+        if (is_object($products)) {
+            $products = $this->sortQueryResultsByUidList($products, $productsUids);
+        }
+
+        return $products;
+    }
+
+    /**
+     * Finish order text
+     * Show some successful texts
+     */
+    public function finishOrderAction()
+    {
+        ProductUtility::cleanOngoingOrderInfo();
+    }
+
+    /**
+     * Compare list cart
+     */
+    public function compareListCartAction()
+    {
+        // Nothing to do. Products are counted by JS to make action cacheable
+    }
+
+    /**
+     * Compare list of products
+     */
+    public function comparePreViewAction()
+    {
+        $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME) ?? [];
+
+        $this->view->assign('products', $this->getProductByUidsList($compareList));
+    }
+
+    /**
+     * Create compare view for products
+     */
+    public function compareViewAction()
+    {
+        $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME) ?? [];
+
+        $products = $this->getProductByUidsList($compareList);
+        $productAttributeSets = [];
+
+        /** @var Product $product */
+        foreach ($products as $product) {
+            /** @var AttributeSet $attributesGroupedBySet */
+            foreach ($product->getAttributesGroupedBySets() as $attributesGroupedBySet) {
+                if (!array_key_exists($attributesGroupedBySet->getUid(), $productAttributeSets)) {
+                    $productAttributeSets[$attributesGroupedBySet->getUid()] = [
+                        'attributeSet' => $attributesGroupedBySet
+                    ];
+                }
+            }
+        }
+
+        foreach ($productAttributeSets as &$attributeSet) {
+            $attributeSet['attributesListDiff'] = $this->generateAttributesDiffDataForProducts($products, $attributeSet['attributeSet']);
+        }
+
+        $this->view->assign('products', $this->getProductByUidsList($compareList))->assign('diffData', $productAttributeSets);
+    }
+
+    /**
      * Generate difference data for all products and attribute sets
      *
-     * @param array $products
+     * @param array        $products
      * @param AttributeSet $attributeSet
+     *
      * @return array
      */
     protected function generateAttributesDiffDataForProducts(array $products, AttributeSet $attributeSet)
@@ -743,19 +795,11 @@ class ProductController extends AbstractController
 
         /** @var Attribute $attribute */
         foreach ($attributeSet->getAttributes() as $attribute) {
-            if (!$attribute->isShowInCompare()
-                || GeneralUtility::inList(
-                    $this->settings['ignoreAttributeTypesInCompareView'],
-                    $attribute->getType()
-                )
-            ) {
+            if (!$attribute->isShowInCompare() || GeneralUtility::inList($this->settings['ignoreAttributeTypesInCompareView'], $attribute->getType())) {
                 continue;
             }
 
-            $diffData[$attribute->getUid()] = $this->getDiffValuesForProductsSingleAttribute(
-                $products,
-                $attribute
-            );
+            $diffData[$attribute->getUid()] = $this->getDiffValuesForProductsSingleAttribute($products, $attribute);
         }
 
         return $diffData;
@@ -764,8 +808,9 @@ class ProductController extends AbstractController
     /**
      * Get difference between products attribute
      *
-     * @param array $products
+     * @param array     $products
      * @param Attribute $attribute
+     *
      * @return array
      */
     protected function getDiffValuesForProductsSingleAttribute(array $products, Attribute $attribute)
@@ -819,287 +864,136 @@ class ProductController extends AbstractController
     }
 
     /**
-     * Create demand object
-     *
-     * @param array $settings
-     * @param string $class
-     * @return Demand
-     */
-    protected function createDemandFromSettings(
-        array $settings,
-        string $class = null
-    ): DemandInterface {
-        $class = $class ??
-            (!empty($settings['demandClass'])
-                ? $settings['demandClass']
-                : 'Pixelant\\PxaProductManager\\Domain\\Model\\DTO\\Demand');
-
-        /** @var Demand $demand */
-        $demand = GeneralUtility::makeInstance($class);
-        if (!$demand instanceof Demand) {
-            throw new \UnexpectedValueException(
-                sprintf(
-                // @codingStandardsIgnoreStart
-                    'Demand object must instance of "Pixelant\\PxaProductManager\\Domain\\Model\\DTO\\Demand", but instance of "%s" given.',
-                    // @codingStandardsIgnoreEnd
-                    $class
-                ),
-                1539161115399
-            );
-        }
-
-        if (!empty($settings['demandCategories'])) {
-            $demand->setCategories($settings['demandCategories']);
-        }
-        if (!empty($settings['allowedCategoriesMode'])) {
-            $demand->setCategoryConjunction($settings['allowedCategoriesMode']);
-        }
-        if (isset($settings['limit'])) {
-            $demand->setLimit((int)$settings['limit']);
-        }
-        if (isset($settings['offSet'])) {
-            $demand->setOffSet((int)$settings['offSet']);
-        }
-        if (isset($settings['filters']) && is_array($settings['filters'])) {
-            $demand->setFilters($settings['filters']);
-        }
-        if (!empty($settings['includeDiscontinued'])) {
-            $demand->setIncludeDiscontinued((bool)$settings['includeDiscontinued']);
-        }
-
-        // set orderings
-        if (!empty($settings['orderProductBy'])) {
-            $demand->setOrderBy($settings['orderProductBy']);
-        }
-        if (!empty($settings['orderProductDirection'])) {
-            $demand->setOrderDirection($settings['orderProductDirection']);
-        }
-        if (!empty($settings['orderByAllowed'])) {
-            $demand->setOrderByAllowed($settings['orderByAllowed']);
-        }
-
-        $this->emitSignal(__CLASS__, 'AfterDemandCreationBeforeReturn', [$demand, $settings]);
-
-        return $demand;
-    }
-
-    /**
-     * Count results for demand
-     *
-     * @param Demand $demand
-     * @return int
-     */
-    protected function countDemanded(Demand $demand)
-    {
-        // Count all products
-        // reset limit
-        $demand = clone ($demand);
-        $demand->setOffSet(0);
-        $demand->setLimit(0);
-
-        return $this->productRepository->countByDemand($demand);
-    }
-
-    /**
-     * Url for Ajax lazy loading
-     *
-     * @return string
-     */
-    protected function getLazyLoadingUrl()
-    {
-        $uri = $this->controllerContext->getUriBuilder();
-        $uri->reset()
-            ->setTargetPageUid(MainUtility::getTSFE()->id)
-            ->setTargetPageType($this->settings['lazyLoading']['pageType'])
-            ->setCreateAbsoluteUri(true);
-
-        return $uri->buildFrontendUri();
-    }
-
-    /**
-     * Add canonical url for product single view
-     * Make sure any other plugin adding it
-     *
-     * @param Product $product
-     */
-    protected function buildProductCanonicalUrl(Product $product)
-    {
-        $url = $this->linkBuilderService->buildForProduct(
-            $this->settings['pageUid'] ?: MainUtility::getTSFE()->id,
-            $product,
-            $product->getFirstCategory(),
-            false,
-            true // absolute
-        );
-
-        // add only absolute links
-        if (!empty($url)) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $this->response->addAdditionalHeaderData(
-                '<link rel="canonical" href="' . $url . '">'
-            );
-        }
-    }
-
-    /**
-     * Get list of products by cookie list
-     *
-     * @param string $cookieName
-     * @param int $excludeProduct
-     * @param int $limit
-     * @return array
-     */
-    protected function getProductsFromCookieList($cookieName, int $excludeProduct = 0, int $limit = 0)
-    {
-        $productUids = array_key_exists($cookieName, $_COOKIE)
-            ? GeneralUtility::intExplode(',', $_COOKIE[$cookieName], true)
-            : [];
-
-        $products = $this->getProductByUidsList($productUids, $excludeProduct);
-
-        if ($limit && count($products) > $limit) {
-            $products = array_slice($products, 0, $limit);
-        }
-
-        return $products;
-    }
-
-    /**
-     * Get product by uids list in same order
-     *
-     * @param array $productsUids
-     * @param int $excludeProduct
-     * @return array
-     */
-    protected function getProductByUidsList(array $productsUids, int $excludeProduct = 0)
-    {
-        // remove product from list
-        if ($excludeProduct && in_array($excludeProduct, $productsUids)) {
-            $keys = array_keys($productsUids, $excludeProduct);
-            foreach ($keys as $key) {
-                unset($productsUids[$key]);
-            }
-        }
-
-        $products = $this->productRepository->findProductsByUids($productsUids);
-        if (is_object($products)) {
-            $products = $this->sortQueryResultsByUidList($products, $productsUids);
-        }
-
-        return $products;
-    }
-
-    /**
-     * Error handling if no product entry is found
+     * promotion list action
      *
      * @return void
      */
-    protected function handleNoProductFoundError()
+    public function promotionListAction()
     {
-        // If configured, show custom message instead of standard 404
-        if ((int)$this->settings['enableMessageInsteadOfPage404'] !== 0) {
-            $this->forward('notFound');
-        } else {
-            MainUtility::getTSFE()->pageNotFoundAndExit('No product entry found.');
-        }
+        $this->settings['demandCategories'] = $this->getDemandCategories(GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true));
+
+        $demand = $this->createDemandFromSettings($this->settings);
+
+        $products = $this->productRepository->findDemanded($demand);
+
+        $this->view->assign('products', $products);
     }
 
     /**
-     * @return ValidatorResolver
+     * No found page
      */
-    protected function getValidatorResolver(): ValidatorResolver
+    public function notFoundAction()
     {
-        return GeneralUtility::makeInstance(ValidatorResolver::class);
     }
 
     /**
-     * @param Product $product
-     * @param array $buttons
-     * @return array
-     */
-    protected function getProductAdditionalButtons(Product $product, array $buttons = []): array
-    {
-        /**
-         * Generate additional buttons
-         * Should an array that follows this structure
-         * [
-         *     [
-         *         'name' => 'Do something',
-         *         'link' => 'https://www.example.com',
-         *         'classes' => [],
-         *         'order' => '100'
-         *     ],
-         *     [
-         *         'name' => 'Buy',
-         *         'link' => 'https://www.test.net',
-         *         'classes' => ['beauty', 'clarence'],
-         *         'order' => '20'
-         *     ],
-         * ]
-         *
-         * name - button text
-         * link - button link
-         * classes - array of additional button classes
-         * order - used to specify buttons order
-         */
-
-        // Add a signal slot so other extension could add additional buttons
-        $this->emitSignal(__CLASS__, 'BeforeProcessingAdditionalButtons', [$product, &$buttons]);
-
-        // Process
-        foreach ($buttons as &$button) {
-            $button['classes'] = empty($button['classes']) ? '' : implode(' ', $button['classes']);
-        }
-        unset($button);
-
-        // Sort
-        usort($buttons, function ($a, $b) {
-            return $a['order'] - $b['order'];
-        });
-
-        return $buttons;
-    }
-
-    /**
-     * Get preview product if argument exist
+     * action grouped list
      *
-     * @return null|Product
+     * @return void
      */
-    protected function getPreviewProduct()
+    public function groupedListAction()
     {
-        if ($this->request->hasArgument('product_preview')) {
-            $productPreview = (int)$this->request->getArgument('product_preview');
-            if ($productPreview > 0) {
-                if (isset($this->settings['showHiddenRecords'])
-                    && (int)$this->settings['showHiddenRecords'] === 1
-                ) {
-                    $this->allowHiddenRecords();
-                    $product = $this->productRepository->findByUid($productPreview, false);
-                } else {
-                    $product = $this->productRepository->findByUid($productPreview);
+        $groupedList = [];
+        $excludeCategories = GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true);
+
+        $category = $this->determinateCategory(MainUtility::getActiveCategoryFromRequest());
+
+        if ($category !== null) {
+            // if showCategoriesWithProducts, display products in just this category, not recursive
+            if ($this->settings['showCategoriesWithProducts']) {
+                $this->settings['demandCategories'] = [$category->getUid()];
+
+                $demand = $this->createDemandFromSettings($this->settings);
+                $products = $this->productRepository->findDemanded($demand);
+            }
+
+            /** @var QueryResultInterface $subCategories */
+            $subCategories = $this->categoryRepository->findByParent($category, $this->getOrderingsForCategories());
+
+            if ($subCategories->count() > 0) {
+                $groupedListIndex = 0;
+                $duplicateCategories = [];
+
+                foreach ($subCategories as $index => $subCategory) {
+                    $subCategoryUid = $subCategory->getUid();
+
+                    if (in_array($subCategoryUid, $excludeCategories, true)) {
+                        // excluded category, unset
+                        array_push($duplicateCategories, $index);
+                    } else {
+                        $subCategoryCategories = $this->categoryRepository->findByParent($subCategory);
+
+                        // if category doesn't have any sub categories, fetch products
+                        if ($subCategoryCategories->count() === 0) {
+                            $this->settings['demandCategories'] = [$subCategoryUid];
+                            $demand = $this->createDemandFromSettings($this->settings);
+                            $subCategoryProducts = $this->productRepository->findDemanded($demand);
+
+                            if ($subCategoryProducts->count() > 0) {
+                                // if category has products it will be displayed differently,
+                                // remove from "browse" categories
+                                array_push($duplicateCategories, $index);
+                                // add to grouped list instead
+                                $groupedList[$groupedListIndex]['category'] = $subCategory;
+                                $groupedList[$groupedListIndex]['products'] = $subCategoryProducts;
+                                $groupedList[$groupedListIndex]['categoryAttributes'] = 0;
+                                if ($subCategoryProducts->count() > 0) {
+                                    $groupedList[$groupedListIndex]['categoryAttributes'] = $subCategoryProducts->current()->getAttributes()->count();
+                                }
+                                $groupedListIndex++;
+                            }
+                        }
+                    }
                 }
+
+                // remove dublicate categories (added to groupedList)
+                if (!empty($duplicateCategories)) {
+                    foreach ($duplicateCategories as $index) {
+                        unset($subCategories[$index]);
+                    }
+                }
+            }
+
+            $this->view->assignMultiple([
+                                            'category' => $category,
+                                            'products' => $products ?? [],
+                                            'subCategories' => $subCategories,
+                                        ]);
+        }
+
+        $this->view->assign('groupedList', $groupedList ?? []);
+    }
+
+    /**
+     * List of custom products
+     *
+     * @return void
+     */
+    public function customProductsListAction()
+    {
+        $mode = $this->settings['customProductsList']['mode'];
+        $products = [];
+
+        // Products mode
+        if ($mode === 'products') {
+            $productsList = GeneralUtility::trimExplode(',', $this->settings['customProductsList']['productsToShow'], true);
+            $products = $this->getProductByUidsList($productsList);
+        }
+
+        // Category mode
+        if ($mode === 'category') {
+            $categories = GeneralUtility::trimExplode(',', $this->settings['customProductsList']['productsCategories'], true);
+            $this->view->assign('categories', $this->categoryRepository->findByUidList($categories));
+
+            // Get products
+            if (!empty($this->settings['customProductsList']['productsToShowWithinCategories'])) {
+                $productsList = GeneralUtility::trimExplode(',', $this->settings['customProductsList']['productsToShowWithinCategories'], true);
+                $products = $this->getProductByUidsList($productsList);
+            } else {
+                $products = $this->productRepository->findProductsByCategories($categories, ['tstamp' => QueryInterface::ORDER_DESCENDING], 'or', (int)$this->settings['limit']);
             }
         }
 
-        return $product ?? null;
-    }
-
-    /**
-     * Allow hidden content
-     */
-    protected function allowHiddenRecords()
-    {
-        $context = GeneralUtility::makeInstance(Context::class);
-        /** @var VisibilityAspect $visibilityAspect */
-        $visibilityAspect = $context->getAspect('visibility');
-
-        $newVisibilityAspect = GeneralUtility::makeInstance(
-            VisibilityAspect::class,
-            $visibilityAspect->includeHiddenPages(),
-            true,
-            $visibilityAspect->includeDeletedRecords()
-        );
-
-        $context->setAspect('visibility', $newVisibilityAspect);
+        $this->view->assign('products', $products);
     }
 }

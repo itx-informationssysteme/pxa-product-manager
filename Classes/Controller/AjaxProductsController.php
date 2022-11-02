@@ -33,6 +33,7 @@ use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 
 /**
  * Class AjaxProductsController
+ *
  * @package Pixelant\PxaProductManager\Controller
  */
 class AjaxProductsController extends ProductController
@@ -43,10 +44,7 @@ class AjaxProductsController extends ProductController
     public function initializeAjaxLazyListAction()
     {
         // allow to create Demand from arguments
-        $allowedProperties = GeneralUtility::trimExplode(
-            ',',
-            $this->settings['demand']['allowMapingProperties']
-        );
+        $allowedProperties = GeneralUtility::trimExplode(',', $this->settings['demand']['allowMapingProperties']);
 
         /** @var PropertyMappingConfiguration $demandConfiguration */
         $demandConfiguration = $this->arguments['demand']->getPropertyMappingConfiguration();
@@ -57,6 +55,7 @@ class AjaxProductsController extends ProductController
      * Ajax lazy loading
      *
      * @param Demand $demand
+     *
      * @return string Json formatted string
      */
     public function ajaxLazyListAction(Demand $demand)
@@ -68,8 +67,7 @@ class AjaxProductsController extends ProductController
         // Raw result is much faster for ajax ?
         $products = $this->productRepository->findDemanded($demand);
 
-        $productPid = $this->request->hasArgument('pagePid') ?
-            (int)$this->request->getArgument('pagePid') : 0;
+        $productPid = $this->request->hasArgument('pagePid') ? (int)$this->request->getArgument('pagePid') : 0;
 
         if ($productPid && $productPid !== (int)$this->settings['pagePid']) {
             $this->settings['pagePid'] = $productPid;
@@ -78,9 +76,7 @@ class AjaxProductsController extends ProductController
         }
 
         // Get available options if required
-        if ($this->request->hasArgument('hideFilterOptionsNoResult')
-            && !empty($this->request->getArgument('hideFilterOptionsNoResult'))
-        ) {
+        if ($this->request->hasArgument('hideFilterOptionsNoResult') && !empty($this->request->getArgument('hideFilterOptionsNoResult'))) {
             $filtersAvailableOptions = $this->createFiltersAvailableOptions($demand);
         }
 
@@ -108,13 +104,6 @@ class AjaxProductsController extends ProductController
      */
     public function latestVisitedAction(int $excludeProduct = 0)
     {
-        $this->view->assign(
-            'latestVisitedProducts',
-            $this->getProductsFromCookieList(
-                ProductUtility::LATEST_VISITED_COOKIE_NAME,
-                $excludeProduct,
-                (int)$this->settings['latestVisitedProductsLimit']
-            )
-        );
+        $this->view->assign('latestVisitedProducts', $this->getProductsFromCookieList(ProductUtility::LATEST_VISITED_COOKIE_NAME, $excludeProduct, (int)$this->settings['latestVisitedProductsLimit']));
     }
 }

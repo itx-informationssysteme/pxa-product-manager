@@ -1,7 +1,7 @@
 <?php
-defined('TYPO3_MODE') || die;
+defined('TYPO3') || die;
 
-call_user_func(function () {
+call_user_func(function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
 
     $tempColumns = [
@@ -57,41 +57,37 @@ call_user_func(function () {
         'pxapm_image' => [
             'exclude' => 1,
             'label' => $ll . 'sys_category.pxapm_image',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                'pxapm_image',
-                [
-                    'appearance' => [
-                        // @codingStandardsIgnoreStart
-                        'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
-                        'fileUploadAllowed' => false
-                        // @codingStandardsIgnoreEnd
-                    ],
-                    'foreign_match_fields' => [
-                        'fieldname' => 'pxapm_image',
-                        'tablenames' => 'sys_category',
-                        'table_local' => 'sys_file',
-                    ],
-                    'overrideChildTca' => [
-                        'types' => [
-                            '0' => [
-                                'showitem' => '
-                                --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig('pxapm_image', [
+                                                                                                                   'appearance' => [
+                                                                                                                       // @codingStandardsIgnoreStart
+                                                                                                                       'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
+                                                                                                                       'fileUploadAllowed' => false
+                                                                                                                       // @codingStandardsIgnoreEnd
+                                                                                                                   ],
+                                                                                                                   'foreign_match_fields' => [
+                                                                                                                       'fieldname' => 'pxapm_image',
+                                                                                                                       'tablenames' => 'sys_category',
+                                                                                                                       'table_local' => 'sys_file',
+                                                                                                                   ],
+                                                                                                                   'overrideChildTca' => [
+                                                                                                                       'types' => [
+                                                                                                                           '0' => [
+                                                                                                                               'showitem' => '
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
-                            ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                'showitem' => '
-                                --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                           ],
+                                                                                                                           \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                               'showitem' => '
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
-                            ]
-                        ]
-                    ],
-                    'maxitems' => 1,
-                    'behaviour' => [
-                        'allowLanguageSynchronization' => true
-                    ]
-                ],
-                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-            )
+                                                                                                                           ]
+                                                                                                                       ]
+                                                                                                                   ],
+                                                                                                                   'maxitems' => 1,
+                                                                                                                   'behaviour' => [
+                                                                                                                       'allowLanguageSynchronization' => true
+                                                                                                                   ]
+                                                                                                               ], $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])
         ],
         /* This field is mainly used for sorting */
         'pxapm_subcategories' => [
@@ -124,9 +120,7 @@ call_user_func(function () {
                 'renderType' => 'selectMultipleSideBySide',
                 'foreign_table' => 'tx_pxaproductmanager_domain_model_attributeset',
                 // @codingStandardsIgnoreStart
-                'foreign_table_where' =>  \Pixelant\PxaProductManager\Utility\TCAUtility::getAttributesSetsForeignTableWherePid() .
-                    ' AND tx_pxaproductmanager_domain_model_attributeset.sys_language_uid IN (-1,0)' .
-                    ' ORDER BY tx_pxaproductmanager_domain_model_attributeset.sorting',
+                'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TCAUtility::getAttributesSetsForeignTableWherePid() . ' AND tx_pxaproductmanager_domain_model_attributeset.sys_language_uid IN (-1,0)' . ' ORDER BY tx_pxaproductmanager_domain_model_attributeset.sorting',
                 // @codingStandardsIgnoreEnd
                 'MM' => 'tx_pxaproductmanager_category_attributeset_mm',
                 'size' => 10,
@@ -162,49 +156,44 @@ call_user_func(function () {
         'pxapm_banner_image' => [
             'exclude' => 1,
             'label' => $ll . 'sys_category.pxapm_banner_image',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                'pxapm_banner_image',
-                [
-                    'appearance' => [
-                        'createNewRelationLinkTitle' =>
-                            'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
-                        'showPossibleLocalizationRecords' => false,
-                        'showRemovedLocalizationRecords' => true,
-                        'showAllLocalizationLink' => false,
-                        'showSynchronizationLink' => false
-                    ],
-                    'foreign_match_fields' => [
-                        'fieldname' => 'pxapm_banner_image',
-                        'tablenames' => 'sys_category',
-                        'table_local' => 'sys_file',
-                    ],
-                    // @codingStandardsIgnoreStart
-                    'overrideChildTca' => [
-                        'types' => [
-                            '0' => [
-                                'showitem' => '
-                                --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig('pxapm_banner_image', [
+                                                                                                                          'appearance' => [
+                                                                                                                              'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
+                                                                                                                              'showPossibleLocalizationRecords' => false,
+                                                                                                                              'showRemovedLocalizationRecords' => true,
+                                                                                                                              'showAllLocalizationLink' => false,
+                                                                                                                              'showSynchronizationLink' => false
+                                                                                                                          ],
+                                                                                                                          'foreign_match_fields' => [
+                                                                                                                              'fieldname' => 'pxapm_banner_image',
+                                                                                                                              'tablenames' => 'sys_category',
+                                                                                                                              'table_local' => 'sys_file',
+                                                                                                                          ],
+                                                                                                                          // @codingStandardsIgnoreStart
+                                                                                                                          'overrideChildTca' => [
+                                                                                                                              'types' => [
+                                                                                                                                  '0' => [
+                                                                                                                                      'showitem' => '
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
-                            ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
-                                'showitem' => '
-                                --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                  ],
+                                                                                                                                  \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                                                                                                                                      'showitem' => '
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
-                            ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                'showitem' => '
-                                --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
+                                                                                                                                  ],
+                                                                                                                                  \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                                      'showitem' => '
+                                --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                                 --palette--;;filePalette'
-                            ]
-                        ]
-                    ],
-                    // @codingStandardsIgnoreEnd
-                    'behaviour' => [
-                        'allowLanguageSynchronization' => true
-                    ],
-                ],
-                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-            ),
+                                                                                                                                  ]
+                                                                                                                              ]
+                                                                                                                          ],
+                                                                                                                          // @codingStandardsIgnoreEnd
+                                                                                                                          'behaviour' => [
+                                                                                                                              'allowLanguageSynchronization' => true
+                                                                                                                          ],
+                                                                                                                      ], $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']),
         ],
         'pxapm_tax_rate' => [
             'exclude' => 0,
@@ -254,59 +243,33 @@ call_user_func(function () {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('sys_category', $tempColumns);
 
     // Additional fields
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
-        'sys_category',
-        '--div--;' . $ll . 'sys_category.additional_fields_tab,
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_category', '--div--;' . $ll . 'sys_category.additional_fields_tab,
         pxapm_image,
         pxapm_banner_image,
         pxapm_tax_rate,
         pxapm_card_view_template,
         pxapm_single_view_template,
-        pxapm_description',
-        '',
-        'after:items'
-    );
+        pxapm_description', '', 'after:items');
 
     // Attibutes
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
-        'sys_category',
-        '--div--;' . $ll . 'sys_category.attributes_tab,
-        pxapm_attributes_sets',
-        '',
-        'after:pxapm_description'
-    );
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_category', '--div--;' . $ll . 'sys_category.attributes_tab,
+        pxapm_attributes_sets', '', 'after:pxapm_description');
 
     // Subcategories
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
-        'sys_category',
-        '--div--;' . $ll . 'sys_category.subcategories_tab,
-        pxapm_subcategories',
-        '',
-        'after:pxapm_attributes'
-    );
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_category', '--div--;' . $ll . 'sys_category.subcategories_tab,
+        pxapm_subcategories', '', 'after:pxapm_attributes');
 
     // Metadata
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
-        'sys_category',
-        '--div--;' . $ll . 'sys_category.metadata_tab,
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_category', '--div--;' . $ll . 'sys_category.metadata_tab,
         meta_description,
         keywords,
-        alternative_title',
-        '',
-        'after:pxapm_subcategories'
-    );
+        alternative_title', '', 'after:pxapm_subcategories');
 
     // Slug
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
-        'sys_category',
-        'pxapm_slug',
-        '',
-        'after:title'
-    );
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('sys_category', 'pxapm_slug', '', 'after:title');
 
     if (!empty($categoryWhere = \Pixelant\PxaProductManager\Utility\TCAUtility::getCategoriesTCAWhereClause())) {
         $categoriesCongifuration = &$GLOBALS['TCA']['sys_category']['columns']['parent']['config'];
-        $categoriesCongifuration['foreign_table_where'] =
-            $categoryWhere . ' ' . $categoriesCongifuration['foreign_table_where'];
+        $categoriesCongifuration['foreign_table_where'] = $categoryWhere . ' ' . $categoriesCongifuration['foreign_table_where'];
     }
 });

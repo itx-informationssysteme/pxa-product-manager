@@ -9,6 +9,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class SolrIndexSingleAttributeValueTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\UserFunction
  */
 class SolrIndexSingleAttributeValueTest extends UnitTestCase
@@ -19,24 +20,11 @@ class SolrIndexSingleAttributeValueTest extends UnitTestCase
     protected $fixture;
 
     /**
-     * Setup
-     */
-    protected function setUp()
-    {
-        $this->fixture = $this->getMockBuilder(SolrIndexSingleAttributeValue::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getAttribute'])
-            ->getMock();
-    }
-
-    /**
      * @test
      */
     public function gettingAttributeValueWithoutIdentifierThrowsException()
     {
-        $this->expectException(
-            \UnexpectedValueException::class
-        );
+        $this->expectException(\UnexpectedValueException::class);
 
         $this->fixture->getSingleAttributeValue('', []);
     }
@@ -55,17 +43,14 @@ class SolrIndexSingleAttributeValueTest extends UnitTestCase
 
         $this->fixture->cObj = $cOj;
 
-        $this->fixture->expects($this->once())
-            ->method('getAttribute')
-            ->with('rsk')
-            ->willReturn(['uid' => 1, 'type' => Attribute::ATTRIBUTE_TYPE_INPUT]);
+        $this->fixture->expects($this->once())->method('getAttribute')->with('rsk')->willReturn([
+                                                                                                    'uid' => 1,
+                                                                                                    'type' => Attribute::ATTRIBUTE_TYPE_INPUT
+                                                                                                ]);
 
         $result = $this->fixture->getSingleAttributeValue('', $parameters);
 
-        $this->assertEquals(
-            $value,
-            $result
-        );
+        $this->assertEquals($value, $result);
     }
 
     /**
@@ -82,10 +67,10 @@ class SolrIndexSingleAttributeValueTest extends UnitTestCase
 
         $this->fixture->cObj = $cOj;
 
-        $this->fixture->expects($this->once())
-            ->method('getAttribute')
-            ->with('rsk')
-            ->willReturn(['uid' => 1, 'type' => Attribute::ATTRIBUTE_TYPE_CHECKBOX]);
+        $this->fixture->expects($this->once())->method('getAttribute')->with('rsk')->willReturn([
+                                                                                                    'uid' => 1,
+                                                                                                    'type' => Attribute::ATTRIBUTE_TYPE_CHECKBOX
+                                                                                                ]);
 
         $result = $this->fixture->getSingleAttributeValue('', $parameters);
 
@@ -106,17 +91,14 @@ class SolrIndexSingleAttributeValueTest extends UnitTestCase
 
         $this->fixture->cObj = $cOj;
 
-        $this->fixture->expects($this->once())
-            ->method('getAttribute')
-            ->with('rsk')
-            ->willReturn(['uid' => 1, 'type' => Attribute::ATTRIBUTE_TYPE_INPUT]);
+        $this->fixture->expects($this->once())->method('getAttribute')->with('rsk')->willReturn([
+                                                                                                    'uid' => 1,
+                                                                                                    'type' => Attribute::ATTRIBUTE_TYPE_INPUT
+                                                                                                ]);
 
         $result = $this->fixture->getSingleAttributeValue('', $parameters);
 
-        $this->assertEquals(
-            '',
-            $result
-        );
+        $this->assertEquals('', $result);
     }
 
     /**
@@ -133,17 +115,22 @@ class SolrIndexSingleAttributeValueTest extends UnitTestCase
 
         $this->fixture->cObj = $cOj;
 
-        $this->fixture->expects($this->once())
-            ->method('getAttribute')
-            ->with('rsk')
-            ->willReturn(['uid' => 1, 'type' => Attribute::ATTRIBUTE_TYPE_MULTISELECT]);
+        $this->fixture->expects($this->once())->method('getAttribute')->with('rsk')->willReturn([
+                                                                                                    'uid' => 1,
+                                                                                                    'type' => Attribute::ATTRIBUTE_TYPE_MULTISELECT
+                                                                                                ]);
 
         $result = $this->fixture->getSingleAttributeValue('', $parameters);
 
-        $this->assertEquals(
-            '',
-            $result
-        );
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * Setup
+     */
+    protected function setUp()
+    {
+        $this->fixture = $this->getMockBuilder(SolrIndexSingleAttributeValue::class)->disableOriginalConstructor()->setMethods(['getAttribute'])->getMock();
     }
 
     protected function tearDown()

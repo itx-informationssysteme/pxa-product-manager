@@ -54,6 +54,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class AbstractController
+ *
  * @package Pixelant\PxaProductManager\Controller
  */
 class AbstractController extends ActionController
@@ -135,6 +136,7 @@ class AbstractController extends ActionController
      * Get category
      *
      * @param int $category
+     *
      * @return Category|object
      */
     protected function determinateCategory($category = 0)
@@ -148,11 +150,7 @@ class AbstractController extends ActionController
         $category = $this->categoryRepository->findByUid($categoryUid ?? 0);
 
         if ($category === null) {
-            $this->addFlashMessage(
-                'Couldn\'t determine category, please check your selection.',
-                'Error',
-                FlashMessage::ERROR
-            );
+            $this->addFlashMessage('Couldn\'t determine category, please check your selection.', 'Error', FlashMessage::ERROR);
         }
 
         return $category;
@@ -166,45 +164,19 @@ class AbstractController extends ActionController
     protected function getNavigationTree()
     {
         $activeCategory = MainUtility::getActiveCategoryFromRequest();
-        $excludeCategories = GeneralUtility::intExplode(
-            ',',
-            $this->settings['excludeCategories'],
-            true
-        );
+        $excludeCategories = GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true);
 
         /** @var CategoriesNavigationTreeBuilder $treeBuilder */
         $treeBuilder = GeneralUtility::makeInstance(CategoriesNavigationTreeBuilder::class);
 
-        $treeBuilder
-            ->setExpandAll((bool)$this->settings['navigationExpandAll'])
-            ->setHideCategoriesWithoutProducts((bool)$this->settings['navigationHideCategoriesWithoutProducts'])
-            ->setExcludeCategories($excludeCategories);
+        $treeBuilder->setExpandAll((bool)$this->settings['navigationExpandAll'])->setHideCategoriesWithoutProducts((bool)$this->settings['navigationHideCategoriesWithoutProducts'])->setExcludeCategories($excludeCategories);
 
         // set custom order
         if (!empty($orderings = $this->getOrderingsForCategories())) {
             $treeBuilder->setOrderings($orderings);
         }
 
-        return $treeBuilder->buildTree(
-            (int)$this->settings['category'],
-            $activeCategory
-        );
-    }
-
-    /**
-     * Generate root line array of demand categories
-     *
-     * @param array $allowedCategories
-     * @param array $excludeCategories
-     * @return array
-     */
-    protected function getDemandCategories(array $allowedCategories = [], array $excludeCategories = [])
-    {
-        $allowedCategories = CategoryUtility::getCategoriesRootLine(
-            $allowedCategories
-        );
-
-        return array_diff($allowedCategories, $excludeCategories);
+        return $treeBuilder->buildTree((int)$this->settings['category'], $activeCategory);
     }
 
     /**
@@ -232,21 +204,25 @@ class AbstractController extends ActionController
     }
 
     /**
-     * Translate label
+     * Generate root line array of demand categories
      *
-     * @param string $key
-     * @param array $arguments
-     * @return string
+     * @param array $allowedCategories
+     * @param array $excludeCategories
+     *
+     * @return array
      */
-    protected function translate(string $key, array $arguments = null): string
+    protected function getDemandCategories(array $allowedCategories = [], array $excludeCategories = [])
     {
-        return LocalizationUtility::translate($key, 'PxaProductManager', $arguments) ?? '';
+        $allowedCategories = CategoryUtility::getCategoriesRootLine($allowedCategories);
+
+        return array_diff($allowedCategories, $excludeCategories);
     }
 
     /**
      * Create object with available filters options
      *
      * @param Demand $demand
+     *
      * @return FiltersAvailableOptions
      */
     protected function createFiltersAvailableOptions(Demand $demand): FiltersAvailableOptions
@@ -259,12 +235,8 @@ class AbstractController extends ActionController
         $allAvailableProducts = $this->productRepository->findDemandedRaw($filtersDemand);
 
         // Set for non active filters
-        $filtersAvailableOptions->setAvailableCategoriesForAll(
-            $this->getAvailableFilteringCategoriesForProducts($allAvailableProducts)
-        );
-        $filtersAvailableOptions->setAvailableAttributesForAll(
-            $this->getAvailableFilteringAttributesOptionsForProducts($allAvailableProducts)
-        );
+        $filtersAvailableOptions->setAvailableCategoriesForAll($this->getAvailableFilteringCategoriesForProducts($allAvailableProducts));
+        $filtersAvailableOptions->setAvailableAttributesForAll($this->getAvailableFilteringAttributesOptionsForProducts($allAvailableProducts));
         // Now get results per filter
         $demandFilters = $filtersDemand->getFilters();
         foreach ($demandFilters as $key => $demandFilter) {
@@ -284,15 +256,9 @@ class AbstractController extends ActionController
                 // Get result for new filters
                 $allAvailableProductsVariant = $this->productRepository->findDemandedRaw($filtersDemand);
                 if ($filter->getType() === Filter::TYPE_CATEGORIES) {
-                    $filtersAvailableOptions->setAvailableCategoriesForFilter(
-                        $filter->getUid(),
-                        $this->getAvailableFilteringCategoriesForProducts($allAvailableProductsVariant)
-                    );
+                    $filtersAvailableOptions->setAvailableCategoriesForFilter($filter->getUid(), $this->getAvailableFilteringCategoriesForProducts($allAvailableProductsVariant));
                 } else {
-                    $filtersAvailableOptions->setAvailableAttributesForFilter(
-                        $filter->getUid(),
-                        $this->getAvailableFilteringAttributesOptionsForProducts($allAvailableProductsVariant)
-                    );
+                    $filtersAvailableOptions->setAvailableAttributesForFilter($filter->getUid(), $this->getAvailableFilteringAttributesOptionsForProducts($allAvailableProductsVariant));
                 }
             }
         }
@@ -301,9 +267,24 @@ class AbstractController extends ActionController
     }
 
     /**
+     * Get available categories for products query raw result
+     *
+     * @param array $productsRawResult
+     *
+     * @return array
+     */
+    protected function getAvailableFilteringCategoriesForProducts(array $productsRawResult): array
+    {
+        return $this->categoryRepository->getProductsCategoriesUids(array_map(function($item) {
+                                                                        return $item['uid'];
+                                                                    }, $productsRawResult));
+    }
+
+    /**
      * Remove options without products.
      *
      * @param array $products Raw data of products from DB
+     *
      * @return array
      */
     protected function getAvailableFilteringAttributesOptionsForProducts($products): array
@@ -314,10 +295,7 @@ class AbstractController extends ActionController
         foreach ($products as &$product) {
             if ($product['serialized_attributes_values']) {
                 $attributeValues = unserialize($product['serialized_attributes_values']);
-                $attributeUids = array_merge(
-                    $attributeUids,
-                    array_keys($attributeValues)
-                );
+                $attributeUids = array_merge($attributeUids, array_keys($attributeValues));
                 // Save unserialized
                 $product['attributesValues'] = $attributeValues;
             }
@@ -330,10 +308,7 @@ class AbstractController extends ActionController
                 foreach ($product['attributesValues'] as $attributeUid => $attributeValue) {
                     if (in_array($attributeUid, $attributeUids, true)) {
                         // save option uid
-                        $availableOptions = array_merge(
-                            $availableOptions,
-                            GeneralUtility::intExplode(',', $attributeValue, true)
-                        );
+                        $availableOptions = array_merge($availableOptions, GeneralUtility::intExplode(',', $attributeValue, true));
                     }
                 }
             }
@@ -343,70 +318,21 @@ class AbstractController extends ActionController
     }
 
     /**
-     * Get available categories for products query raw result
-     *
-     * @param array $productsRawResult
-     * @return array
-     */
-    protected function getAvailableFilteringCategoriesForProducts(array $productsRawResult): array
-    {
-        return $this->categoryRepository->getProductsCategoriesUids(
-            array_map(
-                function ($item) {
-                    return $item['uid'];
-                },
-                $productsRawResult
-            )
-        );
-    }
-
-    /**
      * Filter attribute uids by dropdown type
      *
      * @param array $attributeUids
+     *
      * @return array
      */
     protected function filterOutAttributeUidsNotDropDown(array $attributeUids): array
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-            'tx_pxaproductmanager_domain_model_attribute'
-        );
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_pxaproductmanager_domain_model_attribute');
 
         /** @noinspection PhpParamsInspection */
-        $queryBuilder->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
-        $statement = $queryBuilder
-            ->select('uid')
-            ->from('tx_pxaproductmanager_domain_model_attribute')
-            ->where(
-                $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->eq(
-                        'type',
-                        $queryBuilder->createNamedParameter(
-                            Attribute::ATTRIBUTE_TYPE_DROPDOWN,
-                            Connection::PARAM_INT
-                        )
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'type',
-                        $queryBuilder->createNamedParameter(
-                            Attribute::ATTRIBUTE_TYPE_MULTISELECT,
-                            Connection::PARAM_INT
-                        )
-                    )
-                ),
-                $queryBuilder->expr()->in(
-                    'uid',
-                    $queryBuilder->createNamedParameter(
-                        $attributeUids,
-                        Connection::PARAM_INT_ARRAY
-                    )
-                )
-            )
-            ->execute();
+        $statement = $queryBuilder->select('uid')->from('tx_pxaproductmanager_domain_model_attribute')->where($queryBuilder->expr()->orX($queryBuilder->expr()->eq('type', $queryBuilder->createNamedParameter(Attribute::ATTRIBUTE_TYPE_DROPDOWN, Connection::PARAM_INT)), $queryBuilder->expr()->eq('type', $queryBuilder->createNamedParameter(Attribute::ATTRIBUTE_TYPE_MULTISELECT, Connection::PARAM_INT))), $queryBuilder->expr()->in('uid', $queryBuilder->createNamedParameter($attributeUids, Connection::PARAM_INT_ARRAY)))->execute();
 
         $rows = [];
         while ($row = $statement->fetch()) {
@@ -454,10 +380,32 @@ class AbstractController extends ActionController
     }
 
     /**
+     * Translate label
+     *
+     * @param string $key
+     * @param array  $arguments
+     *
+     * @return string
+     */
+    protected function translate(string $key, array $arguments = null): string
+    {
+        return LocalizationUtility::translate($key, 'PxaProductManager', $arguments) ?? '';
+    }
+
+    /**
+     * @return object|PageRenderer
+     */
+    protected function getPageRenderer()
+    {
+        return GeneralUtility::makeInstance(PageRenderer::class);
+    }
+
+    /**
      * Sort query result according to uid list order
      *
      * @param QueryResultInterface $queryResults
-     * @param array $uidList
+     * @param array                $uidList
+     *
      * @return array
      */
     protected function sortQueryResultsByUidList(QueryResultInterface $queryResults, array $uidList): array
@@ -476,13 +424,5 @@ class AbstractController extends ActionController
         }
 
         return $result;
-    }
-
-    /**
-     * @return object|PageRenderer
-     */
-    protected function getPageRenderer()
-    {
-        return GeneralUtility::makeInstance(PageRenderer::class);
     }
 }

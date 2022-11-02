@@ -1,8 +1,8 @@
-(function (w, $) {
+(function(w, $) {
 	const ProductManager = w.ProductManager || {};
 
 	// Lazy loading main function
-	ProductManager.WishList = (function () {
+	ProductManager.WishList = (function() {
 		/**
 		 * Main settings
 		 */
@@ -40,7 +40,7 @@
 		 *
 		 * @param wishListSettings
 		 */
-		const init = function (wishListSettings) {
+		const init = function(wishListSettings) {
 			_initVars(wishListSettings);
 
 			initButtons($buttons);
@@ -64,7 +64,7 @@
 		 * @param wishListSettings
 		 * @private
 		 */
-		const _initVars = function (wishListSettings) {
+		const _initVars = function(wishListSettings) {
 			settings = wishListSettings;
 
 			$buttons = $(wishListSettings.buttonIdentifier + '.' + wishListSettings.loadingClass);
@@ -84,44 +84,49 @@
 		 * @param button
 		 * @private
 		 */
-		const _toggleWishListAjaxAction = function (button) {
+		const _toggleWishListAjaxAction = function(button) {
 			ajaxLoadingInProgress = true;
 
 			let parentToRemove = button.data('delete-parent-on-remove'),
 				productUid = parseInt(button.data('product-uid')),
 				uri = button.data('ajax-uri');
 
-			if (parentToRemove) {
+			if (parentToRemove)
+			{
 				parentToRemove = button.closest(parentToRemove);
 			}
 
 			button
-				.addClass(settings.loadingClass)
-				.prop('disabled', true);
+			.addClass(settings.loadingClass)
+			.prop('disabled', true);
 
 			$.ajax({
 				url: uri,
 				dataType: 'json'
-			}).done(function (data) {
-				if (data.success) {
+			}).done(function(data) {
+				if (data.success)
+				{
 					button
-						.toggleClass(settings.inListClass)
-						.toggleClass(settings.notInListClass)
-						.removeClass(settings.loadingClass)
-						.prop('disabled', false)
-						.find(settings.wishListButtonSingleView).text(data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'))
-						.attr('title', data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'));
+					.toggleClass(settings.inListClass)
+					.toggleClass(settings.notInListClass)
+					.removeClass(settings.loadingClass)
+					.prop('disabled', false)
+					.find(settings.wishListButtonSingleView).text(data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'))
+					.attr('title', data.inList ? button.data('remove-from-list-text') : button.data('add-to-list-text'));
 
-					if ($mainCart.length === 1 && data.inList) {
+					if ($mainCart.length === 1 && data.inList)
+					{
 						let itemImg = $('[data-fly-image="' + productUid + '"]');
 
-						if (itemImg.length === 1 && settings.enableFlyToCartAnimation) {
+						if (itemImg.length === 1 && settings.enableFlyToCartAnimation)
+						{
 							ProductManager.Main.flyToElement(itemImg, $mainCart);
 						}
 					}
 
-					if (parentToRemove.length === 1) {
-						parentToRemove.fadeOut('fast', function () {
+					if (parentToRemove.length === 1)
+					{
+						parentToRemove.fadeOut('fast', function() {
 							parentToRemove.remove();
 
 							// Update items after remove
@@ -135,10 +140,12 @@
 
 					ProductManager.Main.updateCartCounter($mainCartCounter, $cartCounters, data.inList ? 1 : -1);
 					ProductManager.Messanger.showSuccessMessage(data.message);
-				} else {
+				}
+				else
+				{
 					button
-						.removeClass(settings.loadingClass)
-						.prop('disabled', false);
+					.removeClass(settings.loadingClass)
+					.prop('disabled', false);
 
 					ProductManager.Messanger.showErrorMessage(data.message);
 				}
@@ -152,10 +159,10 @@
 						}
 					}
 				);
-			}).fail(function (jqXHR, textStatus) {
+			}).fail(function(jqXHR, textStatus) {
 				ProductManager.Messanger.showErrorMessage('Request failed: ' + textStatus);
 				console.log('Request failed: ' + textStatus);
-			}).always(function () {
+			}).always(function() {
 				ajaxLoadingInProgress = false;
 			});
 		};
@@ -166,8 +173,9 @@
 		 * @returns {boolean}
 		 * @private
 		 */
-		const _updateTotalPrice = function () {
-			if ($totalPrice.length === 0) {
+		const _updateTotalPrice = function() {
+			if ($totalPrice.length === 0)
+			{
 				return false;
 			}
 
@@ -180,13 +188,15 @@
 				decimalSep = format[1] || '.',
 				thousandsSep = format[2] || ',';
 
-			$orderItemsPrices.each(function () {
+			$orderItemsPrices.each(function() {
 				const $this = $(this);
 
 				let productUid = parseInt($this.data('product-uid'));
-				if (productUid > 0) {
+				if (productUid > 0)
+				{
 					let $amountItem = $(_convertClassToIdWithProductId(settings.orderItemAmountClass, productUid));
-					if ($amountItem.length === 1) {
+					if ($amountItem.length === 1)
+					{
 						let amount = parseInt($amountItem.val());
 						sum += amount * parseFloat($this.data('price'));
 					}
@@ -207,8 +217,9 @@
 		 * @returns {boolean}
 		 * @private
 		 */
-		const _updateTotalTax = function () {
-			if ($totalTax.length === 0) {
+		const _updateTotalTax = function() {
+			if ($totalTax.length === 0)
+			{
 				return false;
 			}
 
@@ -221,13 +232,15 @@
 				decimalSep = format[1] || '.',
 				thousandsSep = format[2] || ',';
 
-			$orderItemsTaxes.each(function () {
+			$orderItemsTaxes.each(function() {
 				const $this = $(this);
 
 				let productUid = parseInt($this.data('product-uid'));
-				if (productUid > 0) {
+				if (productUid > 0)
+				{
 					let $amountItem = $(_convertClassToIdWithProductId(settings.orderItemAmountClass, productUid));
-					if ($amountItem.length === 1) {
+					if ($amountItem.length === 1)
+					{
 						let amount = parseInt($amountItem.val());
 						sum += amount * parseFloat($this.data('tax'));
 					}
@@ -242,7 +255,7 @@
 			);
 		};
 
-		const _updatePriceAndTax = function () {
+		const _updatePriceAndTax = function() {
 			_updateTotalPrice();
 			_updateTotalTax();
 		};
@@ -253,16 +266,18 @@
 		 * @returns {boolean}
 		 * @private
 		 */
-		const _trackOrderAmountChanges = function () {
-			if ($orderItemsAmount.length === 0) {
+		const _trackOrderAmountChanges = function() {
+			if ($orderItemsAmount.length === 0)
+			{
 				return false;
 			}
 
-			$orderItemsAmount.on('change', function () {
+			$orderItemsAmount.on('change', function() {
 				const $this = $(this);
 				let value = parseInt($this.val());
 
-				if (value <= 0) {
+				if (value <= 0)
+				{
 					$this.val(1);
 				}
 
@@ -277,18 +292,20 @@
 		 * @returns {boolean}
 		 * @private
 		 */
-		const _saveCurrentStateOfAmountOfProducts = function () {
+		const _saveCurrentStateOfAmountOfProducts = function() {
 			let currentState = {};
 
-			if ($orderItemsAmount.length <= 0) {
+			if ($orderItemsAmount.length <= 0)
+			{
 				return false;
 			}
 
-			$orderItemsAmount.each(function () {
+			$orderItemsAmount.each(function() {
 				const $this = $(this);
 				let productUid = parseInt($this.data('product-uid'));
 
-				if (productUid > 0) {
+				if (productUid > 0)
+				{
 					currentState[productUid] = parseInt($this.val());
 				}
 			});
@@ -309,7 +326,7 @@
 		 * @returns {*}
 		 * @private
 		 */
-		const _convertClassToIdWithProductId = function (className, productUid) {
+		const _convertClassToIdWithProductId = function(className, productUid) {
 			return className.replace('.', '#') + '-' + productUid;
 		};
 
@@ -319,37 +336,41 @@
 		 * @param $buttons
 		 * @public
 		 */
-		const initButtons = function ($buttons) {
+		const initButtons = function($buttons) {
 			const productsWishList = ProductManager.Main.getCookie('pxa_pm_wish_list') || '';
 
-			$buttons.on('click', function (e) {
+			$buttons.on('click', function(e) {
 				e.preventDefault();
 
-				if (!ajaxLoadingInProgress) {
+				if (!ajaxLoadingInProgress)
+				{
 					_toggleWishListAjaxAction($(this));
 				}
 			});
 
-			$buttons.each(function () {
+			$buttons.each(function() {
 				let button = $(this),
 					productUid = parseInt(button.data('product-uid')),
 					text = '',
 					className = '';
 
-				if (ProductManager.Main.isInList(productsWishList, productUid)) {
+				if (ProductManager.Main.isInList(productsWishList, productUid))
+				{
 					text = button.data('remove-from-list-text');
 					className = settings.inListClass;
-				} else {
+				}
+				else
+				{
 					text = button.data('add-to-list-text');
 					className = settings.notInListClass;
 				}
 
 				button
-					.attr('title', text)
-					.removeClass(settings.loadingClass)
-					.removeClass(settings.initializationClass)
-					.addClass(className)
-					.find(settings.wishListButtonSingleView).text(text);
+				.attr('title', text)
+				.removeClass(settings.loadingClass)
+				.removeClass(settings.initializationClass)
+				.addClass(className)
+				.find(settings.wishListButtonSingleView).text(text);
 			});
 		};
 
@@ -358,7 +379,7 @@
 		 *
 		 * @return string
 		 */
-		const getSettings = function () {
+		const getSettings = function() {
 			return settings;
 		};
 

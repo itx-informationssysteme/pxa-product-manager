@@ -12,6 +12,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * Class AbstractMailService
+ *
  * @package Pixelant\PxaProductManager\Service
  */
 abstract class AbstractMailService
@@ -76,9 +77,20 @@ abstract class AbstractMailService
     }
 
     /**
+     * Init settings
+     */
+    protected function initPluginSettings()
+    {
+        /** @var ConfigurationManagerInterface $configurationManager */
+        $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
+        $this->pluginSettings = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+    }
+
+    /**
      * Send email
      *
      * @param string $format
+     *
      * @return bool
      * @throws OrderEmailException
      */
@@ -94,25 +106,22 @@ abstract class AbstractMailService
             throw new OrderEmailException('The option "senderEmail" must be set for the order email.', 1524229127393);
         }
 
-        $this->mailMessage
-            ->setFrom([$this->senderEmail => $this->senderName])
-            ->setTo($this->receivers)
-            ->setSubject($this->subject);
+        $this->mailMessage->setFrom([$this->senderEmail => $this->senderName])->setTo($this->receivers)->setSubject($this->subject);
 
         if ($format === self::FORMAT_PLAINTEXT) {
-            $this->mailMessage->setBody($this->message, 'text/plain');
+            $this->mailMessage->text($this->message);
         } else {
-            $this->mailMessage->setBody($this->message, 'text/html');
+            $this->mailMessage->html($this->message);
         }
 
         return $this->mailMessage->send() > 0;
     }
 
-
     /**
      * Generate email body
      *
      * @param array $variables
+     *
      * @return mixed
      */
     abstract public function generateMailBody(...$variables);
@@ -127,11 +136,13 @@ abstract class AbstractMailService
 
     /**
      * @param array $pluginSettings
+     *
      * @return AbstractMailService
      */
     public function setPluginSettings(array $pluginSettings)
     {
         $this->pluginSettings = $pluginSettings;
+
         return $this;
     }
 
@@ -145,11 +156,13 @@ abstract class AbstractMailService
 
     /**
      * @param string $senderName
+     *
      * @return AbstractMailService
      */
     public function setSenderName(string $senderName)
     {
         $this->senderName = $senderName;
+
         return $this;
     }
 
@@ -163,11 +176,13 @@ abstract class AbstractMailService
 
     /**
      * @param string $senderEmail
+     *
      * @return AbstractMailService
      */
     public function setSenderEmail(string $senderEmail)
     {
         $this->senderEmail = $senderEmail;
+
         return $this;
     }
 
@@ -181,11 +196,13 @@ abstract class AbstractMailService
 
     /**
      * @param array $receivers
+     *
      * @return AbstractMailService
      */
     public function setReceivers(array $receivers)
     {
         $this->receivers = $receivers;
+
         return $this;
     }
 
@@ -199,11 +216,13 @@ abstract class AbstractMailService
 
     /**
      * @param string $subject
+     *
      * @return AbstractMailService
      */
     public function setSubject(string $subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
@@ -217,24 +236,14 @@ abstract class AbstractMailService
 
     /**
      * @param string $message
+     *
      * @return AbstractMailService
      */
     public function setMessage(string $message)
     {
         $this->message = $message;
-        return $this;
-    }
 
-    /**
-     * Init settings
-     */
-    protected function initPluginSettings()
-    {
-        /** @var ConfigurationManagerInterface $configurationManager */
-        $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
-        $this->pluginSettings = $configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK
-        );
+        return $this;
     }
 
     /**
@@ -242,21 +251,17 @@ abstract class AbstractMailService
      *
      * @param string $templatePathAndFilename
      * @param string $templateName
+     *
      * @return StandaloneView
      * @throws OrderEmailException
      */
-    protected function initializeStandaloneView(
-        string $templatePathAndFilename = '',
-        string $templateName = ''
-    ): StandaloneView {
+    protected function initializeStandaloneView(string $templatePathAndFilename = '', string $templateName = ''): StandaloneView
+    {
         /** @var StandaloneView $standaloneView */
         $standaloneView = $this->objectManager->get(StandaloneView::class);
 
         if (empty($templatePathAndFilename) && empty($templateName)) {
-            throw new OrderEmailException(
-                'Either "$templatePathAndFilename" or "$templateName" must be set for the order email.',
-                1524229784912
-            );
+            throw new OrderEmailException('Either "$templatePathAndFilename" or "$templateName" must be set for the order email.', 1524229784912);
         }
 
         if (!empty($templatePathAndFilename)) {

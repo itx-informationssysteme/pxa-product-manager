@@ -1,23 +1,26 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 <div class="element-browser-panel element-browser-main">
-    <div class="element-browser-main-sidebar">
-        <div class="element-browser-body">
-            <f:format.raw>{tree}</f:format.raw>
-        </div>
-    </div>
-    <div class="element-browser-main-content">
-        <div class="element-browser-body">
-            <div class="link-browser-section">
-                <f:if condition="{expandActivePage}">
-                    <h2><f:translate key="LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:be.select_{tableName}" /></h2>
-                    <p>
-                        <f:format.raw>{activePageIcon}</f:format.raw> {activePageTitle}
-                    </p>
-                    <br>
-                    <f:format.raw>{dbListHTML}</f:format.raw>
-                </f:if>
-            </div>
-        </div>
-    </div>
+	<div class="element-browser-main-sidebar">
+		<div class="element-browser-body">
+			<f:format.raw>{tree}</f:format.raw>
+		</div>
+	</div>
+	<div class="element-browser-main-content">
+		<div class="element-browser-body">
+			<div class="link-browser-section">
+				<f:if condition="{expandActivePage}">
+					<h2>
+						<f:translate key="LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:be.select_{tableName}"/>
+					</h2>
+					<p>
+						<f:format.raw>{activePageIcon}</f:format.raw>
+						{activePageTitle}
+					</p>
+					<br>
+					<f:format.raw>{dbListHTML}</f:format.raw>
+				</f:if>
+			</div>
+		</div>
+	</div>
 </div>
 </html>

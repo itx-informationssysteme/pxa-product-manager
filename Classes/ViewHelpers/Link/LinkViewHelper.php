@@ -8,6 +8,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * Class LinkViewHelper
+ *
  * @package Pixelant\PxaProductManager\ViewHelpers\Link
  */
 class LinkViewHelper extends AbstractTagBasedViewHelper
@@ -58,9 +59,7 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      */
     public function render()
     {
-        $pageUid = empty($this->arguments['pageUid'])
-            ? (int)$GLOBALS['TSFE']->id
-            : (int)$this->arguments['pageUid'];
+        $pageUid = empty($this->arguments['pageUid']) ? (int)$GLOBALS['TSFE']->id : (int)$this->arguments['pageUid'];
         $product = $this->arguments['product'];
         $category = $this->arguments['category'];
         $target = $this->arguments['target'];
@@ -71,19 +70,9 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
 
         if ($pageUid && ($product !== null || $category !== null)) {
             if ($product !== null) {
-                $uri = $this->linkBuilderService->buildForProduct(
-                    $pageUid,
-                    $product,
-                    $category,
-                    $excludeCategories,
-                    $absolute
-                );
+                $uri = $this->linkBuilderService->buildForProduct($pageUid, $product, $category, $excludeCategories, $absolute);
             } else {
-                $uri = $this->linkBuilderService->buildForCategory(
-                    $pageUid,
-                    $category,
-                    $absolute
-                );
+                $uri = $this->linkBuilderService->buildForCategory($pageUid, $category, $absolute);
             }
 
             if (!empty($target)) {

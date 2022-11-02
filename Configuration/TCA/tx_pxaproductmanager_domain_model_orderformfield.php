@@ -1,7 +1,7 @@
 <?php
 defined('TYPO3_MODE') || die('Access denied.');
 
-return (function () {
+return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_orderformfield';
     $llCore = 'LLL:EXT:core/Resources/Private/Language/';
 
@@ -96,28 +96,30 @@ return (function () {
             ],
             'starttime' => [
                 'exclude' => true,
-                'label' => $llCore . 'locallang_general.xlf:LGL.starttime',
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
                 'config' => [
                     'type' => 'input',
-                    'size' => 13,
-                    'eval' => 'datetime,int',
                     'renderType' => 'inputDateTime',
-                    'default' => 0,
-                ]
+                    'eval' => 'datetime,int',
+                    'default' => 0
+                ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'endtime' => [
                 'exclude' => true,
-                'label' => $llCore . 'locallang_general.xlf:LGL.endtime',
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
                 'config' => [
                     'type' => 'input',
-                    'size' => 13,
+                    'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
                     'default' => 0,
-                    'renderType' => 'inputDateTime',
                     'range' => [
                         'upper' => mktime(0, 0, 0, 1, 1, 2038)
                     ]
                 ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'name' => [
                 'exclude' => 0,

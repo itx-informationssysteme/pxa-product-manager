@@ -27,13 +27,13 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\AttributeValue;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Image;
 use Pixelant\PxaProductManager\Domain\Model\Link;
 use Pixelant\PxaProductManager\Domain\Model\Product;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -41,11 +41,11 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Product.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -66,9 +66,7 @@ class ProductTest extends UnitTestCase
         $this->fixture = new Product();
 
         // Set plugin setup ts fetched in "MainUtility" called from Product model
-        $GLOBALS['TSFE'] = $this->createMock(
-            TypoScriptFrontendController::class
-        );
+        $GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
 
         $this->configuration = [
             'plugin.' => [
@@ -128,10 +126,7 @@ class ProductTest extends UnitTestCase
     public function getCategoriesReturnsInitialValueForCategories()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getCategories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getCategories());
     }
 
     /**
@@ -144,10 +139,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($category);
         $this->fixture->setCategories($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getCategories()
-        );
+        self::assertSame($objectStorage, $this->fixture->getCategories());
     }
 
     /**
@@ -160,10 +152,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($category);
         $this->fixture->addCategory($category);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getCategories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getCategories());
     }
 
     /**
@@ -178,10 +167,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addCategory($category);
         $this->fixture->removeCategory($category);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getCategories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getCategories());
     }
 
     /**
@@ -192,10 +178,7 @@ class ProductTest extends UnitTestCase
         $name = 'name';
         $this->fixture->setName($name);
 
-        self::assertEquals(
-            $name,
-            $this->fixture->getName()
-        );
+        self::assertEquals($name, $this->fixture->getName());
     }
 
     /**
@@ -214,10 +197,7 @@ class ProductTest extends UnitTestCase
         $value = 'slug';
         $this->fixture->setSlug($value);
 
-        $this->assertEquals(
-            $value,
-            $this->fixture->getSlug()
-        );
+        $this->assertEquals($value, $this->fixture->getSlug());
     }
 
     /**
@@ -228,10 +208,7 @@ class ProductTest extends UnitTestCase
         $sku = 'sku';
         $this->fixture->setSku($sku);
 
-        self::assertEquals(
-            $sku,
-            $this->fixture->getSku()
-        );
+        self::assertEquals($sku, $this->fixture->getSku());
     }
 
     /**
@@ -239,10 +216,7 @@ class ProductTest extends UnitTestCase
      */
     public function defaultPricesIsZero()
     {
-        $this->assertEquals(
-            0.00,
-            $this->fixture->getPrice()
-        );
+        $this->assertEquals(0.00, $this->fixture->getPrice());
     }
 
     /**
@@ -265,10 +239,7 @@ class ProductTest extends UnitTestCase
         $description = 'description';
         $this->fixture->setDescription($description);
 
-        self::assertEquals(
-            $description,
-            $this->fixture->getDescription()
-        );
+        self::assertEquals($description, $this->fixture->getDescription());
     }
 
     /**
@@ -279,10 +250,7 @@ class ProductTest extends UnitTestCase
         $disableSingleView = true;
         $this->fixture->setDisableSingleView($disableSingleView);
 
-        self::assertEquals(
-            $disableSingleView,
-            $this->fixture->isDisableSingleView()
-        );
+        self::assertEquals($disableSingleView, $this->fixture->isDisableSingleView());
     }
 
     /**
@@ -293,10 +261,7 @@ class ProductTest extends UnitTestCase
         $alternativeTitle = 'alternativeTitle';
         $this->fixture->setAlternativeTitle($alternativeTitle);
 
-        self::assertEquals(
-            $alternativeTitle,
-            $this->fixture->getAlternativeTitle()
-        );
+        self::assertEquals($alternativeTitle, $this->fixture->getAlternativeTitle());
     }
 
     /**
@@ -307,10 +272,7 @@ class ProductTest extends UnitTestCase
         $pathSegment = 'pathSegment';
         $this->fixture->setPathSegment($pathSegment);
 
-        self::assertEquals(
-            $pathSegment,
-            $this->fixture->getPathSegment()
-        );
+        self::assertEquals($pathSegment, $this->fixture->getPathSegment());
     }
 
     /**
@@ -321,10 +283,7 @@ class ProductTest extends UnitTestCase
         $keyWords = 'keyWords';
         $this->fixture->setKeywords($keyWords);
 
-        self::assertEquals(
-            $keyWords,
-            $this->fixture->getKeywords()
-        );
+        self::assertEquals($keyWords, $this->fixture->getKeywords());
     }
 
     /**
@@ -335,10 +294,7 @@ class ProductTest extends UnitTestCase
         $metaDescription = 'metaDescription';
         $this->fixture->setMetaDescription($metaDescription);
 
-        self::assertEquals(
-            $metaDescription,
-            $this->fixture->getMetaDescription()
-        );
+        self::assertEquals($metaDescription, $this->fixture->getMetaDescription());
     }
 
     /**
@@ -347,10 +303,7 @@ class ProductTest extends UnitTestCase
     public function getRelatedProductsReturnsInitialValueForRelatedProducts()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getRelatedProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getRelatedProducts());
     }
 
     /**
@@ -363,10 +316,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->setRelatedProducts($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getRelatedProducts()
-        );
+        self::assertSame($objectStorage, $this->fixture->getRelatedProducts());
     }
 
     /**
@@ -379,10 +329,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->addRelatedProduct($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getRelatedProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getRelatedProducts());
     }
 
     /**
@@ -397,10 +344,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addRelatedProduct($product);
         $this->fixture->removeRelatedProduct($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getRelatedProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getRelatedProducts());
     }
 
     /**
@@ -409,10 +353,7 @@ class ProductTest extends UnitTestCase
     public function getImagesReturnsInitialValueForImages()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getImages()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getImages());
     }
 
     /**
@@ -425,10 +366,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($image);
         $this->fixture->setImages($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getImages()
-        );
+        self::assertSame($objectStorage, $this->fixture->getImages());
     }
 
     /**
@@ -441,10 +379,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($image);
         $this->fixture->addImage($image);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getImages()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getImages());
     }
 
     /**
@@ -459,10 +394,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addImage($image);
         $this->fixture->removeImage($image);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getImages()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getImages());
     }
 
     /**
@@ -475,10 +407,7 @@ class ProductTest extends UnitTestCase
 
         $this->fixture->addImage($image);
 
-        self::assertSame(
-            $image,
-            $this->fixture->getMainImage()
-        );
+        self::assertSame($image, $this->fixture->getMainImage());
     }
 
     /**
@@ -491,10 +420,7 @@ class ProductTest extends UnitTestCase
 
         $this->fixture->addImage($image);
 
-        self::assertSame(
-            $image,
-            $this->fixture->getThumbnail()
-        );
+        self::assertSame($image, $this->fixture->getThumbnail());
     }
 
     /**
@@ -503,10 +429,7 @@ class ProductTest extends UnitTestCase
     public function getAttributeFilesReturnsInitialValueForAttributeImages()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributeFiles()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributeFiles());
     }
 
     /**
@@ -519,10 +442,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($image);
         $this->fixture->setAttributeFiles($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getAttributeFiles()
-        );
+        self::assertSame($objectStorage, $this->fixture->getAttributeFiles());
     }
 
     /**
@@ -531,10 +451,7 @@ class ProductTest extends UnitTestCase
     public function getLinksReturnsInitialValueForLinks()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getLinks());
     }
 
     /**
@@ -547,10 +464,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($link);
         $this->fixture->setLinks($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getLinks()
-        );
+        self::assertSame($objectStorage, $this->fixture->getLinks());
     }
 
     /**
@@ -563,10 +477,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($link);
         $this->fixture->addLink($link);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getLinks());
     }
 
     /**
@@ -581,10 +492,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addLink($link);
         $this->fixture->removeLink($link);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getLinks());
     }
 
     /**
@@ -593,10 +501,7 @@ class ProductTest extends UnitTestCase
     public function getSubProductsReturnsInitialValueForSubProducts()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getSubProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getSubProducts());
     }
 
     /**
@@ -609,10 +514,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->setSubProducts($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getSubProducts()
-        );
+        self::assertSame($objectStorage, $this->fixture->getSubProducts());
     }
 
     /**
@@ -625,10 +527,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->addSubProduct($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getSubProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getSubProducts());
     }
 
     /**
@@ -643,10 +542,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addSubProduct($product);
         $this->fixture->removeSubProduct($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getSubProducts()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getSubProducts());
     }
 
     /**
@@ -655,10 +551,7 @@ class ProductTest extends UnitTestCase
     public function getFalLinksReturnsInitialValueForFalLinks()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getFalLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getFalLinks());
     }
 
     /**
@@ -671,10 +564,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($falLink);
         $this->fixture->setFalLinks($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getFalLinks()
-        );
+        self::assertSame($objectStorage, $this->fixture->getFalLinks());
     }
 
     /**
@@ -687,10 +577,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($falLink);
         $this->fixture->addFalLink($falLink);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getFalLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getFalLinks());
     }
 
     /**
@@ -705,10 +592,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addFalLink($falLink);
         $this->fixture->removeFalLink($falLink);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getFalLinks()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getFalLinks());
     }
 
     /**
@@ -717,10 +601,7 @@ class ProductTest extends UnitTestCase
     public function getAttributesReturnsInitialValueForAttributes()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributes());
     }
 
     /**
@@ -733,10 +614,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($attribute);
         $this->fixture->setAttributes($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getAttributes()
-        );
+        self::assertSame($objectStorage, $this->fixture->getAttributes());
     }
 
     /**
@@ -749,10 +627,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($attribute);
         $this->fixture->addAttribute($attribute);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributes());
     }
 
     /**
@@ -767,10 +642,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addAttribute($attribute);
         $this->fixture->removeAttribute($attribute);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributes());
     }
 
     /**
@@ -788,26 +660,15 @@ class ProductTest extends UnitTestCase
 
         /** @var Product|MockObject $mockedProduct */
         $mockedProduct = $this->createPartialMock(Product::class, ['initializeAttributes']);
-        $mockedProduct->_setProperty(
-            'attributesIdentifiersArray',
-            [
-                123321 => $attribute,
-                'identifier' => $attribute2
-            ]
-        );
-        $mockedProduct
-            ->expects($this->atLeastOnce())
-            ->method('initializeAttributes');
+        $mockedProduct->_setProperty('attributesIdentifiersArray', [
+                                                                     123321 => $attribute,
+                                                                     'identifier' => $attribute2
+                                                                 ]);
+        $mockedProduct->expects($this->atLeastOnce())->method('initializeAttributes');
 
-        $this->assertEquals(
-            $value,
-            $mockedProduct->getAttribute(123321)->getValue()
-        );
+        $this->assertEquals($value, $mockedProduct->getAttribute(123321)->getValue());
 
-        $this->assertEquals(
-            $value2,
-            $mockedProduct->getAttribute('identifier')->getValue()
-        );
+        $this->assertEquals($value2, $mockedProduct->getAttribute('identifier')->getValue());
     }
 
     /**
@@ -817,13 +678,9 @@ class ProductTest extends UnitTestCase
     {
         /** @var Product|MockObject $mockedProduct */
         $mockedProduct = $this->createPartialMock(Product::class, ['initializeAttributes']);
-        $mockedProduct
-            ->expects($this->atLeastOnce())
-            ->method('initializeAttributes');
+        $mockedProduct->expects($this->atLeastOnce())->method('initializeAttributes');
 
-        $this->assertNull(
-            $mockedProduct->getAttribute('notExist')
-        );
+        $this->assertNull($mockedProduct->getAttribute('notExist'));
     }
 
     /**
@@ -833,9 +690,7 @@ class ProductTest extends UnitTestCase
     {
         /** @var Product|MockObject $mockedProduct */
         $mockedProduct = $this->createPartialMock(Product::class, ['initializeAttributes']);
-        $mockedProduct
-            ->expects($this->atLeastOnce())
-            ->method('initializeAttributes');
+        $mockedProduct->expects($this->atLeastOnce())->method('initializeAttributes');
 
         $mockedProduct->_setProperty('attributes', null);
 
@@ -849,9 +704,7 @@ class ProductTest extends UnitTestCase
     {
         /** @var Product|MockObject $mockedProduct */
         $mockedProduct = $this->createPartialMock(Product::class, ['initializeAttributes']);
-        $mockedProduct
-            ->expects($this->never())
-            ->method('initializeAttributes');
+        $mockedProduct->expects($this->never())->method('initializeAttributes');
 
         $mockedProduct->_setProperty('attributes', (new \stdClass()));
 
@@ -864,10 +717,7 @@ class ProductTest extends UnitTestCase
     public function getAttributeValuesReturnsInitialValueForAttributeValues()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributeValues()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributeValues());
     }
 
     /**
@@ -880,10 +730,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($attributeValue);
         $this->fixture->setAttributeValues($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getAttributeValues()
-        );
+        self::assertSame($objectStorage, $this->fixture->getAttributeValues());
     }
 
     /**
@@ -896,10 +743,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($attributeValue);
         $this->fixture->addAttributeValue($attributeValue);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributeValues()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributeValues());
     }
 
     /**
@@ -914,10 +758,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addAttributeValue($attributeValue);
         $this->fixture->removeAttributeValue($attributeValue);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributeValues()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributeValues());
     }
 
     /**
@@ -928,10 +769,7 @@ class ProductTest extends UnitTestCase
         $crdate = 1500454777453;
         $this->fixture->setCrdate($crdate);
 
-        self::assertEquals(
-            $crdate,
-            $this->fixture->getCrdate()
-        );
+        self::assertEquals($crdate, $this->fixture->getCrdate());
     }
 
     /**
@@ -942,10 +780,7 @@ class ProductTest extends UnitTestCase
         $tstamp = 1500454846848;
         $this->fixture->setTstamp($tstamp);
 
-        self::assertEquals(
-            $tstamp,
-            $this->fixture->getTstamp()
-        );
+        self::assertEquals($tstamp, $this->fixture->getTstamp());
     }
 
     /**
@@ -956,10 +791,7 @@ class ProductTest extends UnitTestCase
         $hidden = true;
         $this->fixture->setHidden($hidden);
 
-        self::assertEquals(
-            $hidden,
-            $this->fixture->getHidden()
-        );
+        self::assertEquals($hidden, $this->fixture->getHidden());
     }
 
     /**
@@ -970,10 +802,7 @@ class ProductTest extends UnitTestCase
         $deleted = true;
         $this->fixture->setDeleted($deleted);
 
-        self::assertEquals(
-            $deleted,
-            $this->fixture->getDeleted()
-        );
+        self::assertEquals($deleted, $this->fixture->getDeleted());
     }
 
     /**
@@ -984,10 +813,7 @@ class ProductTest extends UnitTestCase
         $serializedAttributesValues = serialize(['test']);
         $this->fixture->setSerializedAttributesValues($serializedAttributesValues);
 
-        self::assertEquals(
-            $serializedAttributesValues,
-            $this->fixture->getSerializedAttributesValues()
-        );
+        self::assertEquals($serializedAttributesValues, $this->fixture->getSerializedAttributesValues());
     }
 
     /**
@@ -998,10 +824,7 @@ class ProductTest extends UnitTestCase
         $attributeDescription = 'attributeDescription';
         $this->fixture->setAttributesDescription($attributeDescription);
 
-        self::assertEquals(
-            $attributeDescription,
-            $this->fixture->getAttributesDescription()
-        );
+        self::assertEquals($attributeDescription, $this->fixture->getAttributesDescription());
     }
 
     /**
@@ -1010,10 +833,7 @@ class ProductTest extends UnitTestCase
     public function getAccessoriesReturnsInitialValueForAccessories()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAccessories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAccessories());
     }
 
     /**
@@ -1026,10 +846,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->setAccessories($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getAccessories()
-        );
+        self::assertSame($objectStorage, $this->fixture->getAccessories());
     }
 
     /**
@@ -1042,10 +859,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($product);
         $this->fixture->addAccessory($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAccessories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAccessories());
     }
 
     /**
@@ -1060,10 +874,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addAccessory($product);
         $this->fixture->removeAccessory($product);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAccessories()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAccessories());
     }
 
     /**
@@ -1074,10 +885,7 @@ class ProductTest extends UnitTestCase
         $tstamp = new \DateTime();
         $this->fixture->setLaunched($tstamp);
 
-        self::assertEquals(
-            $tstamp,
-            $this->fixture->getLaunched()
-        );
+        self::assertEquals($tstamp, $this->fixture->getLaunched());
     }
 
     /**
@@ -1088,10 +896,7 @@ class ProductTest extends UnitTestCase
         $tstamp = new \DateTime();
         $this->fixture->setDiscontinued($tstamp);
 
-        self::assertEquals(
-            $tstamp,
-            $this->fixture->getDiscontinued()
-        );
+        self::assertEquals($tstamp, $this->fixture->getDiscontinued());
     }
 
     /**
@@ -1102,10 +907,7 @@ class ProductTest extends UnitTestCase
         $usp = 'unique selling point';
         $this->fixture->setUsp($usp);
 
-        self::assertEquals(
-            $usp,
-            $this->fixture->getUsp()
-        );
+        self::assertEquals($usp, $this->fixture->getUsp());
     }
 
     /**
@@ -1113,21 +915,15 @@ class ProductTest extends UnitTestCase
      */
     public function uspCanBeGetAsList()
     {
-        $usp = implode(
-            "\n",
-            [
-                'unique selling point 1',
-                'unique selling point 2'
-            ]
-        );
+        $usp = implode("\n", [
+                               'unique selling point 1',
+                               'unique selling point 2'
+                           ]);
         $uspAsList = explode("\n", $usp);
 
         $this->fixture->setUsp($usp);
 
-        self::assertEquals(
-            $uspAsList,
-            $this->fixture->getUspAsList()
-        );
+        self::assertEquals($uspAsList, $this->fixture->getUspAsList());
     }
 
     /**
@@ -1138,10 +934,7 @@ class ProductTest extends UnitTestCase
         $teaser = 'teaser';
         $this->fixture->setTeaser($teaser);
 
-        self::assertEquals(
-            $teaser,
-            $this->fixture->getTeaser()
-        );
+        self::assertEquals($teaser, $this->fixture->getTeaser());
     }
 
     /**
@@ -1152,10 +945,7 @@ class ProductTest extends UnitTestCase
         $additionalInformation = 'additional information';
         $this->fixture->setAdditionalInformation($additionalInformation);
 
-        self::assertEquals(
-            $additionalInformation,
-            $this->fixture->getAdditionalInformation()
-        );
+        self::assertEquals($additionalInformation, $this->fixture->getAdditionalInformation());
     }
 
     /**
@@ -1164,10 +954,7 @@ class ProductTest extends UnitTestCase
     public function getAssetsReturnsInitialValueForAssets()
     {
         $objectStorage = new ObjectStorage();
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAssets()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAssets());
     }
 
     /**
@@ -1180,10 +967,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($asset);
         $this->fixture->setAssets($objectStorage);
 
-        self::assertSame(
-            $objectStorage,
-            $this->fixture->getAssets()
-        );
+        self::assertSame($objectStorage, $this->fixture->getAssets());
     }
 
     /**
@@ -1196,10 +980,7 @@ class ProductTest extends UnitTestCase
         $objectStorage->attach($asset);
         $this->fixture->addAsset($asset);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAssets()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAssets());
     }
 
     /**
@@ -1214,10 +995,7 @@ class ProductTest extends UnitTestCase
         $this->fixture->addAsset($asset);
         $this->fixture->removeAsset($asset);
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAssets()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAssets());
     }
 
     /**
@@ -1225,15 +1003,9 @@ class ProductTest extends UnitTestCase
      */
     public function getIsNewCanBeFetched()
     {
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)
-            ->setMethods(['getSettings'])
-            ->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)
-            ->setMethods(['getConfiguration'])
-            ->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)
-            ->setMethods(array('isEnvironmentInFrontendMode'))
-            ->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);
@@ -1246,20 +1018,14 @@ class ProductTest extends UnitTestCase
         $launched->modify('-15 days');
         $this->fixture->setLaunched($launched);
 
-        self::assertEquals(
-            false,
-            $this->fixture->getIsNew()
-        );
+        self::assertEquals(false, $this->fixture->getIsNew());
 
         // verify that getIsNew returns true when we set launched to today -13 days
         $launched = new \DateTime();
         $launched->modify('-13 days');
         $this->fixture->setLaunched($launched);
 
-        self::assertEquals(
-            true,
-            $this->fixture->getIsNew()
-        );
+        self::assertEquals(true, $this->fixture->getIsNew());
     }
 
     /**
@@ -1267,22 +1033,13 @@ class ProductTest extends UnitTestCase
      */
     public function getAdditionalClassesCanBeFetched()
     {
-        $category = $this->getMockBuilder(Category::class)
-            ->setMethods(['getUid'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->getMockBuilder(Category::class)->setMethods(['getUid'])->disableOriginalConstructor()->getMock();
         $category->method('getUid')->will(self::returnValue(33));
         $this->fixture->addCategory($category);
 
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)
-            ->setMethods(['getSettings'])
-            ->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)
-            ->setMethods(['getConfiguration'])
-            ->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)
-            ->setMethods(array('isEnvironmentInFrontendMode'))
-            ->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);
@@ -1295,20 +1052,14 @@ class ProductTest extends UnitTestCase
         $launched->modify('-15 days');
         $this->fixture->setLaunched($launched);
 
-        self::assertEquals(
-            'class-33',
-            $this->fixture->getAdditionalClasses()
-        );
+        self::assertEquals('class-33', $this->fixture->getAdditionalClasses());
 
         // verify that getAdditionalClasses returns correct classes for "new" and category
         $launched = new \DateTime();
         $launched->modify('-13 days');
         $this->fixture->setLaunched($launched);
 
-        self::assertEquals(
-            'class-33 class-new',
-            $this->fixture->getAdditionalClasses()
-        );
+        self::assertEquals('class-33 class-new', $this->fixture->getAdditionalClasses());
     }
 
     /**
@@ -1319,10 +1070,7 @@ class ProductTest extends UnitTestCase
         $customSorting = 1910;
         $this->fixture->setCustomSorting($customSorting);
 
-        self::assertEquals(
-            $customSorting,
-            $this->fixture->getCustomSorting()
-        );
+        self::assertEquals($customSorting, $this->fixture->getCustomSorting());
     }
 
     /**
@@ -1334,9 +1082,6 @@ class ProductTest extends UnitTestCase
 
         $this->fixture->setTaxRate($value);
 
-        self::assertEquals(
-            $value,
-            $this->fixture->getTaxRate()
-        );
+        self::assertEquals($value, $this->fixture->getTaxRate());
     }
 }

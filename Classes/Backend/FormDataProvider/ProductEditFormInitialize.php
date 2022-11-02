@@ -42,6 +42,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
 
     /**
      * @param array $result
+     *
      * @return array
      */
     public function addData(array $result): array
@@ -62,17 +63,10 @@ class ProductEditFormInitialize implements FormDataProviderInterface
                 $this->simulateDataValues($attributeHolder->getAttributes()->toArray(), $result['databaseRow']);
 
                 if (is_array($result['defaultLanguageDiffRow'])) {
-                    $diffKey = sprintf(
-                        '%s:%d',
-                        $result['tableName'],
-                        $result['databaseRow']['uid']
-                    );
+                    $diffKey = sprintf('%s:%d', $result['tableName'], $result['databaseRow']['uid']);
 
                     if (array_key_exists($diffKey, $result['defaultLanguageDiffRow'])) {
-                        $this->setDiffData(
-                            $result['defaultLanguageDiffRow'][$diffKey],
-                            $result['defaultLanguageRow']
-                        );
+                        $this->setDiffData($result['defaultLanguageDiffRow'][$diffKey], $result['defaultLanguageRow']);
                     }
                 }
             } else {
@@ -88,7 +82,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
     /**
      * Add attributes configuration to TCA
      *
-     * @param array $attributesSets
+     * @param array  $attributesSets
      * @param array &$tca
      */
     protected function populateTCA(array $attributesSets, array &$tca)
@@ -118,13 +112,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
                         $label = '';
                     }
 
-                    $tcaConfigurationField = TCAUtility::getFalFieldTCAConfiguration(
-                        $field,
-                        $attributeUid,
-                        $attribute->getName(),
-                        $label,
-                        $allowedFileTypes
-                    );
+                    $tcaConfigurationField = TCAUtility::getFalFieldTCAConfiguration($field, $attributeUid, $attribute->getName(), $label, $allowedFileTypes);
                 } else {
                     $tcaConfigurationField = $this->attributeTCAConfiguration[$attributeType];
                 }
@@ -152,9 +140,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
                             $tca['columns'][$field]['config']['minitems'] = 1;
                             break;
                         default:
-                            $tca['columns'][$field]['config']['eval'] = $tca['columns'][$field]['config']['eval']
-                                ? $tca['columns'][$field]['config']['eval'] . ', required'
-                                : 'required';
+                            $tca['columns'][$field]['config']['eval'] = $tca['columns'][$field]['config']['eval'] ? $tca['columns'][$field]['config']['eval'] . ', required' : 'required';
                     }
                 }
 
@@ -162,21 +148,9 @@ class ProductEditFormInitialize implements FormDataProviderInterface
                 switch ($attributeType) {
                     case Attribute::ATTRIBUTE_TYPE_DROPDOWN:
                     case Attribute::ATTRIBUTE_TYPE_MULTISELECT:
-                        /** @var QueryBuilder $queryBuilder */
-                        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-                            'tx_pxaproductmanager_domain_model_option'
-                        );
+                        /** @var QueryBuilder $queryBuilder */ $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_pxaproductmanager_domain_model_option');
 
-                        $statement = $queryBuilder
-                            ->select('uid', 'value')
-                            ->from('tx_pxaproductmanager_domain_model_option')
-                            ->where(
-                                $queryBuilder->expr()->eq(
-                                    'attribute',
-                                    $queryBuilder->createNamedParameter($attributeUid)
-                                )
-                            )
-                            ->execute();
+                        $statement = $queryBuilder->select('uid', 'value')->from('tx_pxaproductmanager_domain_model_option')->where($queryBuilder->expr()->eq('attribute', $queryBuilder->createNamedParameter($attributeUid)))->execute();
 
                         $options = [];
                         while ($row = $statement->fetch()) {
@@ -220,11 +194,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
             }
 
             foreach ($tca['types'] as &$type) {
-                $type = str_replace(
-                    ',--palette--;;paletteAttributes',
-                    $productAttributesShow,
-                    $type
-                );
+                $type = str_replace(',--palette--;;paletteAttributes', $productAttributesShow, $type);
             }
         }
     }
@@ -251,18 +221,12 @@ class ProductEditFormInitialize implements FormDataProviderInterface
                 switch ($attribute->getType()) {
                     case Attribute::ATTRIBUTE_TYPE_DROPDOWN:
                     case Attribute::ATTRIBUTE_TYPE_MULTISELECT:
-                        $dbRow[$field] = GeneralUtility::trimExplode(
-                            ',',
-                            $attributeUidToValue[$attribute->getUid()],
-                            true
-                        );
+                        $dbRow[$field] = GeneralUtility::trimExplode(',', $attributeUidToValue[$attribute->getUid()], true);
                         break;
                     default:
                         $dbRow[$field] = $attributeUidToValue[$attribute->getUid()];
                 }
-            } elseif ($attribute->getDefaultValue()
-                && $attribute->getType() !== Attribute::ATTRIBUTE_TYPE_MULTISELECT
-            ) {
+            } elseif ($attribute->getDefaultValue() && $attribute->getType() !== Attribute::ATTRIBUTE_TYPE_MULTISELECT) {
                 $dbRow[$field] = $attribute->getDefaultValue();
             }
         }
@@ -297,17 +261,9 @@ class ProductEditFormInitialize implements FormDataProviderInterface
     protected function showNotificationMessage(string $label)
     {
         /** @var FlashMessage $flashMessage */
-        $flashMessage = GeneralUtility::makeInstance(
-            FlashMessage::class,
-            $this->translate($label),
-            $this->translate('tca.notification_title'),
-            FlashMessage::INFO,
-            true
-        );
+        $flashMessage = GeneralUtility::makeInstance(FlashMessage::class, $this->translate($label), $this->translate('tca.notification_title'), FlashMessage::INFO, true);
 
-        $flashMessageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier(
-            'core.template.flashMessages'
-        );
+        $flashMessageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier('core.template.flashMessages');
         $flashMessageQueue->enqueue($flashMessage);
     }
 }

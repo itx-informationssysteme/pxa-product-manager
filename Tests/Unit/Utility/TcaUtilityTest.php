@@ -8,6 +8,7 @@ use Pixelant\PxaProductManager\Utility\TCAUtility;
 
 /**
  * Class TcaUtility
+ *
  * @package Pixelant\PxaProductManager\Tests\Utility
  */
 class TcaUtilityTest extends UnitTestCase

@@ -4,8 +4,8 @@ namespace Pixelant\PxaProductManager\ViewHelpers\Product;
 
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /***************************************************************
@@ -35,28 +35,16 @@ class GetFalFilesByExtensionViewHelper extends AbstractViewHelper
     use CompileWithRenderStatic;
 
     /**
-     * Register arguments
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('product', 'object', 'Product model', true);
-        $this->registerArgument('extension', 'string', 'File extension look for', true);
-        $this->registerArgument('limit', 'int', 'Limit, 0 - unlimited', false, 0);
-    }
-
-    /**
      * Get product file by extension
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param array                     $arguments
+     * @param \Closure                  $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
+     *
      * @return array
      */
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): array {
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): array
+    {
         /** @var Product $product */
         $product = $arguments['product'];
         $extension = $arguments['extension'];
@@ -77,5 +65,15 @@ class GetFalFilesByExtensionViewHelper extends AbstractViewHelper
         }
 
         return $result;
+    }
+
+    /**
+     * Register arguments
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('product', 'object', 'Product model', true);
+        $this->registerArgument('extension', 'string', 'File extension look for', true);
+        $this->registerArgument('limit', 'int', 'Limit, 0 - unlimited', false, 0);
     }
 }

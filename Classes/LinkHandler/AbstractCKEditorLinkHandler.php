@@ -49,7 +49,7 @@ use TYPO3\CMS\Recordlist\Tree\View\LinkParameterProviderInterface;
  */
 // @codingStandardsIgnoreStart
 abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implements LinkHandlerInterface, LinkParameterProviderInterface
-// @codingStandardsIgnoreEnd
+    // @codingStandardsIgnoreEnd
 {
     /**
      * Parts of the current link
@@ -103,14 +103,26 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
             }
         }
 
-        GeneralUtility::makeInstance(PageRenderer::class)->loadRequireJsModule(
-            'TYPO3/CMS/PxaProductManager/Backend/LinkHandler'
-        );
+        GeneralUtility::makeInstance(PageRenderer::class)->loadRequireJsModule('TYPO3/CMS/PxaProductManager/Backend/LinkHandler');
 
         // Init variables
         $this->initLinkPartName();
         $this->initTableName();
     }
+
+    /**
+     * Init link part name
+     *
+     * @return void
+     */
+    abstract protected function initLinkPartName();
+
+    /**
+     * Init table name
+     *
+     * @return void
+     */
+    abstract protected function initTableName();
 
     /**
      * Checks if this is the handler for the given link
@@ -126,11 +138,7 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
         if (isset($linkParts['url'][$this->linkPartName])) {
             $this->linkParts = $linkParts;
 
-            $record = BackendUtility::getRecord(
-                $this->tableName,
-                (int)$this->linkParts['url'][$this->linkPartName],
-                'pid'
-            );
+            $record = BackendUtility::getRecord($this->tableName, (int)$this->linkParts['url'][$this->linkPartName], 'pid');
 
             // Save pid
             if ($record) {
@@ -153,12 +161,10 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
     public function render(ServerRequestInterface $request)
     {
         $this->view->setTemplateRootPaths([
-            10 => 'EXT:pxa_product_manager/Resources/Private/Backend/Templates/LinkBrowser/'
-        ]);
+                                              10 => 'EXT:pxa_product_manager/Resources/Private/Backend/Templates/LinkBrowser/'
+                                          ]);
 
-        $this->expandPage = isset($request->getQueryParams()['expandPage'])
-            ? (int)$request->getQueryParams()['expandPage']
-            : 0;
+        $this->expandPage = isset($request->getQueryParams()['expandPage']) ? (int)$request->getQueryParams()['expandPage'] : 0;
 
         $tsConfig = $GLOBALS['BE_USER']->getTSConfig();
 
@@ -171,9 +177,9 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
         $pageTree->addField('nav_title');
 
         $this->view->assignMultiple([
-            'tableName' => $this->tableName,
-            'tree' => $pageTree->getBrowsableTree()
-        ]);
+                                        'tableName' => $this->tableName,
+                                        'tree' => $pageTree->getBrowsableTree()
+                                    ]);
 
         $this->addRecordsOnExpandedPage($this->expandPage);
 
@@ -181,25 +187,54 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
     }
 
     /**
-     * @param array $values Values to be checked
+     * Assign list of records
      *
-     * @return bool Returns TRUE if the given values match the currently selected item
+     * @param $pageId
      */
-    public function isCurrentlySelectedItem(array $values)
+    protected function addRecordsOnExpandedPage($pageId)
     {
-        $compareToPid = $this->expandPage ?: $this->pid;
+        // If there is an anchor value (content element reference) in the element reference, then force an ID to expand:
+        if (!$pageId && isset($this->linkParts['url'][$this->linkPartName])) {
+            // Set to the current link page id.
+            $pageId = $this->pid;
+        }
+        // Draw the record list IF there is a page id to expand:
+        if ($pageId && MathUtility::canBeInterpretedAsInteger($pageId) && $this->getBackendUser()->isInWebMount($pageId)) {
+            $pageId = (int)$pageId;
 
-        return $compareToPid === (int)$values['pid'];
-    }
+            $activePageRecord = BackendUtility::getRecordWSOL('pages', $pageId);
+            $this->view->assign('expandActivePage', true);
 
-    /**
-     * Returns the URL of the current script
-     *
-     * @return string
-     */
-    public function getScriptUrl()
-    {
-        return $this->linkBrowser->getScriptUrl();
+            // Create header for listing, showing the page title/icon
+            $this->view->assign('activePage', $activePageRecord);
+            $this->view->assign('activePageTitle', BackendUtility::getRecordTitle('pages', $activePageRecord, true));
+            $this->view->assign('activePageIcon', $this->iconFactory->getIconForRecord('pages', $activePageRecord, Icon::SIZE_SMALL)->render());
+
+            $permsClause = $this->getBackendUser()->getPagePermsClause(Permission::PAGE_SHOW);
+            $pageInfo = BackendUtility::readPageAccess($pageId, $permsClause);
+
+            /** @var ElementBrowserRecordList $dbList */
+            $dbList = GeneralUtility::makeInstance(ElementBrowserRecordList::class);
+            $dbList->setOverrideUrlParameters($this->getUrlParameters([]));
+            $dbList->thisScript = $this->getScriptUrl();
+            $dbList->thumbs = false;
+            $dbList->setIsEditable(false);
+            $dbList->calcPerms = $this->getBackendUser()->calcPerms($pageInfo);
+            $dbList->noControlPanels = true;
+            $dbList->clickMenuEnabled = false;
+            $dbList->tableList = $this->tableName;
+            $dbList->hideTranslations = $this->tableName;
+
+            $dbList->start($pageId, GeneralUtility::_GP('table'), MathUtility::forceIntegerInRange(GeneralUtility::_GP('pointer'), 0, 100000), GeneralUtility::_GP('search_field'), GeneralUtility::_GP('search_levels'), GeneralUtility::_GP('showLimit'));
+
+            $dbList->setDispFields();
+            $dbList->generateList();
+
+            $dbListHTML = $dbList->getSearchBox();
+            $dbListHTML .= $dbList->HTMLcode;
+
+            $this->view->assign('dbListHTML', $dbListHTML);
+        }
     }
 
     /**
@@ -217,15 +252,37 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
     }
 
     /**
+     * Returns the URL of the current script
+     *
+     * @return string
+     */
+    public function getScriptUrl()
+    {
+        return $this->linkBrowser->getScriptUrl();
+    }
+
+    /**
+     * @param array $values Values to be checked
+     *
+     * @return bool Returns TRUE if the given values match the currently selected item
+     */
+    public function isCurrentlySelectedItem(array $values)
+    {
+        $compareToPid = $this->expandPage ?: $this->pid;
+
+        return $compareToPid === (int)$values['pid'];
+    }
+
+    /**
      * @return string[] Array of body-tag attributes
      */
     public function getBodyTagAttributes()
     {
         return [
             'data-typolink-template' => GeneralUtility::makeInstance(LinkService::class)->asString([
-                'type' => 'pxappm',
-                $this->linkPartName => '###RECORD_UID###'
-            ])
+                                                                                                       'type' => 'pxappm',
+                                                                                                       $this->linkPartName => '###RECORD_UID###'
+                                                                                                   ])
         ];
     }
 
@@ -237,114 +294,19 @@ abstract class AbstractCKEditorLinkHandler extends AbstractLinkHandler implement
     public function formatCurrentUrl(): string
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable($this->tableName);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
 
         /** @noinspection PhpParamsInspection */
-        $queryBuilder->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
-            ->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
+        $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class))->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
 
-        $record = $queryBuilder
-            ->select('*')
-            ->from($this->tableName)
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'uid',
-                    $queryBuilder->createNamedParameter($this->linkParts['url'][$this->linkPartName], \PDO::PARAM_INT)
-                )
-            )
-            ->execute()
-            ->fetch();
+        $record = $queryBuilder->select('*')->from($this->tableName)->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($this->linkParts['url'][$this->linkPartName], \PDO::PARAM_INT)))->execute()->fetch();
 
         if ($record) {
-            $title = BackendUtility::getRecordTitle(
-                $this->tableName,
-                $record,
-                true
-            );
+            $title = BackendUtility::getRecordTitle($this->tableName, $record, true);
 
             return $title . ' (id = ' . $this->linkParts['url'][$this->linkPartName] . ')';
         } else {
             return '';
         }
     }
-
-    /**
-     * Assign list of records
-     *
-     * @param $pageId
-     */
-    protected function addRecordsOnExpandedPage($pageId)
-    {
-        // If there is an anchor value (content element reference) in the element reference, then force an ID to expand:
-        if (!$pageId && isset($this->linkParts['url'][$this->linkPartName])) {
-            // Set to the current link page id.
-            $pageId = $this->pid;
-        }
-        // Draw the record list IF there is a page id to expand:
-        if ($pageId
-            && MathUtility::canBeInterpretedAsInteger($pageId) && $this->getBackendUser()->isInWebMount($pageId)
-        ) {
-            $pageId = (int)$pageId;
-
-            $activePageRecord = BackendUtility::getRecordWSOL('pages', $pageId);
-            $this->view->assign('expandActivePage', true);
-
-            // Create header for listing, showing the page title/icon
-            $this->view->assign('activePage', $activePageRecord);
-            $this->view->assign('activePageTitle', BackendUtility::getRecordTitle('pages', $activePageRecord, true));
-            $this->view->assign(
-                'activePageIcon',
-                $this->iconFactory->getIconForRecord('pages', $activePageRecord, Icon::SIZE_SMALL)->render()
-            );
-
-            $permsClause = $this->getBackendUser()->getPagePermsClause(Permission::PAGE_SHOW);
-            $pageInfo = BackendUtility::readPageAccess($pageId, $permsClause);
-
-            /** @var ElementBrowserRecordList $dbList */
-            $dbList = GeneralUtility::makeInstance(ElementBrowserRecordList::class);
-            $dbList->setOverrideUrlParameters($this->getUrlParameters([]));
-            $dbList->thisScript = $this->getScriptUrl();
-            $dbList->thumbs = false;
-            $dbList->setIsEditable(false);
-            $dbList->calcPerms = $this->getBackendUser()->calcPerms($pageInfo);
-            $dbList->noControlPanels = true;
-            $dbList->clickMenuEnabled = false;
-            $dbList->tableList = $this->tableName;
-            $dbList->hideTranslations = $this->tableName;
-
-            $dbList->start(
-                $pageId,
-                GeneralUtility::_GP('table'),
-                MathUtility::forceIntegerInRange(GeneralUtility::_GP('pointer'), 0, 100000),
-                GeneralUtility::_GP('search_field'),
-                GeneralUtility::_GP('search_levels'),
-                GeneralUtility::_GP('showLimit')
-            );
-
-            $dbList->setDispFields();
-            $dbList->generateList();
-
-            $dbListHTML = $dbList->getSearchBox();
-            $dbListHTML .= $dbList->HTMLcode;
-
-            $this->view->assign('dbListHTML', $dbListHTML);
-        }
-    }
-
-    /**
-     * Init link part name
-     *
-     * @return void
-     */
-    abstract protected function initLinkPartName();
-
-    /**
-     * Init table name
-     *
-     * @return void
-     */
-    abstract protected function initTableName();
 }

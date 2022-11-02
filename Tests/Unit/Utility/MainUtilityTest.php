@@ -3,13 +3,12 @@
 namespace Pixelant\PxaProductManager\Tests\Utility;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Pixelant\PxaProductManager\Controller\NavigationController;
 use Pixelant\PxaProductManager\Domain\Model\Category;
-use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Utility\MainUtility;
 
 /**
  * Class HelperFunctionsTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Utility
  */
 class MainUtilityTest extends UnitTestCase

@@ -17,6 +17,7 @@ class OrderEditFormInitialize implements FormDataProviderInterface
 {
     /**
      * @param array $result
+     *
      * @return array
      */
     public function addData(array $result): array
@@ -63,11 +64,7 @@ class OrderEditFormInitialize implements FormDataProviderInterface
         }
 
         // Add field to types
-        $result['processedTca']['types']['1']['showitem'] = str_replace(
-            '|order_fields|',
-            implode(',', array_keys($orderFields)),
-            $result['processedTca']['types']['1']['showitem']
-        );
+        $result['processedTca']['types']['1']['showitem'] = str_replace('|order_fields|', implode(',', array_keys($orderFields)), $result['processedTca']['types']['1']['showitem']);
 
         return $result;
     }

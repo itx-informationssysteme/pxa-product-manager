@@ -7,6 +7,7 @@ use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
 
 /**
  * Class InputFormField
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class InputFormField extends OrderFormField

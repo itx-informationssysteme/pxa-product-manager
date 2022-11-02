@@ -24,6 +24,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
@@ -131,21 +132,12 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $defaultValue = '';
-
-    /**
-     * Value for current product
-     *
-     * @var string|array
-     */
-    protected $value;
-
     /**
      * label
      *
      * @var \string
      */
     protected $label = '';
-
     /**
      * Icon
      *
@@ -180,6 +172,20 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
+     * As string return value.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if (is_array($this->value)) {
+            return implode(',', $this->value);
+        }
+
+        return (string)$this->value;
+    }
+
+    /**
      * Returns the name
      *
      * @return \string $name
@@ -193,6 +199,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the name
      *
      * @param \string $name
+     *
      * @return void
      */
     public function setName(string $name)
@@ -214,11 +221,22 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the type
      *
      * @param \integer $type
+     *
      * @return void
      */
     public function setType(int $type)
     {
         $this->type = $type;
+    }
+
+    /**
+     * Returns the boolean state of required
+     *
+     * @return boolean
+     */
+    public function isRequired(): bool
+    {
+        return $this->getRequired();
     }
 
     /**
@@ -235,6 +253,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the required
      *
      * @param boolean $required
+     *
      * @return void
      */
     public function setRequired(bool $required)
@@ -243,13 +262,13 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Returns the boolean state of required
+     * Returns the boolean state of showInAttributeListing
      *
      * @return boolean
      */
-    public function isRequired(): bool
+    public function isShowInAttributeListing(): bool
     {
-        return $this->getRequired();
+        return $this->getShowInAttributeListing();
     }
 
     /**
@@ -266,6 +285,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the showInAttributeListing
      *
      * @param boolean $showInAttributeListing
+     *
      * @return void
      */
     public function setShowInAttributeListing(bool $showInAttributeListing)
@@ -274,19 +294,10 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Returns the boolean state of showInAttributeListing
-     *
-     * @return boolean
-     */
-    public function isShowInAttributeListing(): bool
-    {
-        return $this->getShowInAttributeListing();
-    }
-
-    /**
      * Returns the identifier
      *
      * @param bool $strict
+     *
      * @return \string $identifier
      */
     public function getIdentifier(): string
@@ -298,6 +309,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the identifier
      *
      * @param \string $identifier
+     *
      * @return void
      */
     public function setIdentifier(string $identifier)
@@ -309,6 +321,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Adds a Option
      *
      * @param Option $option
+     *
      * @return void
      */
     public function addOption(Option $option)
@@ -320,6 +333,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Removes a Option
      *
      * @param Option $optionToRemove The Option to be removed
+     *
      * @return void
      */
     public function removeOption(Option $optionToRemove)
@@ -341,6 +355,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the options
      *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     *
      * @return void
      */
     public function setOptions(ObjectStorage $options)
@@ -359,17 +374,6 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Sets the showInCompare
-     *
-     * @param boolean $showInCompare
-     * @return void
-     */
-    public function setShowInCompare(bool $showInCompare)
-    {
-        $this->showInCompare = $showInCompare;
-    }
-
-    /**
      * Returns the boolean state of showInCompare
      *
      * @return boolean
@@ -379,6 +383,17 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         return $this->getShowInCompare();
     }
 
+    /**
+     * Sets the showInCompare
+     *
+     * @param boolean $showInCompare
+     *
+     * @return void
+     */
+    public function setShowInCompare(bool $showInCompare)
+    {
+        $this->showInCompare = $showInCompare;
+    }
 
     /**
      * Returns the defaultValue
@@ -394,6 +409,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the defaultValue
      *
      * @param \string $defaultValue
+     *
      * @return void
      */
     public function setDefaultValue(string $defaultValue)
@@ -463,6 +479,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the label
      *
      * @param \string $label
+     *
      * @return void
      */
     public function setLabel(string $label)
@@ -471,21 +488,10 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Sets the icon value
-     *
-     * @api
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $icon
-     */
-    public function setIcon(\TYPO3\CMS\Extbase\Domain\Model\FileReference $icon)
-    {
-        $this->icon = $icon;
-    }
-
-    /**
      * Gets the icon value
      *
-     * @api
      * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @api
      */
     public function getIcon()
     {
@@ -493,7 +499,20 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
+     * Sets the icon value
+     *
+     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $icon
+     *
+     * @api
+     */
+    public function setIcon(\TYPO3\CMS\Extbase\Domain\Model\FileReference $icon)
+    {
+        $this->icon = $icon;
+    }
+
+    /**
      * Check if attribute type is FAL file
+     *
      * @return bool
      */
     public function isFalType(): bool

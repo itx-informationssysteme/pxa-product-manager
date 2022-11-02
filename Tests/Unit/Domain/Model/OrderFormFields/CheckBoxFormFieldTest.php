@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model\OrderFormFields;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -10,6 +9,7 @@ use Pixelant\PxaProductManager\Domain\Model\OrderFormFields\CheckBoxFormField;
 
 /**
  * Class CheckBoxFormFieldTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Domain\Model\OrderFormFields
  */
 class CheckBoxFormFieldTest extends UnitTestCase
@@ -21,10 +21,7 @@ class CheckBoxFormFieldTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->fixture = $this
-            ->getMockBuilder(CheckBoxFormField::class)
-            ->setMethods(['translateKey'])
-            ->getMock();
+        $this->fixture = $this->getMockBuilder(CheckBoxFormField::class)->setMethods(['translateKey'])->getMock();
     }
 
     public function tearDown()
@@ -43,10 +40,7 @@ class CheckBoxFormFieldTest extends UnitTestCase
         $this->fixture->setValue($value);
         $this->fixture->setType(OrderFormField::FIELD_CHECKBOX);
 
-        $this->fixture
-            ->expects($this->once())
-            ->method('translateKey')
-            ->with($expectKey);
+        $this->fixture->expects($this->once())->method('translateKey')->with($expectKey);
 
         $this->fixture->getValueAsText();
     }

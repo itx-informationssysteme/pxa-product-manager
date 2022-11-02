@@ -167,6 +167,7 @@ class Category extends CategoryExtbase
      * setImage alias
      *
      * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $image
+     *
      * @return void
      */
     public function setImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image)
@@ -188,6 +189,7 @@ class Category extends CategoryExtbase
      * Set alternative title
      *
      * @param \string $alternativeTitle
+     *
      * @return void
      */
     public function setAlternativeTitle(string $alternativeTitle)
@@ -209,6 +211,7 @@ class Category extends CategoryExtbase
      * Set path segment
      *
      * @param \string $pathSegment
+     *
      * @return void
      */
     public function setPathSegment(string $pathSegment)
@@ -230,6 +233,7 @@ class Category extends CategoryExtbase
      * Set keywords
      *
      * @param \string $keywords keywords
+     *
      * @return void
      */
     public function setKeywords(string $keywords)
@@ -251,6 +255,7 @@ class Category extends CategoryExtbase
      * Set metaDescription
      *
      * @param string $metaDescription metaDescription
+     *
      * @return void
      */
     public function setMetaDescription(string $metaDescription)
@@ -272,6 +277,7 @@ class Category extends CategoryExtbase
      * Set Hidden
      *
      * @param boolean $hidden
+     *
      * @return void
      */
     public function setHidden(bool $hidden)
@@ -293,6 +299,7 @@ class Category extends CategoryExtbase
      * Set Deleted
      *
      * @param boolean $deleted
+     *
      * @return void
      */
     public function setDeleted(bool $deleted)
@@ -315,6 +322,7 @@ class Category extends CategoryExtbase
      * Sets the Attributes
      *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeSet> $attributeSets
+     *
      * @return void
      */
     // @codingStandardsIgnoreEnd
@@ -327,6 +335,7 @@ class Category extends CategoryExtbase
      * Adds a pxapmAttribute
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet
+     *
      * @return void
      */
     public function addAttributeSet(\Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet)
@@ -338,6 +347,7 @@ class Category extends CategoryExtbase
      * Removes a AttributeSet
      *
      * @param \Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet
+     *
      * @return void
      */
     public function removeAttributeSet(\Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet)
@@ -359,6 +369,7 @@ class Category extends CategoryExtbase
      * setBannerImage
      *
      * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $bannerImage
+     *
      * @return void
      */
     public function setBannerImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $bannerImage)
@@ -371,7 +382,7 @@ class Category extends CategoryExtbase
      *
      * @return float $pxaPmTaxRate
      */
-    public function getTaxRate() : float
+    public function getTaxRate(): float
     {
         return $this->taxRate;
     }
@@ -380,6 +391,7 @@ class Category extends CategoryExtbase
      * Sets the taxRate
      *
      * @param float $taxRate
+     *
      * @return void
      */
     public function setTaxRate(float $taxRate)
@@ -401,6 +413,7 @@ class Category extends CategoryExtbase
      * Set CardViewTemplate
      *
      * @param \string $cardViewTemplate CardViewTemplate
+     *
      * @return void
      */
     public function setCardViewTemplate(string $cardViewTemplate)
@@ -422,6 +435,7 @@ class Category extends CategoryExtbase
      * Set SingleViewTemplate
      *
      * @param \string $singleViewTemplate SingleViewTemplate
+     *
      * @return void
      */
     public function setSingleViewTemplate(string $singleViewTemplate)

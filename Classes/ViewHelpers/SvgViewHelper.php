@@ -1,9 +1,10 @@
 <?php
+
 namespace Pixelant\PxaProductManager\ViewHelpers;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /***************************************************************
@@ -40,35 +41,21 @@ class SvgViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * Initialize arguments
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('source', 'string', 'File path', true);
-        $this->registerArgument('class', 'string', 'Specifies an alternate class for the svg', false);
-        $this->registerArgument('width', 'int', 'Specifies a width for the svg', false);
-        $this->registerArgument('height', 'int', 'Specifies a height for the svg', false);
-    }
-
-    /**
      * Prepare svg output
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param array                     $arguments
+     * @param \Closure                  $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      *
      * @return string svg content
      */
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    {
         $arguments['source'] = ltrim($arguments['source'], '/');
         $sourceAbs = GeneralUtility::getFileAbsFileName($arguments['source']);
 
         if (!file_exists($sourceAbs)) {
-            return 'no SVG file on /'.$arguments['source'];
+            return 'no SVG file on /' . $arguments['source'];
         }
 
         return self::getInlineSvg($sourceAbs, $arguments);
@@ -76,7 +63,8 @@ class SvgViewHelper extends AbstractViewHelper
 
     /**
      * @param string $source
-     * @param array $arguments
+     * @param array  $arguments
+     *
      * @return string
      */
     protected static function getInlineSvg($source, $arguments)
@@ -101,5 +89,16 @@ class SvgViewHelper extends AbstractViewHelper
         }
 
         return $domXml->ownerDocument->saveXML($domXml->ownerDocument->documentElement);
+    }
+
+    /**
+     * Initialize arguments
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('source', 'string', 'File path', true);
+        $this->registerArgument('class', 'string', 'Specifies an alternate class for the svg', false);
+        $this->registerArgument('width', 'int', 'Specifies a width for the svg', false);
+        $this->registerArgument('height', 'int', 'Specifies a height for the svg', false);
     }
 }

@@ -10,11 +10,11 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\AttributeSet.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -44,10 +44,7 @@ class AttributeSetTest extends UnitTestCase
 
         $this->fixture->setName($name);
 
-        self::assertEquals(
-            $name,
-            $this->fixture->getName()
-        );
+        self::assertEquals($name, $this->fixture->getName());
     }
 
     /**
@@ -57,10 +54,7 @@ class AttributeSetTest extends UnitTestCase
     {
         $objectStorage = new ObjectStorage();
 
-        self::assertEquals(
-            $objectStorage,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorage, $this->fixture->getAttributes());
     }
 
     /**
@@ -74,10 +68,7 @@ class AttributeSetTest extends UnitTestCase
         $objectStorageWithOneAttribute->attach($attribute);
         $this->fixture->setAttributes($objectStorageWithOneAttribute);
 
-        self::assertSame(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributes()
-        );
+        self::assertSame($objectStorageWithOneAttribute, $this->fixture->getAttributes());
     }
 
     /**
@@ -91,10 +82,7 @@ class AttributeSetTest extends UnitTestCase
 
         $this->fixture->addAttribute($attribute);
 
-        self::assertEquals(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorageWithOneAttribute, $this->fixture->getAttributes());
     }
 
     /**
@@ -109,9 +97,6 @@ class AttributeSetTest extends UnitTestCase
         $this->fixture->addAttribute($attribute);
         $this->fixture->removeAttribute($attribute);
 
-        self::assertEquals(
-            $objectStorageWithOneAttribute,
-            $this->fixture->getAttributes()
-        );
+        self::assertEquals($objectStorageWithOneAttribute, $this->fixture->getAttributes());
     }
 }

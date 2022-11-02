@@ -30,6 +30,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
  * Class Demand
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class Demand implements DemandInterface

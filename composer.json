@@ -2,8 +2,12 @@
   "name": "pixelant/pxa-product-manager",
   "type": "typo3-cms-extension",
   "description": "Create and list products on a site.",
-  "license": ["GPL-2.0+"],
-  "keywords": ["TYPO3 CMS"],
+  "license": [
+    "GPL-2.0+"
+  ],
+  "keywords": [
+    "TYPO3 CMS"
+  ],
   "authors": [
     {
       "name": "Pixelant",
@@ -13,16 +17,13 @@
     }
   ],
   "require": {
-    "typo3/cms-core": "^9.5",
+    "typo3/cms-core": "^10.4",
     "php": ">=7.0.0"
   },
   "require-dev": {
-    "typo3/cms-seo": "^9.5",
-    "squizlabs/php_codesniffer": "^3.3",
-    "nimut/testing-framework": "^4.0"
-  },
-  "suggest": {
-    "pixelant/pxa-pm-importer": "Import products data from different sources"
+    "typo3/cms-seo": "^10.4",
+    "squizlabs/php_codesniffer": "^3.5.5",
+    "nimut/testing-framework": "^5.0.3"
   },
   "replace": {
     "pxa_product_manager": "self.version",
@@ -54,7 +55,8 @@
     },
     "typo3/cms": {
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
-      "web-dir": ".Build/Web"
+      "web-dir": ".Build/Web",
+      "extension-key": "pxa_product_manager"
     }
   }
 }

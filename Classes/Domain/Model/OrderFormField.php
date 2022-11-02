@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class OrderFormField
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class OrderFormField extends AbstractEntity
@@ -190,25 +191,21 @@ class OrderFormField extends AbstractEntity
     }
 
     /**
-     * @return string
-     */
-    public function getValidationRules(): string
-    {
-        return $this->validationRules;
-    }
-
-    /**
      * Explode validation rules
      *
      * @return array
      */
     public function getValidationRulesArray(): array
     {
-        return GeneralUtility::trimExplode(
-            ',',
-            $this->getValidationRules(),
-            true
-        );
+        return GeneralUtility::trimExplode(',', $this->getValidationRules(), true);
+    }
+
+    /**
+     * @return string
+     */
+    public function getValidationRules(): string
+    {
+        return $this->validationRules;
     }
 
     /**
@@ -292,17 +289,6 @@ class OrderFormField extends AbstractEntity
     }
 
     /**
-     * Translate key, wrapper for testing
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function translateKey(string $key): string
-    {
-        return LocalizationUtility::translate($key, 'PxaProductManager') ?? '';
-    }
-
-    /**
      * Get value depending on field type
      *
      * @return string
@@ -310,5 +296,17 @@ class OrderFormField extends AbstractEntity
     public function getValueAsText(): string
     {
         return $this->value;
+    }
+
+    /**
+     * Translate key, wrapper for testing
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function translateKey(string $key): string
+    {
+        return LocalizationUtility::translate($key, 'PxaProductManager') ?? '';
     }
 }

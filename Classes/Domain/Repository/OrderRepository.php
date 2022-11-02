@@ -35,6 +35,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class OrderRepository
+ *
  * @package Pixelant\PxaProductManager\Domain\Repository
  */
 class OrderRepository extends Repository
@@ -42,9 +43,9 @@ class OrderRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'crdate' => QueryInterface::ORDER_DESCENDING
-    );
+    ];
 
     /**
      * Set default query settings
@@ -64,7 +65,8 @@ class OrderRepository extends Repository
      * Get order for tab
      *
      * @param string $tab
-     * @param array $storage
+     * @param array  $storage
+     *
      * @return QueryResultInterface
      * @throws UnknownOrdersTabException
      */
@@ -83,48 +85,10 @@ class OrderRepository extends Repository
     }
 
     /**
-     * Find all order in current root line
-     *
-     * @param array $customStorage
-     * @return QueryResultInterface
-     */
-    public function findCompleted(array $customStorage = []): QueryResultInterface
-    {
-        $query = $this->createQuery();
-        $this->setCustomStorage($query, $customStorage);
-
-        $query->matching(
-            $query->equals('complete', true)
-        );
-
-        return $query->execute();
-    }
-
-    /**
-     * Find all archived orders in current root line
-     * @param array $customStorage
-     * @return QueryResultInterface
-     */
-    public function findArchived(array $customStorage = []): QueryResultInterface
-    {
-        $query = $this->createQuery();
-        $query->getQuerySettings()
-            ->setIgnoreEnableFields(true)
-            ->setEnableFieldsToBeIgnored(['disabled']);
-
-        $this->setCustomStorage($query, $customStorage);
-
-        $query->matching(
-            $query->equals('hidden', true)
-        );
-
-        return $query->execute();
-    }
-
-    /**
      * Find all un-completed
      *
      * @param array $customStorage
+     *
      * @return QueryResultInterface
      */
     public function findActive(array $customStorage = []): QueryResultInterface
@@ -132,9 +96,56 @@ class OrderRepository extends Repository
         $query = $this->createQuery();
         $this->setCustomStorage($query, $customStorage);
 
-        $query->matching(
-            $query->equals('complete', false)
-        );
+        $query->matching($query->equals('complete', false));
+
+        return $query->execute();
+    }
+
+    /**
+     * Override storage of query
+     *
+     * @param QueryInterface $query
+     * @param array          $customStorage
+     */
+    protected function setCustomStorage(QueryInterface $query, array $customStorage)
+    {
+        if (!empty($customStorage)) {
+            $query->getQuerySettings()->setStoragePageIds($customStorage);
+        }
+    }
+
+    /**
+     * Find all order in current root line
+     *
+     * @param array $customStorage
+     *
+     * @return QueryResultInterface
+     */
+    public function findCompleted(array $customStorage = []): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        $this->setCustomStorage($query, $customStorage);
+
+        $query->matching($query->equals('complete', true));
+
+        return $query->execute();
+    }
+
+    /**
+     * Find all archived orders in current root line
+     *
+     * @param array $customStorage
+     *
+     * @return QueryResultInterface
+     */
+    public function findArchived(array $customStorage = []): QueryResultInterface
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setIgnoreEnableFields(true)->setEnableFieldsToBeIgnored(['disabled']);
+
+        $this->setCustomStorage($query, $customStorage);
+
+        $query->matching($query->equals('hidden', true));
 
         return $query->execute();
     }
@@ -143,37 +154,17 @@ class OrderRepository extends Repository
      * Find by id, even hidden
      *
      * @param int $uid
+     *
      * @return Order|null
      */
     public function findByIdIgnoreHidden(int $uid)
     {
         $query = $this->createQuery();
 
-        $query->getQuerySettings()
-            ->setIgnoreEnableFields(true)
-            ->setEnableFieldsToBeIgnored(['disabled'])
-            ->setRespectStoragePage(false)
-            ->setRespectSysLanguage(false);
+        $query->getQuerySettings()->setIgnoreEnableFields(true)->setEnableFieldsToBeIgnored(['disabled'])->setRespectStoragePage(false)->setRespectSysLanguage(false);
 
-        $query->matching(
-            $query->equals('uid', $uid)
-        );
+        $query->matching($query->equals('uid', $uid));
 
         return $query->execute()->getFirst();
-    }
-
-    /**
-     * Override storage of query
-     *
-     * @param QueryInterface $query
-     * @param array $customStorage
-     */
-    protected function setCustomStorage(QueryInterface $query, array $customStorage)
-    {
-        if (!empty($customStorage)) {
-            $query
-                ->getQuerySettings()
-                ->setStoragePageIds($customStorage);
-        }
     }
 }

@@ -7,6 +7,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class AbstractValidator
+ *
  * @package Pixelant\PxaProductManager\Validation\Validator
  */
 abstract class AbstractValidator implements ValidatorInterface

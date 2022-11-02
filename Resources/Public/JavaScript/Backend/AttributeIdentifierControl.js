@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery'], function($) {
 	'use strict';
 
 	/**
@@ -23,7 +23,7 @@ define(['jquery'], function ($) {
 	/**
 	 * Sync identifier with name field
 	 */
-	AttributeIdentifierControl.syncIdentifier = function () {
+	AttributeIdentifierControl.syncIdentifier = function() {
 		let value = $inputName.val();
 
 		$.ajax({
@@ -32,12 +32,15 @@ define(['jquery'], function ($) {
 			data: {
 				'value': value
 			}
-		}).done(function (response) {
-			if (response.success) {
+		}).done(function(response) {
+			if (response.success)
+			{
 				$inputIdentifier
-					.val(response.output)
-					.trigger('change');
-			} else {
+				.val(response.output)
+				.trigger('change');
+			}
+			else
+			{
 				top.TYPO3.Notification.error('Error while syncing!');
 			}
 		});
@@ -46,8 +49,8 @@ define(['jquery'], function ($) {
 	/**
 	 * Initializes events
 	 */
-	AttributeIdentifierControl.initializeEvents = function () {
-		$('.attributeIdentifier').on('click', function (evt) {
+	AttributeIdentifierControl.initializeEvents = function() {
+		$('.attributeIdentifier').on('click', function(evt) {
 			evt.preventDefault();
 			AttributeIdentifierControl.syncIdentifier();
 		});

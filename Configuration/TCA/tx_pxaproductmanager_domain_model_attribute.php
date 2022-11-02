@@ -1,7 +1,7 @@
 <?php
 defined('TYPO3_MODE') || die;
 
-return (function () {
+return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
     $llType = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_attribute.type_';
     $accessTab = '--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime';
@@ -79,8 +79,7 @@ return (function () {
                         ['', 0],
                     ],
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attribute',
-                    'foreign_table_where' => 'AND tx_pxaproductmanager_domain_model_attribute.pid=###CURRENT_PID###' .
-                        ' AND tx_pxaproductmanager_domain_model_attribute.sys_language_uid IN (-1,0)',
+                    'foreign_table_where' => 'AND tx_pxaproductmanager_domain_model_attribute.pid=###CURRENT_PID###' . ' AND tx_pxaproductmanager_domain_model_attribute.sys_language_uid IN (-1,0)',
                     'default' => 0
                 ]
             ],
@@ -97,34 +96,31 @@ return (function () {
                 ]
             ],
             'starttime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.starttime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
-                    'default' => 0,
-                    'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
-                ]
+                    'default' => 0
+                ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'endtime' => [
-                'exclude' => 1,
-                'l10n_mode' => 'exclude',
-                'label' => $llCore . 'locallang_general.xlf:LGL.endtime',
+                'exclude' => true,
+                'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
                 'config' => [
                     'type' => 'input',
                     'renderType' => 'inputDateTime',
                     'eval' => 'datetime,int',
-                    'size' => 13,
                     'default' => 0,
                     'range' => [
-                        'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-                    ],
-                ]
+                        'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                    ]
+                ],
+                'l10n_mode' => 'exclude',
+                'l10n_display' => 'defaultAsReadonly'
             ],
             'name' => [
                 'exclude' => 0,
@@ -242,8 +238,7 @@ return (function () {
             'options' => [
                 'exclude' => 0,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_attribute.options',
-                'displayCond' => 'FIELD:type:IN:' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN .
-                    ',' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . '',
+                'displayCond' => 'FIELD:type:IN:' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN . ',' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . '',
                 'config' => [
                     'type' => 'inline',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_option',
@@ -263,51 +258,45 @@ return (function () {
             'icon' => [
                 'exclude' => 1,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_attribute.icon',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                    'icon',
-                    [
-                        'appearance' => [
-                            'createNewRelationLinkTitle' =>
-                                'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
-                            'showPossibleLocalizationRecords' => false,
-                            'showRemovedLocalizationRecords' => true,
-                            'showAllLocalizationLink' => false,
-                            'showSynchronizationLink' => false
-                        ],
-                        'foreign_match_fields' => [
-                            'fieldname' => 'icon',
-                            'tablenames' => 'tx_pxaproductmanager_domain_model_attribute',
-                            'table_local' => 'sys_file',
-                        ],
-                        'maxitems' => 1,
-                        // @codingStandardsIgnoreStart
-                        'overrideChildTca' => [
-                            'types' => [
-                                '0' => [
-                                    'showitem' => '
+                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig('icon', [
+                                                                                                                'appearance' => [
+                                                                                                                    'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
+                                                                                                                    'showPossibleLocalizationRecords' => false,
+                                                                                                                    'showRemovedLocalizationRecords' => true,
+                                                                                                                    'showAllLocalizationLink' => false,
+                                                                                                                    'showSynchronizationLink' => false
+                                                                                                                ],
+                                                                                                                'foreign_match_fields' => [
+                                                                                                                    'fieldname' => 'icon',
+                                                                                                                    'tablenames' => 'tx_pxaproductmanager_domain_model_attribute',
+                                                                                                                    'table_local' => 'sys_file',
+                                                                                                                ],
+                                                                                                                'maxitems' => 1,
+                                                                                                                // @codingStandardsIgnoreStart
+                                                                                                                'overrideChildTca' => [
+                                                                                                                    'types' => [
+                                                                                                                        '0' => [
+                                                                                                                            'showitem' => '
                             --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
                             --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
-                                    'showitem' => '
+                                                                                                                        ],
+                                                                                                                        \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                                                                                                            'showitem' => '
                             --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;pxaProductManagerPalette,
                             --palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette'
-                                ]
-                            ]
-                        ],
-                        // @codingStandardsIgnoreEnd
-                        'behaviour' => [
-                            'allowLanguageSynchronization' => true
-                        ],
-                    ],
-                    'svg'
-                ),
+                                                                                                                        ]
+                                                                                                                    ]
+                                                                                                                ],
+                                                                                                                // @codingStandardsIgnoreEnd
+                                                                                                                'behaviour' => [
+                                                                                                                    'allowLanguageSynchronization' => true
+                                                                                                                ],
+                                                                                                            ], 'svg'),
             ],
         ]
     ];
-
 
     $tx_pxaproductmanager_domain_model_attribute['columns']['type']['config']['items'] = [
         [

@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 
 /**
  * Class ProductLinkBuilderTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\LinkHandler
  */
 class ProductLinkBuilderTest extends FunctionalTestCase
@@ -21,15 +22,6 @@ class ProductLinkBuilderTest extends FunctionalTestCase
 
     protected $testExtensionsToLoad = ['typo3conf/ext/pxa_product_manager'];
 
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
-
-        $this->productLinkBuilder = $this->createPartialMock(ProductLinkBuilder::class, ['getLinkBuilder', 'getSite']);
-    }
-
     /**
      * @test
      */
@@ -40,10 +32,11 @@ class ProductLinkBuilderTest extends FunctionalTestCase
         $target = '';
         $finalUrl = '';
 
-        $this->assertEquals(
-            [$finalUrl, $linkText, $target],
-            $this->productLinkBuilder->build($linkDetails, $linkText, $target, [])
-        );
+        $this->assertEquals([
+                                $finalUrl,
+                                $linkText,
+                                $target
+                            ], $this->productLinkBuilder->build($linkDetails, $linkText, $target, []));
     }
 
     /**
@@ -56,25 +49,14 @@ class ProductLinkBuilderTest extends FunctionalTestCase
         $target = '';
 
         $site = $this->createPartialMock(Site::class, ['getConfiguration']);
-        $site
-            ->expects($this->once())
-            ->method('getConfiguration')
-            ->willReturn(['productSingleViewFallbackPid' => 1]);
+        $site->expects($this->once())->method('getConfiguration')->willReturn(['productSingleViewFallbackPid' => 1]);
 
-        $this->productLinkBuilder
-            ->expects($this->once())
-            ->method('getSite')
-            ->willReturn($site);
+        $this->productLinkBuilder->expects($this->once())->method('getSite')->willReturn($site);
 
         $mockedLinkBuilder = $this->createPartialMock(LinkBuilderService::class, ['buildForProduct']);
-        $mockedLinkBuilder
-            ->expects($this->once())
-            ->method('buildForProduct');
+        $mockedLinkBuilder->expects($this->once())->method('buildForProduct');
 
-        $this->productLinkBuilder
-            ->expects($this->once())
-            ->method('getLinkBuilder')
-            ->willReturn($mockedLinkBuilder);
+        $this->productLinkBuilder->expects($this->once())->method('getLinkBuilder')->willReturn($mockedLinkBuilder);
 
         $this->productLinkBuilder->build($linkDetails, $linkText, $target, []);
     }
@@ -89,27 +71,25 @@ class ProductLinkBuilderTest extends FunctionalTestCase
         $target = '';
 
         $site = $this->createPartialMock(Site::class, ['getConfiguration']);
-        $site
-            ->expects($this->once())
-            ->method('getConfiguration')
-            ->willReturn(['productSingleViewFallbackPid' => 1]);
+        $site->expects($this->once())->method('getConfiguration')->willReturn(['productSingleViewFallbackPid' => 1]);
 
-        $this->productLinkBuilder
-            ->expects($this->once())
-            ->method('getSite')
-            ->willReturn($site);
+        $this->productLinkBuilder->expects($this->once())->method('getSite')->willReturn($site);
 
         $mockedLinkBuilder = $this->createPartialMock(LinkBuilderService::class, ['buildForCategory']);
-        $mockedLinkBuilder
-            ->expects($this->once())
-            ->method('buildForCategory');
+        $mockedLinkBuilder->expects($this->once())->method('buildForCategory');
 
-        $this->productLinkBuilder
-            ->expects($this->once())
-            ->method('getLinkBuilder')
-            ->willReturn($mockedLinkBuilder);
+        $this->productLinkBuilder->expects($this->once())->method('getLinkBuilder')->willReturn($mockedLinkBuilder);
 
         $this->productLinkBuilder->build($linkDetails, $linkText, $target, []);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->importDataSet(__DIR__ . '/../Fixtures/sys_category.xml');
+        $this->importDataSet(__DIR__ . '/../Fixtures/tx_pxaproductmanager_domain_model_product.xml');
+
+        $this->productLinkBuilder = $this->createPartialMock(ProductLinkBuilder::class, ['getLinkBuilder', 'getSite']);
     }
 
     protected function tearDown()

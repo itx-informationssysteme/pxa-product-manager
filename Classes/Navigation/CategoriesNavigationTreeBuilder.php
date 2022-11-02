@@ -136,6 +136,7 @@ class CategoriesNavigationTreeBuilder
      *
      * @param int $rootCategory
      * @param int $activeCategory
+     *
      * @return array
      */
     public function buildTree(int $rootCategory, int $activeCategory = 0): array
@@ -162,103 +163,46 @@ class CategoriesNavigationTreeBuilder
         $subItems = $this->findSubCategories($rootCategory);
 
         if ($subItems->count() > 0) {
-            $this->buildDeepTree(
-                $subItems,
-                $activeCategory,
-                $treeData['subItems'],
-                2
-            );
+            $this->buildDeepTree($subItems, $activeCategory, $treeData['subItems'], 2);
         }
 
         return $treeData;
     }
 
     /**
-     * @return array
+     * Get subcategories with order
+     *
+     * @param Category $parentCategory
+     *
+     * @return QueryResultInterface|null
      */
-    public function getExcludeCategories(): array
+    protected function findSubCategories(Category $parentCategory)
     {
-        return $this->excludeCategories;
-    }
+        if (in_array($parentCategory->getUid(), $this->parentCategoriesUids)) {
+            if (TYPO3_MODE === 'BE' || MainUtility::isBackendLogin()) {
+                throw new \RuntimeException(// @codingStandardsIgnoreStart
+                    'Same parent with UID "' . $parentCategory->getUid() . '" was met second time, that should never happen. Check you categories relation.', // @codingStandardsIgnoreEnd
+                    1527148858571);
+            }
 
-    /**
-     * @param array $excludeCategories
-     * @return CategoriesNavigationTreeBuilder
-     */
-    public function setExcludeCategories(array $excludeCategories)
-    {
-        $this->excludeCategories = $excludeCategories;
-        return $this;
-    }
+            return null;
+        }
 
-    /**
-     * @return bool
-     */
-    public function isExpandAll(): bool
-    {
-        return $this->expandAll;
-    }
+        $this->parentCategoriesUids[] = $parentCategory->getUid();
 
-    /**
-     * @param bool $expandAll
-     * @return CategoriesNavigationTreeBuilder
-     */
-    public function setExpandAll(bool $expandAll)
-    {
-        $this->expandAll = $expandAll;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHideCategoriesWithoutProducts(): bool
-    {
-        return $this->hideCategoriesWithoutProducts;
-    }
-
-    /**
-     * @param bool $hideCategoriesWithoutProducts
-     * @return  CategoriesNavigationTreeBuilder
-     */
-    public function setHideCategoriesWithoutProducts(bool $hideCategoriesWithoutProducts)
-    {
-        $this->hideCategoriesWithoutProducts = $hideCategoriesWithoutProducts;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderings(): array
-    {
-        return $this->orderings;
-    }
-
-    /**
-     * @param array $orderings
-     * @return CategoriesNavigationTreeBuilder
-     */
-    public function setOrderings(array $orderings)
-    {
-        $this->orderings = $orderings;
-        return $this;
+        return $this->categoryRepository->findByParent($parentCategory, $this->orderings);
     }
 
     /**
      * Build navigation tree
      *
      * @param QueryResultInterface $categories
-     * @param int $activeCategoryUid
-     * @param array $treeData
-     * @param int $level
+     * @param int                  $activeCategoryUid
+     * @param array                $treeData
+     * @param int                  $level
      */
-    protected function buildDeepTree(
-        QueryResultInterface $categories,
-        int $activeCategoryUid,
-        array &$treeData,
-        int $level = 0
-    ) {
+    protected function buildDeepTree(QueryResultInterface $categories, int $activeCategoryUid, array &$treeData, int $level = 0)
+    {
         if ($level > 50) {
             throw new \RuntimeException('Rich maximum recursive level', 1527148148945);
         }
@@ -279,53 +223,18 @@ class CategoriesNavigationTreeBuilder
                     'level' => $level
                 ];
 
-                if ($subItems->count() > 0
-                    && ($this->expandAll || $treeData[$category->getUid()]['isActive'])
-                ) {
-                    $this->buildDeepTree(
-                        $subItems,
-                        $activeCategoryUid,
-                        $treeData[$category->getUid()]['subItems'],
-                        $level + 1
-                    );
+                if ($subItems->count() > 0 && ($this->expandAll || $treeData[$category->getUid()]['isActive'])) {
+                    $this->buildDeepTree($subItems, $activeCategoryUid, $treeData[$category->getUid()]['subItems'], $level + 1);
                 }
             }
         }
     }
 
     /**
-     * Get subcategories with order
-     *
-     * @param Category $parentCategory
-     * @return QueryResultInterface|null
-     */
-    protected function findSubCategories(Category $parentCategory)
-    {
-        if (in_array($parentCategory->getUid(), $this->parentCategoriesUids)) {
-            if (TYPO3_MODE === 'BE' || MainUtility::isBackendLogin()) {
-                throw new \RuntimeException(
-                    // @codingStandardsIgnoreStart
-                    'Same parent with UID "' . $parentCategory->getUid() . '" was met second time, that should never happen. Check you categories relation.',
-                    // @codingStandardsIgnoreEnd
-                    1527148858571
-                );
-            }
-
-            return null;
-        }
-
-        $this->parentCategoriesUids[] = $parentCategory->getUid();
-
-        return $this->categoryRepository->findByParent(
-            $parentCategory,
-            $this->orderings
-        );
-    }
-
-    /**
      * Check if category is visible inside menu
      *
      * @param Category $category
+     *
      * @return bool
      */
     protected function isCategoryVisible(Category $category): bool
@@ -340,10 +249,91 @@ class CategoriesNavigationTreeBuilder
      * Check if there is products results for category
      *
      * @param Category $category
+     *
      * @return bool
      */
     protected function hasNoProducts(Category $category)
     {
         return $this->productRepository->countByCategory($category) === 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludeCategories(): array
+    {
+        return $this->excludeCategories;
+    }
+
+    /**
+     * @param array $excludeCategories
+     *
+     * @return CategoriesNavigationTreeBuilder
+     */
+    public function setExcludeCategories(array $excludeCategories)
+    {
+        $this->excludeCategories = $excludeCategories;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpandAll(): bool
+    {
+        return $this->expandAll;
+    }
+
+    /**
+     * @param bool $expandAll
+     *
+     * @return CategoriesNavigationTreeBuilder
+     */
+    public function setExpandAll(bool $expandAll)
+    {
+        $this->expandAll = $expandAll;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHideCategoriesWithoutProducts(): bool
+    {
+        return $this->hideCategoriesWithoutProducts;
+    }
+
+    /**
+     * @param bool $hideCategoriesWithoutProducts
+     *
+     * @return  CategoriesNavigationTreeBuilder
+     */
+    public function setHideCategoriesWithoutProducts(bool $hideCategoriesWithoutProducts)
+    {
+        $this->hideCategoriesWithoutProducts = $hideCategoriesWithoutProducts;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderings(): array
+    {
+        return $this->orderings;
+    }
+
+    /**
+     * @param array $orderings
+     *
+     * @return CategoriesNavigationTreeBuilder
+     */
+    public function setOrderings(array $orderings)
+    {
+        $this->orderings = $orderings;
+
+        return $this;
     }
 }

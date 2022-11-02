@@ -24,6 +24,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
@@ -57,6 +58,7 @@ class Option extends AbstractEntity
      * Sets the value
      *
      * @param \string $value
+     *
      * @return void
      */
     public function setValue(string $value)

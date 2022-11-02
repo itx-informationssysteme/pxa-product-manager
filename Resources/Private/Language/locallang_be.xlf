@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
     <file source-language="en" datatype="plaintext" original="messages" date="2017-09-17T13:07:47Z"
-          product-name="pxa_product_manager">
+            product-name="pxa_product_manager">
         <header/>
         <body>
             <!--New content element wizard labels:START-->
@@ -286,7 +286,8 @@
             <!--Extension manager configuration:START-->
             <trans-unit id="extconf.categoriesRestriction">
                 <source>Categories PID restriction: Restrict the available categories in product records. PageTsConfig:
-                    TCEFORM.tx_pxaproductmanager_domain_model_product.categories.PAGE_TSCONFIG_IDLIST=xxx,xxx.</source>
+                    TCEFORM.tx_pxaproductmanager_domain_model_product.categories.PAGE_TSCONFIG_IDLIST=xxx,xxx.
+                </source>
             </trans-unit>
             <trans-unit id="extconf.accessoriesRestriction" xml:space="preserve">
             <source>Accessories PID restriction: Restrict the available accessories in product records. PageTsConfig:
@@ -305,7 +306,8 @@
             </trans-unit>
             <trans-unit id="extconf.attributesSetsRestriction">
                 <source>Attributes Sets PID restriction: Restrict the available attributes sets in categories records. PageTsConfig:
-                    TCEFORM.sys_category.pxapm_attributes_sets.PAGE_TSCONFIG_IDLIST=xxx,xxx.</source>
+                    TCEFORM.sys_category.pxapm_attributes_sets.PAGE_TSCONFIG_IDLIST=xxx,xxx.
+                </source>
             </trans-unit>
             <trans-unit id="extconf.restriction.current_pid" xml:space="preserve">
                 <source>Current page</source>

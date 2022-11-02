@@ -8,6 +8,7 @@ use TYPO3\CMS\Backend\Form\AbstractNode;
 
 /**
  * Class AttributeIdentifierControl
+ *
  * @package Pixelant\PxaProductManager\Backend\FormEngine\FieldControl
  */
 class AttributeIdentifierControl extends AbstractNode
@@ -16,6 +17,7 @@ class AttributeIdentifierControl extends AbstractNode
 
     /**
      * Render field control
+     *
      * @return array
      */
     public function render(): array

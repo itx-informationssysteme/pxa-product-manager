@@ -24,17 +24,18 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\AttributeFalFile;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Image.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -71,9 +72,6 @@ class AttributeFalFileTest extends UnitTestCase
         $pxaAttribute = 111;
         $this->fixture->setAttribute($pxaAttribute);
 
-        $this->assertEquals(
-            $pxaAttribute,
-            $this->fixture->getAttribute()
-        );
+        $this->assertEquals($pxaAttribute, $this->fixture->getAttribute());
     }
 }

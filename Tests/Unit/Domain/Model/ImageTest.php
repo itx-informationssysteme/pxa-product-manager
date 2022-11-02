@@ -24,17 +24,18 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Image;
 
 /**
  * Test case for class \Pixelant\PxaProductManager\Domain\Model\Image.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @package TYPO3
+ * @package    TYPO3
  * @subpackage Products Manager
  *
  */
@@ -63,10 +64,7 @@ class ImageTest extends UnitTestCase
         $uidLocal = 123;
         $this->fixture->setFileUid($uidLocal);
 
-        self::assertEquals(
-            $uidLocal,
-            $this->fixture->getFileUid()
-        );
+        self::assertEquals($uidLocal, $this->fixture->getFileUid());
     }
 
     /**
@@ -77,10 +75,7 @@ class ImageTest extends UnitTestCase
         $useInListing = true;
         $this->fixture->setUseInListing($useInListing);
 
-        self::assertEquals(
-            $useInListing,
-            $this->fixture->isUseInListing()
-        );
+        self::assertEquals($useInListing, $this->fixture->isUseInListing());
     }
 
     /**
@@ -91,10 +86,7 @@ class ImageTest extends UnitTestCase
         $mainImage = true;
         $this->fixture->setMainImage($mainImage);
 
-        self::assertEquals(
-            $mainImage,
-            $this->fixture->isMainImage()
-        );
+        self::assertEquals($mainImage, $this->fixture->isMainImage());
     }
 
     /**
@@ -105,10 +97,7 @@ class ImageTest extends UnitTestCase
         $title = 'title';
         $this->fixture->setTitle($title);
 
-        self::assertEquals(
-            $title,
-            $this->fixture->getTitle()
-        );
+        self::assertEquals($title, $this->fixture->getTitle());
     }
 
     /**
@@ -119,9 +108,6 @@ class ImageTest extends UnitTestCase
         $description = 'description';
         $this->fixture->setDescription($description);
 
-        self::assertEquals(
-            $description,
-            $this->fixture->getDescription()
-        );
+        self::assertEquals($description, $this->fixture->getDescription());
     }
 }

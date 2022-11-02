@@ -5,6 +5,7 @@ namespace Pixelant\PxaProductManager\Validation\Validator;
 
 /**
  * Interface ValidatorInterface
+ *
  * @package Pixelant\PxaProductManager\Validation\Validator
  */
 interface ValidatorInterface
@@ -13,6 +14,7 @@ interface ValidatorInterface
      * Check if given value is valid
      *
      * @param $value
+     *
      * @return bool
      */
     public function validate($value): bool;

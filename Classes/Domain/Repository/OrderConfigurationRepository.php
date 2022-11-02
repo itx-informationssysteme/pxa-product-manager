@@ -7,6 +7,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class OrderConfigurationRepository
+ *
  * @package Pixelant\PxaProductManager\Domain\Repository
  */
 class OrderConfigurationRepository extends Repository

@@ -66,6 +66,7 @@ class Image extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
      * Set File uid
      *
      * @param integer $fileUid
+     *
      * @return void
      */
     public function setFileUid(int $fileUid)
@@ -116,17 +117,6 @@ class Image extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     * @return void
-     */
-    public function setTitle(string $title)
-    {
-        $this->title = $title;
-    }
-
-    /**
      * Get title
      *
      * @return string
@@ -137,14 +127,15 @@ class Image extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
     }
 
     /**
-     * Set description
+     * Set title
      *
-     * @param string $description
+     * @param string $title
+     *
      * @return void
      */
-    public function setDescription(string $description)
+    public function setTitle(string $title)
     {
-        $this->description = $description;
+        $this->title = $title;
     }
 
     /**
@@ -155,5 +146,17 @@ class Image extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
     public function getDescription()
     {
         return $this->description ?: $this->getOriginalResource()->getDescription();
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return void
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
     }
 }

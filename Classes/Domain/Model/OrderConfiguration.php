@@ -13,6 +13,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  * Class OrderConfiguration
+ *
  * @package Pixelant\PxaProductManager\Domain\Model
  */
 class OrderConfiguration extends AbstractEntity
@@ -59,6 +60,22 @@ class OrderConfiguration extends AbstractEntity
     protected $frontendUser = null;
 
     /**
+     * Initialize
+     */
+    public function __construct()
+    {
+        $this->initStorageObjects();
+    }
+
+    /**
+     * Object storage
+     */
+    protected function initStorageObjects()
+    {
+        $this->formFields = new ObjectStorage();
+    }
+
+    /**
      * @return string
      */
     public function getName(): string
@@ -75,48 +92,11 @@ class OrderConfiguration extends AbstractEntity
     }
 
     /**
-     * Initialize
-     */
-    public function __construct()
-    {
-        $this->initStorageObjects();
-    }
-
-    /**
      * @param FrontendUserRepository $frontendUserRepository
      */
     public function injectFrontendUserRepository(FrontendUserRepository $frontendUserRepository)
     {
         $this->frontendUserRepository = $frontendUserRepository;
-    }
-
-    /**
-     * Object storage
-     */
-    protected function initStorageObjects()
-    {
-        $this->formFields = new ObjectStorage();
-    }
-
-    /**
-     * @return ObjectStorage
-     */
-    public function getFormFields(): ObjectStorage
-    {
-        if (false === $this->orderFormFieldProcessed && defined('TYPO3_MODE') && TYPO3_MODE === 'FE') {
-            $this->orderFormFieldProcessed = true;
-            $this->prepareOrderFormFields();
-        }
-
-        return $this->formFields;
-    }
-
-    /**
-     * @param ObjectStorage $formFields
-     */
-    public function setFormFields(ObjectStorage $formFields)
-    {
-        $this->formFields = $formFields;
     }
 
     /**
@@ -152,19 +132,11 @@ class OrderConfiguration extends AbstractEntity
     }
 
     /**
-     * @return bool
+     * @return array
      */
-    public function isEnabledReplaceWithFeUserFields(): bool
+    public function getAdminEmailsArray(): array
     {
-        return $this->enabledReplaceWithFeUserFields;
-    }
-
-    /**
-     * @param bool $enabledReplaceWithFeUserFields
-     */
-    public function setEnabledReplaceWithFeUserFields(bool $enabledReplaceWithFeUserFields)
-    {
-        $this->enabledReplaceWithFeUserFields = $enabledReplaceWithFeUserFields;
+        return GeneralUtility::trimExplode("\n", $this->getAdminEmails(), true);
     }
 
     /**
@@ -176,57 +148,11 @@ class OrderConfiguration extends AbstractEntity
     }
 
     /**
-     * @return array
-     */
-    public function getAdminEmailsArray(): array
-    {
-        return GeneralUtility::trimExplode("\n", $this->getAdminEmails(), true);
-    }
-
-    /**
      * @param string $adminEmails
      */
     public function setAdminEmails(string $adminEmails)
     {
         $this->adminEmails = $adminEmails;
-    }
-
-    /**
-     * Set order fields value depending on form configuration
-     *
-     * @return OrderConfiguration
-     */
-    public function prepareOrderFormFields()
-    {
-        // Replace form fields with fe user values
-        if ($this->isEnabledReplaceWithFeUserFields() && $this->getFrontendUser()) {
-            /** @var OrderFormField $formField */
-            foreach ($this->formFields as $formField) {
-                $fieldName = GeneralUtility::underscoredToLowerCamelCase($formField->getName());
-
-                if (ObjectAccess::isPropertyGettable($this->getFrontendUser(), $fieldName)) {
-                    $formField->setValue(
-                        ObjectAccess::getProperty($this->getFrontendUser(), $fieldName)
-                    );
-                    $formField->setStatic(true);
-                }
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return FrontendUser
-     */
-    public function getFrontendUser()
-    {
-        if ($this->frontendUser === null && MainUtility::isFrontendLogin()) {
-            $userUid = MainUtility::getTSFE()->fe_user->user['uid'];
-            $this->frontendUser = $this->frontendUserRepository->findByUid($userUid);
-        }
-
-        return $this->frontendUser;
     }
 
     /**
@@ -244,5 +170,78 @@ class OrderConfiguration extends AbstractEntity
         }
 
         return '';
+    }
+
+    /**
+     * @return ObjectStorage
+     */
+    public function getFormFields(): ObjectStorage
+    {
+        if (false === $this->orderFormFieldProcessed && defined('TYPO3_MODE') && TYPO3_MODE === 'FE') {
+            $this->orderFormFieldProcessed = true;
+            $this->prepareOrderFormFields();
+        }
+
+        return $this->formFields;
+    }
+
+    /**
+     * @param ObjectStorage $formFields
+     */
+    public function setFormFields(ObjectStorage $formFields)
+    {
+        $this->formFields = $formFields;
+    }
+
+    /**
+     * Set order fields value depending on form configuration
+     *
+     * @return OrderConfiguration
+     */
+    public function prepareOrderFormFields()
+    {
+        // Replace form fields with fe user values
+        if ($this->isEnabledReplaceWithFeUserFields() && $this->getFrontendUser()) {
+            /** @var OrderFormField $formField */
+            foreach ($this->formFields as $formField) {
+                $fieldName = GeneralUtility::underscoredToLowerCamelCase($formField->getName());
+
+                if (ObjectAccess::isPropertyGettable($this->getFrontendUser(), $fieldName)) {
+                    $formField->setValue(ObjectAccess::getProperty($this->getFrontendUser(), $fieldName));
+                    $formField->setStatic(true);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabledReplaceWithFeUserFields(): bool
+    {
+        return $this->enabledReplaceWithFeUserFields;
+    }
+
+    /**
+     * @param bool $enabledReplaceWithFeUserFields
+     */
+    public function setEnabledReplaceWithFeUserFields(bool $enabledReplaceWithFeUserFields)
+    {
+        $this->enabledReplaceWithFeUserFields = $enabledReplaceWithFeUserFields;
+    }
+
+    /**
+     * @return FrontendUser
+     */
+    public function getFrontendUser()
+    {
+        if ($this->frontendUser === null && MainUtility::isFrontendLogin()) {
+            $userUid = MainUtility::getTSFE()->fe_user->user['uid'];
+            $this->frontendUser = $this->frontendUserRepository->findByUid($userUid);
+        }
+
+        return $this->frontendUser;
     }
 }

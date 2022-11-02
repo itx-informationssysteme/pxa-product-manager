@@ -13,6 +13,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Class ProductsXmlSitemapDataProviderTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Seo\XmlSitemap
  */
 class ProductsXmlSitemapDataProviderTest extends UnitTestCase
@@ -20,27 +21,7 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
     /**
      * @var AccessibleMockObjectInterface|MockObject|ProductsXmlSitemapDataProvider
      */
-    protected $subject= null;
-
-    protected function setUp()
-    {
-        $this->subject = $this->getAccessibleMock(
-            ProductsXmlSitemapDataProvider::class,
-            ['getLinkBuilderService', 'getLanguageId'],
-            [],
-            '',
-            false
-        );
-
-        $GLOBALS['TSFE'] = new \stdClass();
-        $GLOBALS['TSFE']->id = 100;
-    }
-
-    protected function tearDown()
-    {
-        unset($GLOBALS['TSFE']);
-        unset($this->subject);
-    }
+    protected $subject = null;
 
     /**
      * @test
@@ -64,12 +45,12 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
         $mockedServerRequest = $this->createMock(ServerRequest::class);
         $mockedCobj = $this->createMock(ContentObjectRenderer::class);
 
-
-        $subject = $this
-            ->getMockBuilder(ProductsXmlSitemapDataProvider::class)
-            ->setConstructorArgs([$mockedServerRequest, 'test', $config, $mockedCobj])
-            ->setMethods(['generateItems'])
-            ->getMock();
+        $subject = $this->getMockBuilder(ProductsXmlSitemapDataProvider::class)->setConstructorArgs([
+                                                                                                        $mockedServerRequest,
+                                                                                                        'test',
+                                                                                                        $config,
+                                                                                                        $mockedCobj
+                                                                                                    ])->setMethods(['generateItems'])->getMock();
 
         $propertyReflection = new \ReflectionProperty($subject, 'excludeCategories');
         $propertyReflection->setAccessible(true);
@@ -93,11 +74,12 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
         $mockedServerRequest = $this->createMock(ServerRequest::class);
         $mockedCobj = $this->createMock(ContentObjectRenderer::class);
 
-        $subject = $this
-            ->getMockBuilder(ProductsXmlSitemapDataProvider::class)
-            ->setConstructorArgs([$mockedServerRequest, 'test', $config, $mockedCobj])
-            ->setMethods(['generateItems'])
-            ->getMock();
+        $subject = $this->getMockBuilder(ProductsXmlSitemapDataProvider::class)->setConstructorArgs([
+                                                                                                        $mockedServerRequest,
+                                                                                                        'test',
+                                                                                                        $config,
+                                                                                                        $mockedCobj
+                                                                                                    ])->setMethods(['generateItems'])->getMock();
 
         $propertyReflection = new \ReflectionProperty($subject, 'pageId');
         $propertyReflection->setAccessible(true);
@@ -115,11 +97,12 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
         $mockedServerRequest = $this->createMock(ServerRequest::class);
         $mockedCobj = $this->createMock(ContentObjectRenderer::class);
 
-        $subject = $this
-            ->getMockBuilder(ProductsXmlSitemapDataProvider::class)
-            ->setConstructorArgs([$mockedServerRequest, 'test', $config, $mockedCobj])
-            ->setMethods(['generateItems'])
-            ->getMock();
+        $subject = $this->getMockBuilder(ProductsXmlSitemapDataProvider::class)->setConstructorArgs([
+                                                                                                        $mockedServerRequest,
+                                                                                                        'test',
+                                                                                                        $config,
+                                                                                                        $mockedCobj
+                                                                                                    ])->setMethods(['generateItems'])->getMock();
 
         $propertyReflection = new \ReflectionProperty($subject, 'pageId');
         $propertyReflection->setAccessible(true);
@@ -142,17 +125,11 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
         ];
 
         $linkBuilderService = $this->createMock(LinkBuilderService::class);
-        $linkBuilderService
-            ->expects($this->once())
-            ->method('buildForProduct')
-            ->willReturn($url);
+        $linkBuilderService->expects($this->once())->method('buildForProduct')->willReturn($url);
 
         $this->subject->_set('pageId', 1);
 
-        $this->subject
-            ->expects($this->once())
-            ->method('getLinkBuilderService')
-            ->willReturn($linkBuilderService);
+        $this->subject->expects($this->once())->method('getLinkBuilderService')->willReturn($linkBuilderService);
 
         $this->assertEquals($url, $this->subject->_call('defineUrl', $data)['loc']);
     }
@@ -182,7 +159,7 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
         $config = [];
         $this->subject->_set('config', $config);
 
-        list($pids, $lastModifiedField, $sortField) = $this->subject->_call('getConfigFields');
+        [$pids, $lastModifiedField, $sortField] = $this->subject->_call('getConfigFields');
 
         $this->assertEquals([], $pids);
         $this->assertEquals('tstamp', $lastModifiedField);
@@ -202,10 +179,27 @@ class ProductsXmlSitemapDataProviderTest extends UnitTestCase
 
         $this->subject->_set('config', $config);
 
-        list($pids, $lastModifiedField, $sortField) = $this->subject->_call('getConfigFields');
+        [$pids, $lastModifiedField, $sortField] = $this->subject->_call('getConfigFields');
 
         $this->assertEquals([12, 333], $pids);
         $this->assertEquals('lastModifiedFieldTest', $lastModifiedField);
         $this->assertEquals('sortFieldTest', $sortField);
+    }
+
+    protected function setUp()
+    {
+        $this->subject = $this->getAccessibleMock(ProductsXmlSitemapDataProvider::class, [
+                                                                                           'getLinkBuilderService',
+                                                                                           'getLanguageId'
+                                                                                       ], [], '', false);
+
+        $GLOBALS['TSFE'] = new \stdClass();
+        $GLOBALS['TSFE']->id = 100;
+    }
+
+    protected function tearDown()
+    {
+        unset($GLOBALS['TSFE']);
+        unset($this->subject);
     }
 }

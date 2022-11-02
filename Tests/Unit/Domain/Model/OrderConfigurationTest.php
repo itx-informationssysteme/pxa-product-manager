@@ -64,10 +64,7 @@ class OrderConfigurationTest extends UnitTestCase
 
         $this->fixture->setFormFields($objectStorage);
 
-        $this->assertSame(
-            $objectStorage,
-            $this->fixture->getFormFields()
-        );
+        $this->assertSame($objectStorage, $this->fixture->getFormFields());
     }
 
     /**
@@ -81,10 +78,7 @@ class OrderConfigurationTest extends UnitTestCase
 
         $this->fixture->addFormField($formField);
 
-        $this->assertEquals(
-            $objectStorage,
-            $this->fixture->getFormFields()
-        );
+        $this->assertEquals($objectStorage, $this->fixture->getFormFields());
     }
 
     /**
@@ -100,10 +94,7 @@ class OrderConfigurationTest extends UnitTestCase
         $this->fixture->addFormField($formField);
         $this->fixture->removeFormField($formField);
 
-        $this->assertEquals(
-            $objectStorage,
-            $this->fixture->getFormFields()
-        );
+        $this->assertEquals($objectStorage, $this->fixture->getFormFields());
     }
 
     /**

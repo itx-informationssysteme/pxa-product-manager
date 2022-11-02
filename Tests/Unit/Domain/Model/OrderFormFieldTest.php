@@ -1,15 +1,14 @@
 <?php
 
-
 namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
 
 use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Pixelant\PxaProductManager\Domain\Model\Option;
 use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Class OrderFormFieldTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\Domain\Model
  */
 class OrderFormFieldTest extends UnitTestCase
@@ -241,7 +240,6 @@ class OrderFormFieldTest extends UnitTestCase
 
         $this->fixture->setErrors($value);
         $this->fixture->addError('new error');
-
 
         $this->assertEquals($expect, $this->fixture->getErrors());
     }

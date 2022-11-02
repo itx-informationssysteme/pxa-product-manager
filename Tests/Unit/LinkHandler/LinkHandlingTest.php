@@ -8,6 +8,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class LinkHandlingTest
+ *
  * @package Pixelant\PxaProductManager\Tests\Unit\LinkHandler
  */
 class LinkHandlingTest extends UnitTestCase
@@ -17,11 +18,6 @@ class LinkHandlingTest extends UnitTestCase
      */
     protected $linkHandling;
 
-    protected function setUp()
-    {
-        $this->linkHandling = GeneralUtility::makeInstance(LinkHandling::class);
-    }
-
     /**
      * @test
      */
@@ -29,10 +25,7 @@ class LinkHandlingTest extends UnitTestCase
     {
         $parameters = ['product' => 123];
 
-        $this->assertEquals(
-            't3://pxappm?product=123',
-            $this->linkHandling->asString($parameters)
-        );
+        $this->assertEquals('t3://pxappm?product=123', $this->linkHandling->asString($parameters));
     }
 
     /**
@@ -42,10 +35,7 @@ class LinkHandlingTest extends UnitTestCase
     {
         $parameters = ['category' => 123];
 
-        $this->assertEquals(
-            't3://pxappm?category=123',
-            $this->linkHandling->asString($parameters)
-        );
+        $this->assertEquals('t3://pxappm?category=123', $this->linkHandling->asString($parameters));
     }
 
     /**
@@ -53,9 +43,7 @@ class LinkHandlingTest extends UnitTestCase
      */
     public function resolveHandlerDataWithNoDataReturnEmptyArray()
     {
-        $this->assertEmpty(
-            $this->linkHandling->resolveHandlerData([])
-        );
+        $this->assertEmpty($this->linkHandling->resolveHandlerData([]));
     }
 
     /**
@@ -65,10 +53,7 @@ class LinkHandlingTest extends UnitTestCase
     {
         $data['product'] = 123;
 
-        $this->assertEquals(
-            $data,
-            $this->linkHandling->resolveHandlerData($data)
-        );
+        $this->assertEquals($data, $this->linkHandling->resolveHandlerData($data));
     }
 
     /**
@@ -78,9 +63,11 @@ class LinkHandlingTest extends UnitTestCase
     {
         $data['category'] = 123;
 
-        $this->assertEquals(
-            $data,
-            $this->linkHandling->resolveHandlerData($data)
-        );
+        $this->assertEquals($data, $this->linkHandling->resolveHandlerData($data));
+    }
+
+    protected function setUp()
+    {
+        $this->linkHandling = GeneralUtility::makeInstance(LinkHandling::class);
     }
 }

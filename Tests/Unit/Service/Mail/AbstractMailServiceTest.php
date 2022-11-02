@@ -16,15 +16,7 @@ class AbstractMailServiceTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->subject = $this->getAccessibleMockForAbstractClass(
-            AbstractMailService::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['initPluginSettings']
-        );
+        $this->subject = $this->getAccessibleMockForAbstractClass(AbstractMailService::class, [], '', false, false, true, ['initPluginSettings']);
     }
 
     /**
@@ -32,9 +24,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultPluginSettingsEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getPluginSettings()
-        );
+        $this->assertEmpty($this->subject->getPluginSettings());
     }
 
     /**
@@ -54,9 +44,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultSenderNameEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getSenderName()
-        );
+        $this->assertEmpty($this->subject->getSenderName());
     }
 
     /**
@@ -76,9 +64,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultSenderEmailEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getSenderEmail()
-        );
+        $this->assertEmpty($this->subject->getSenderEmail());
     }
 
     /**
@@ -98,9 +84,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultReceiversEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getReceivers()
-        );
+        $this->assertEmpty($this->subject->getReceivers());
     }
 
     /**
@@ -120,9 +104,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultSubjectEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getSubject()
-        );
+        $this->assertEmpty($this->subject->getSubject());
     }
 
     /**
@@ -142,9 +124,7 @@ class AbstractMailServiceTest extends UnitTestCase
      */
     public function defaultMessageEmpty()
     {
-        $this->assertEmpty(
-            $this->subject->getMessage()
-        );
+        $this->assertEmpty($this->subject->getMessage());
     }
 
     /**

@@ -45,6 +45,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class ProductUtility
+ *
  * @package Pixelant\PxaProductManager\Utility
  */
 class ProductUtility
@@ -70,45 +71,11 @@ class ProductUtility
     const ORDER_STATE_COOKIE_NAME = 'pxa_pm_order_state';
 
     /**
-     * Get array of uids of categories for product
-     *
-     * @param $product
-     * @return array
-     */
-    public static function getProductCategoriesUids(int $product): array
-    {
-        $result = [];
-
-        if ($product) {
-            $configuration =
-                $GLOBALS['TCA']['tx_pxaproductmanager_domain_model_product']['columns']['categories']['config'];
-
-            /** @var RelationHandler $relationHandler */
-            $relationHandler = GeneralUtility::makeInstance(RelationHandler::class);
-            $relationHandler->start(
-                '',
-                'sys_category',
-                'sys_category_record_mm',
-                $product,
-                'tx_pxaproductmanager_domain_model_product',
-                $configuration
-            );
-
-            foreach ($relationHandler->itemArray as $item) {
-                if ($item['id'] > 0) {
-                    $result[] = $item['id'];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get tree of parent categories of product, include product categories as top level
      *
-     * @param int $productUid
+     * @param int  $productUid
      * @param bool $reverseOrder Default it goes from product categories up to top parents, could reverse order
+     *
      * @return array
      */
     public static function getProductCategoriesParentsTree(int $productUid, bool $reverseOrder = false): array
@@ -172,33 +139,49 @@ class ProductUtility
     }
 
     /**
+     * Get array of uids of categories for product
+     *
+     * @param $product
+     *
+     * @return array
+     */
+    public static function getProductCategoriesUids(int $product): array
+    {
+        $result = [];
+
+        if ($product) {
+            $configuration = $GLOBALS['TCA']['tx_pxaproductmanager_domain_model_product']['columns']['categories']['config'];
+
+            /** @var RelationHandler $relationHandler */
+            $relationHandler = GeneralUtility::makeInstance(RelationHandler::class);
+            $relationHandler->start('', 'sys_category', 'sys_category_record_mm', $product, 'tx_pxaproductmanager_domain_model_product', $configuration);
+
+            foreach ($relationHandler->itemArray as $item) {
+                if ($item['id'] > 0) {
+                    $result[] = $item['id'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get storage for plugin record
      *
      * @param int $pluginUid
+     *
      * @return string
      */
     public static function getStoragePidForPlugin(int $pluginUid): string
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
 
         /** @noinspection PhpParamsInspection */
-        $queryBuilder->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
-        $record = $queryBuilder
-            ->select('pages', 'recursive')
-            ->from('tt_content')
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'uid',
-                    $queryBuilder->createNamedParameter($pluginUid, \PDO::PARAM_INT)
-                )
-            )
-            ->execute()
-            ->fetch();
+        $record = $queryBuilder->select('pages', 'recursive')->from('tt_content')->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($pluginUid, \PDO::PARAM_INT)))->execute()->fetch();
 
         if (!empty($record['pages'])) {
             $recursive = (int)$record['recursive'];
@@ -226,28 +209,6 @@ class ProductUtility
     }
 
     /**
-     * Format product price
-     *
-     * @param float $price
-     * @return string
-     */
-    public static function formatPrice(float $price): string
-    {
-        if ($format = LocalizationUtility::translate('priceFormat', 'PxaProductManager')) {
-            $format = explode('|', trim($format, '|'));
-        } else {
-            $format = [2, '.', ' '];
-        }
-
-        return number_format(
-            $price,
-            (int)($format[0] ?? 2),
-            (string)($format[1] ?? '.'),
-            (string)($format[2] ?? ',')
-        );
-    }
-
-    /**
      * Uids of wish list
      *
      * @return array
@@ -263,6 +224,7 @@ class ProductUtility
      * Check if product in wish list
      *
      * @param object|int $product
+     *
      * @return bool
      */
     public static function isProductInWishList($product): bool
@@ -276,6 +238,7 @@ class ProductUtility
      * Get calculated custom sorting
      *
      * @param Product $product
+     *
      * @return int
      */
     public static function getCalculatedCustomSorting(Product $product): int
@@ -291,8 +254,7 @@ class ProductUtility
                 }
                 // Get "category" points
                 if ($product->getCategories()->count() > 0) {
-                    $pointCategories = ConfigurationUtility::getSettingsByPath('customSorting/points/categories', $pid)
-                        ?: [];
+                    $pointCategories = ConfigurationUtility::getSettingsByPath('customSorting/points/categories', $pid) ?: [];
 
                     foreach ($product->getCategories() as $category) {
                         $catUid = $category->getUid();
@@ -333,12 +295,7 @@ class ProductUtility
         }
 
         // Otherwise get order state from cookie
-        $orderState = json_decode(
-            urldecode(
-                base64_decode($_COOKIE[self::ORDER_STATE_COOKIE_NAME])
-            ),
-            true
-        );
+        $orderState = json_decode(urldecode(base64_decode($_COOKIE[self::ORDER_STATE_COOKIE_NAME])), true);
 
         if (!is_array($orderState)) {
             $orderState = [];
@@ -351,7 +308,8 @@ class ProductUtility
      * Get total price
      *
      * @param Order $order
-     * @param bool $formatPrice
+     * @param bool  $formatPrice
+     *
      * @return float|string
      * @throws \Exception
      */
@@ -363,25 +321,11 @@ class ProductUtility
     }
 
     /**
-     * Get total tax
-     *
-     * @param Order $order
-     * @param bool $formatPrice
-     * @return float|string
-     * @throws \Exception
-     */
-    public static function calculateOrderTotalTax(Order $order, bool $formatPrice = false)
-    {
-        $total = self::calculateTotalForProductsOrder($order, 'tax');
-
-        return $formatPrice ? self::formatPrice($total) : $total;
-    }
-
-    /**
      * Calculate total value for order tax or price
      *
-     * @param Order $order
+     * @param Order  $order
      * @param string $calculationProperty
+     *
      * @return float
      * @throws \Exception
      */
@@ -411,13 +355,48 @@ class ProductUtility
     }
 
     /**
+     * Format product price
+     *
+     * @param float $price
+     *
+     * @return string
+     */
+    public static function formatPrice(float $price): string
+    {
+        if ($format = LocalizationUtility::translate('priceFormat', 'PxaProductManager')) {
+            $format = explode('|', trim($format, '|'));
+        } else {
+            $format = [2, '.', ' '];
+        }
+
+        return number_format($price, (int)($format[0] ?? 2), (string)($format[1] ?? '.'), (string)($format[2] ?? ','));
+    }
+
+    /**
+     * Get total tax
+     *
+     * @param Order $order
+     * @param bool  $formatPrice
+     *
+     * @return float|string
+     * @throws \Exception
+     */
+    public static function calculateOrderTotalTax(Order $order, bool $formatPrice = false)
+    {
+        $total = self::calculateTotalForProductsOrder($order, 'tax');
+
+        return $formatPrice ? self::formatPrice($total) : $total;
+    }
+
+    /**
      * orderProductsToProductQuantityData
      *
      * Generates productQuantityData (array with some main fields that should be saved in the order)
      * from orderProducts (uid => quantity array)
      *
-     * @param array $orderProducts
+     * @param array            $orderProducts
      * @param QueryResult|null $products
+     *
      * @return array
      */
     public static function orderProductsToProductQuantityData(array $orderProducts, QueryResult $products = null)
@@ -440,11 +419,11 @@ class ProductUtility
         }
 
         $signalSlotDispatcher = MainUtility::getObjectManager()->get(Dispatcher::class);
-        $signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'BeforeReturningProductQuantityData',
-            [$orderProducts, &$productsQuantityData, $products]
-        );
+        $signalSlotDispatcher->dispatch(__CLASS__, 'BeforeReturningProductQuantityData', [
+                                                     $orderProducts,
+                                                     &$productsQuantityData,
+                                                     $products
+                                                 ]);
 
         return $productsQuantityData;
     }

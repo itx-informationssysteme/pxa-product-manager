@@ -7,6 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class UrlValidator
+ *
  * @package Pixelant\PxaProductManager\Validation\Validator
  */
 class UrlValidator extends AbstractValidator
@@ -22,6 +23,7 @@ class UrlValidator extends AbstractValidator
      * Validate url
      *
      * @param $value
+     *
      * @return bool
      */
     public function validate($value): bool

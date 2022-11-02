@@ -19,12 +19,13 @@ namespace Pixelant\PxaProductManager\Task;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Utility\MainUtility;
-use TYPO3\CMS\Scheduler\Task\AbstractTask;
-use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 /**
  * Class ProductCustomSortingUpdateTask
+ *
  * @package Pixelant\PxaProductManager\Task
  */
 class ProductCustomSortingUpdateTask extends AbstractTask
@@ -52,7 +53,8 @@ class ProductCustomSortingUpdateTask extends AbstractTask
                         $productRepository->update($product);
                         $updatedProducts++;
                     }
-                } catch (\Exception $e) {
+                }
+                catch (\Exception $e) {
                     return false;
                 }
             }
@@ -62,6 +64,7 @@ class ProductCustomSortingUpdateTask extends AbstractTask
                 $persistenceManager->persistAll();
             }
         }
+
         return true;
     }
 }

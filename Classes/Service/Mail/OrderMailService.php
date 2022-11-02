@@ -8,23 +8,24 @@ use Pixelant\PxaProductManager\Utility\ProductUtility;
 
 /**
  * Class OrderMailService
+ *
  * @package Pixelant\PxaProductManager\Service
  */
 class OrderMailService extends AbstractMailService
 {
     /**
      * Prepare body to send
+     *
      * @param mixed ...$variables
+     *
      * @return OrderMailService
      * @throws \Pixelant\PxaProductManager\Exception\OrderEmailException
      */
     public function generateMailBody(...$variables)
     {
-        list($template, $order) = $variables;
+        [$template, $order] = $variables;
 
-        $standAloneView = $this->initializeStandaloneView(
-            $template
-        );
+        $standAloneView = $this->initializeStandaloneView($template);
 
         if (MainUtility::isPricingEnabled()) {
             $standAloneView->assign('totalPrice', ProductUtility::calculateOrderTotalPrice($order, true));

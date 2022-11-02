@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Pixelant\PxaProductManager\Controller;
 
 /***************************************************************
@@ -33,6 +32,7 @@ use TYPO3\CMS\Extbase\Mvc\View\JsonView;
 
 /**
  * Class AjaxJsonController
+ *
  * @package Pixelant\PxaProductManager\Controller
  */
 class AjaxJsonController extends AbstractController
@@ -63,18 +63,11 @@ class AjaxJsonController extends AbstractController
             if (!$inWishList && count(ProductUtility::getWishList()) >= $limit) {
                 $message = $this->translate('fe.error_limit');
             } else {
-                MainUtility::{$inWishList ? 'removeValueFromListCookie' : 'addValueToListCookie'}(
-                    ProductUtility::WISH_LIST_COOKIE_NAME,
-                    $wishProduct->getUid(),
-                    $limit
-                );
+                MainUtility::{$inWishList ? 'removeValueFromListCookie' : 'addValueToListCookie'}(ProductUtility::WISH_LIST_COOKIE_NAME, $wishProduct->getUid(), $limit);
 
-                $message = $this->translate(
-                    $inWishList ? 'fe.remove_from_list' : 'fe.added_to_list',
-                    [
-                        $this->translate('fe.wish_list')
-                    ]
-                );
+                $message = $this->translate($inWishList ? 'fe.remove_from_list' : 'fe.added_to_list', [
+                                                                                                        $this->translate('fe.wish_list')
+                                                                                                    ]);
 
                 $response['success'] = true;
                 $response['inList'] = !$inWishList;
@@ -99,10 +92,7 @@ class AjaxJsonController extends AbstractController
         ];
 
         if ($compareProduct !== null) {
-            $compareList = MainUtility::getTSFE()->fe_user->getKey(
-                'ses',
-                ProductUtility::COMPARE_LIST_SESSION_NAME
-            );
+            $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME);
 
             if (!is_array($compareList)) {
                 $compareList = [];
@@ -118,12 +108,9 @@ class AjaxJsonController extends AbstractController
             }
 
             MainUtility::getTSFE()->fe_user->setKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME, $compareList);
-            $message = $this->translate(
-                $translationKey,
-                [
-                    $this->translate('fe.compare_list')
-                ]
-            );
+            $message = $this->translate($translationKey, [
+                                                           $this->translate('fe.compare_list')
+                                                       ]);
             $response['success'] = true;
         }
 
@@ -170,11 +157,7 @@ class AjaxJsonController extends AbstractController
      */
     public function addLatestVisitedProductAction(Product $product)
     {
-        MainUtility::addValueToListCookie(
-            ProductUtility::LATEST_VISITED_COOKIE_NAME,
-            $product->getUid(),
-            ((int)$this->settings['latestVisitedProductsLimit'] + 1)
-        );
+        MainUtility::addValueToListCookie(ProductUtility::LATEST_VISITED_COOKIE_NAME, $product->getUid(), ((int)$this->settings['latestVisitedProductsLimit'] + 1));
 
         $this->view->assign('value', ['success' => true]);
     }

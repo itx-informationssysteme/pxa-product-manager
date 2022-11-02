@@ -1,191 +1,201 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ppm="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers" data-namespace-typo3-fluid="true">
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:ppm="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers">
 
-<f:layout name="Default" />
+<f:layout name="Default"/>
 
 <f:section name="main">
 
-    <f:flashMessages />
+	<f:flashMessages/>
 
-    <ppm:setPageTitle><f:if condition="{category.alternativeTitle}" then="{category.alternativeTitle}" else="{category.title}"/></ppm:setPageTitle>
+	<ppm:setPageTitle>
+		<f:if condition="{category.alternativeTitle}" else="{category.title}" then="{category.alternativeTitle}"/>
+	</ppm:setPageTitle>
 
-    <f:render section="productWrapper" arguments="{_all}"/>
+	<f:render arguments="{_all}" section="productWrapper"/>
 
 </f:section>
 
 <f:section name="productWrapper">
-    <div class="products-wrapper">
+	<div class="products-wrapper">
 
-        <f:comment><!--root category --></f:comment>
-        <f:if condition="{category}">
+		<f:comment><!--root category --></f:comment>
+		<f:if condition="{category}">
 
-            <f:render partial="Product/GroupedList/Banner" arguments="{image: category.bannerImage, title: category.title}"/>
+			<f:render arguments="{image: category.bannerImage, title: category.title}" partial="Product/GroupedList/Banner"/>
 
-            <div class="row products-grouped-category">
-                <div class="col-md-12">
-                    <f:if condition="{category.title}">
-                        <h1>{category.title}</h1>
-                    </f:if>
+			<div class="row products-grouped-category">
+				<div class="col-md-12">
+					<f:if condition="{category.title}">
+						<h1>{category.title}</h1>
+					</f:if>
 
-                    <f:if condition="{category.description}">
-                        <f:format.html>{category.description}</f:format.html>
-                    </f:if>
-                </div>
-            </div>
+					<f:if condition="{category.description}">
+						<f:format.html>{category.description}</f:format.html>
+					</f:if>
+				</div>
+			</div>
 
-            <f:if condition="{products}">
-                <div class="items-list row">
-                    <f:for each="{products}" as="product">
-                        <f:render section="item" arguments="{product:product, image: product.thumbnail, category: category}" />
-                    </f:for>
-                </div>
-            </f:if>
-        </f:if>
+			<f:if condition="{products}">
+				<div class="items-list row">
+					<f:for as="product" each="{products}">
+						<f:render arguments="{product:product, image: product.thumbnail, category: category}" section="item"/>
+					</f:for>
+				</div>
+			</f:if>
+		</f:if>
 
-        <f:comment><!-- subcategories for navigation --></f:comment>
-        <f:if condition="{subCategories}">
-            <div class="items-list row">
-                <f:for each="{subCategories}" as="subCategory">
-                    <f:render section="item" arguments="{image: subCategory.image, title: subCategory.title, category: subCategory}" />
-                </f:for>
-            </div>
-        </f:if>
+		<f:comment><!-- subcategories for navigation --></f:comment>
+		<f:if condition="{subCategories}">
+			<div class="items-list row">
+				<f:for as="subCategory" each="{subCategories}">
+					<f:render arguments="{image: subCategory.image, title: subCategory.title, category: subCategory}" section="item"/>
+				</f:for>
+			</div>
+		</f:if>
 
-        <f:comment><!-- grouped list (subcategories + products) --></f:comment>
-        <f:if condition="{groupedList}">
-            <f:for each="{groupedList}" as="groupedItem" iteration="groupIteration">
+		<f:comment><!-- grouped list (subcategories + products) --></f:comment>
+		<f:if condition="{groupedList}">
+			<f:for as="groupedItem" each="{groupedList}" iteration="groupIteration">
 
-                <div class="row products-grouped-item{f:if(condition: groupIteration.isOdd, then: ' products-grouped-item-odd', else: ' products-grouped-item-even')}">
-                    <div class="subcategory-description col-md-12">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <f:comment><!-- Image --></f:comment>
-                                <f:render partial="Product/GroupedList/GroupImage" arguments="{image: groupedItem.category.image, title: groupedItem.category.title}"/>
-                            </div>
-                            <div class="col-md-8">
-                                <f:comment><!-- Title and desciption --></f:comment>
-                                <h3>{groupedItem.category.title}</h3>
-                                <f:format.html>{groupedItem.category.description}</f:format.html>
-                            </div>
-                        </div>
-                    </div>
+				<div class="row products-grouped-item{f:if(condition: groupIteration.isOdd, then: ' products-grouped-item-odd', else: ' products-grouped-item-even')}">
+					<div class="subcategory-description col-md-12">
+						<div class="row">
+							<div class="col-md-4">
+								<f:comment><!-- Image --></f:comment>
+								<f:render arguments="{image: groupedItem.category.image, title: groupedItem.category.title}" partial="Product/GroupedList/GroupImage"/>
+							</div>
+							<div class="col-md-8">
+								<f:comment><!-- Title and desciption --></f:comment>
+								<h3>{groupedItem.category.title}</h3>
+								<f:format.html>{groupedItem.category.description}</f:format.html>
+							</div>
+						</div>
+					</div>
 
-                    <f:if condition="{groupedItem.subCategories}">
-                        <div class="row selection">
-                            <div class="col-md-12">
-                                <f:for each="{groupedItem.subCategories}" as="subCategory">
-                                    <f:render section="item" arguments="{image: subCategory.image, title: subCategory.title, category: subCategory}" />
-                                </f:for>
-                            </div>
-                        </div>
-                    </f:if>
+					<f:if condition="{groupedItem.subCategories}">
+						<div class="row selection">
+							<div class="col-md-12">
+								<f:for as="subCategory" each="{groupedItem.subCategories}">
+									<f:render arguments="{image: subCategory.image, title: subCategory.title, category: subCategory}" section="item"/>
+								</f:for>
+							</div>
+						</div>
+					</f:if>
 
-                    <f:if condition="{groupedItem.products}">
-                        <div class="col-md-12">
-                            <div class="row selection">
-                                <div class="col-md-12">
-                                    <f:comment><!-- View mode --></f:comment>
-                                    <ul class="nav nav-pills pull-right" role="tablist">
-                                        <li class="active">
-                                            <a href="#product-view-grid-{groupedItem.category.uid}" class="active" role="tab" data-toggle="tab">
-                                                <ppm:svg source="EXT:pxa_product_manager/Resources/Public/Icons/Svg/grid.svg" />
-                                            </a>
-                                        </li>
+					<f:if condition="{groupedItem.products}">
+						<div class="col-md-12">
+							<div class="row selection">
+								<div class="col-md-12">
+									<f:comment><!-- View mode --></f:comment>
+									<ul class="nav nav-pills pull-right" role="tablist">
+										<li class="active">
+											<a class="active" data-toggle="tab" href="#product-view-grid-{groupedItem.category.uid}" role="tab">
+												<ppm:svg source="EXT:pxa_product_manager/Resources/Public/Icons/Svg/grid.svg"/>
+											</a>
+										</li>
 
-                                        <f:if condition="{groupedItem.categoryAttributes} >= 2">
-                                            <li>
-                                                <a href="#product-view-list-{groupedItem.category.uid}" role="tab" data-toggle="tab">
-                                                    <ppm:svg source="EXT:pxa_product_manager/Resources/Public/Icons/Svg/list.svg" />
-                                                </a>
-                                            </li>
-                                        </f:if>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+										<f:if condition="{groupedItem.categoryAttributes} >= 2">
+											<li>
+												<a data-toggle="tab" href="#product-view-list-{groupedItem.category.uid}" role="tab">
+													<ppm:svg source="EXT:pxa_product_manager/Resources/Public/Icons/Svg/list.svg"/>
+												</a>
+											</li>
+										</f:if>
+									</ul>
+								</div>
+							</div>
+						</div>
 
-                        <div class="tab-content col-md-12">
+						<div class="tab-content col-md-12">
 
-                            <f:comment><!-- Grid view --></f:comment>
-                            <div role="tabpanel" class="tab-pane active" id="product-view-grid-{groupedItem.category.uid}">
-                                <div class="items-list row">
-                                    <f:for each="{groupedItem.products}" as="groupProduct">
-                                        <f:render section="item" arguments="{product:groupProduct, image: groupProduct.thumbnail, category: groupedItem.category}" />
-                                    </f:for>
-                                </div>
-                            </div>
+							<f:comment><!-- Grid view --></f:comment>
+							<div class="tab-pane active" id="product-view-grid-{groupedItem.category.uid}" role="tabpanel">
+								<div class="items-list row">
+									<f:for as="groupProduct" each="{groupedItem.products}">
+										<f:render arguments="{product:groupProduct, image: groupProduct.thumbnail, category: groupedItem.category}" section="item"/>
+									</f:for>
+								</div>
+							</div>
 
-                            <f:comment><!-- List view --></f:comment>
-                            <f:if condition="{groupedItem.categoryAttributes} >= 2">
-                                <div role="tabpanel" class="tab-pane" id="product-view-list-{groupedItem.category.uid}">
-                                    <div class="items-list">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped table-bordered">
-                                                <tr>
-                                                    <th><f:translate key="fe.product" /></th>
-                                                    <f:for each="{groupedItem.products.0.attributes}" as="attribute">
-                                                        <th><f:if condition="{attribute.label}" then="{attribute.label}" else="{attribute.name}"/></th>
-                                                    </f:for>
-                                                    <th><f:translate key="fe.pdf" /></th>
-                                                </tr>
+							<f:comment><!-- List view --></f:comment>
+							<f:if condition="{groupedItem.categoryAttributes} >= 2">
+								<div class="tab-pane" id="product-view-list-{groupedItem.category.uid}" role="tabpanel">
+									<div class="items-list">
+										<div class="table-responsive">
+											<table class="table table-striped table-bordered">
+												<tr>
+													<th>
+														<f:translate key="fe.product"/>
+													</th>
+													<f:for as="attribute" each="{groupedItem.products.0.attributes}">
+														<th>
+															<f:if condition="{attribute.label}" else="{attribute.name}" then="{attribute.label}"/>
+														</th>
+													</f:for>
+													<th>
+														<f:translate key="fe.pdf"/>
+													</th>
+												</tr>
 
-                                                <f:for each="{groupedItem.products}" as="groupProduct" iteration="productIteration">
-                                                    <f:render section="row" arguments="{product: groupProduct, iteration: productIteration}" />
-                                                </f:for>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </f:if>
-                        </div>
-                    </f:if>
-                </div>
-            </f:for>
-        </f:if>
-    </div>
+												<f:for as="groupProduct" each="{groupedItem.products}" iteration="productIteration">
+													<f:render arguments="{product: groupProduct, iteration: productIteration}" section="row"/>
+												</f:for>
+											</table>
+										</div>
+									</div>
+								</div>
+							</f:if>
+						</div>
+					</f:if>
+				</div>
+			</f:for>
+		</f:if>
+	</div>
 </f:section>
 
 <f:section name="item">
-    <div class="col-md-3 col-sm-6">
-        <f:render partial="Product/{f:if(condition: category.cardViewTemplate, then: category.cardViewTemplate, else: 'Card')}" arguments="{_all}" />
-    </div>
+	<div class="col-md-3 col-sm-6">
+		<f:render arguments="{_all}" partial="Product/{f:if(condition: category.cardViewTemplate, then: category.cardViewTemplate, else: 'Card')}"/>
+	</div>
 </f:section>
 
 <f:section name="row">
-    <tr>
-        <td>
-            <f:if condition="{product.disableSingleView}">
-                <f:then>
-                    {product.name}
-                </f:then>
-                <f:else>
-                    <ppm:link.link pageUid="{settings.pagePid}" category="{category}" product="{product}">
-                        {product.name}
-                    </ppm:link.link>
-                </f:else>
-            </f:if>
-        </td>
-        <f:for each="{product.attributes}" as="attribute">
-            <td><f:render partial="Product/Attribute/Type{attribute.type}" arguments="{attribute: attribute}"/></td>
-        </f:for>
-        <td>
-            <f:alias map="{pdfFiles: '{ppm:product.getFalFilesByExtension(product: product, extension: \'pdf\', limit: 1)}'}">
-                <f:if condition="{pdfFiles}">
-                    <f:alias map="{file: pdfFiles.0}">
-                        <f:link.typolink parameter="{file.originalResource.publicUrl} _blank">
-                            <f:if condition="{f:uri.image(src: 'EXT:pxa_product_manager/Resources/Public/Icons/FileIcons/{file.originalResource.properties.extension}.svg')}">
-                                <f:then>
-                                    <ppm:svg source="{f:uri.resource(path: 'Icons/FileIcons/{file.originalResource.properties.extension}.svg')}" width="24" height="24" />
-                                </f:then>
-                                <f:else>
-                                    <ppm:svg source="{f:uri.resource(path: 'Icons/FileIcons/default.svg')}" width="24" height="24" />
-                                </f:else>
-                            </f:if>
-                        </f:link.typolink>
-                    </f:alias>
-                </f:if>
-            </f:alias>
-        </td>
-    </tr>
+	<tr>
+		<td>
+			<f:if condition="{product.disableSingleView}">
+				<f:then>
+					{product.name}
+				</f:then>
+				<f:else>
+					<ppm:link.link category="{category}" pageUid="{settings.pagePid}" product="{product}">
+						{product.name}
+					</ppm:link.link>
+				</f:else>
+			</f:if>
+		</td>
+		<f:for as="attribute" each="{product.attributes}">
+			<td>
+				<f:render arguments="{attribute: attribute}" partial="Product/Attribute/Type{attribute.type}"/>
+			</td>
+		</f:for>
+		<td>
+			<f:alias map="{pdfFiles: '{ppm:product.getFalFilesByExtension(product: product, extension: \'pdf\', limit: 1)}'}">
+				<f:if condition="{pdfFiles}">
+					<f:alias map="{file: pdfFiles.0}">
+						<f:link.typolink parameter="{file.originalResource.publicUrl} _blank">
+							<f:if condition="{f:uri.image(src: 'EXT:pxa_product_manager/Resources/Public/Icons/FileIcons/{file.originalResource.properties.extension}.svg')}">
+								<f:then>
+									<ppm:svg height="24" source="{f:uri.resource(path: 'Icons/FileIcons/{file.originalResource.properties.extension}.svg')}" width="24"/>
+								</f:then>
+								<f:else>
+									<ppm:svg height="24" source="{f:uri.resource(path: 'Icons/FileIcons/default.svg')}" width="24"/>
+								</f:else>
+							</f:if>
+						</f:link.typolink>
+					</f:alias>
+				</f:if>
+			</f:alias>
+		</td>
+	</tr>
 </f:section>
 
 </html>

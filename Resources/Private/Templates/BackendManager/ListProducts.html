@@ -1,66 +1,66 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-      xmlns:pxa="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers/Backend" data-namespace-typo3-fluid="true">
+<html data-namespace-typo3-fluid="true"
+	xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:pxa="http://typo3.org/ns/Pixelant/PxaProductManager/ViewHelpers/Backend">
 
 <f:layout name="BELayout"/>
 <f:debug>{_all}</f:debug>
 
 <f:section name="main">
-    <h1>
-        <pxa:translate key="be.module_name"/>
-        - "{pageTitle}"
-    </h1>
+	<h1>
+		<pxa:translate key="be.module_name"/>
+		- "{pageTitle}"
+	</h1>
 
-    <f:flashMessages/>
+	<f:flashMessages/>
 
-    <f:if condition="{products}">
-            <f:render partial="Backend/CategoryBreadCrumbs" arguments="{categoryBreadCrumbs: categoryBreadCrumbs}"/>
+	<f:if condition="{products}">
+		<f:render arguments="{categoryBreadCrumbs: categoryBreadCrumbs}" partial="Backend/CategoryBreadCrumbs"/>
 
-            <f:render partial="Backend/NewRecordButton" arguments="{label: 'create_new_product', newRecordUrl: newRecordUrl}"/>
+		<f:render arguments="{label: 'create_new_product', newRecordUrl: newRecordUrl}" partial="Backend/NewRecordButton"/>
 
-            <f:render partial="Backend/BackButton" arguments="{activeCategory: activeCategory}"/>
+		<f:render arguments="{activeCategory: activeCategory}" partial="Backend/BackButton"/>
 
-            <div class="panel-group" role="tablist" id="category-list" aria-multiselectable="true">
-                <f:for each="{products}" as="product">
-                    <f:alias
-                            map="{translations: '{pxa:getRecordTranslations(uid: product.uid, table: \'tx_pxaproductmanager_domain_model_product\')}'}">
-                        <div class="panel panel-default">
-                            <div class="panel-heading"
-                                 role="tab"
-                                 id="heading-{category.uid}">
-                                <div class="row panel-title">
-                                    <div class="col-xs-4">
-                                        <a href="{pxa:recordEditUrl(uid: product.uid, table: 'tx_pxaproductmanager_domain_model_product')}"
-                                           title="{pxa:translate(key: 'be.edit_product', arguments: '{0: product.name}')}"
-                                           class="record-title">
-                                            <f:format.raw>
-                                                <pxa:getRecordIcon uid="{product.uid}" table="tx_pxaproductmanager_domain_model_product"/>
-                                            </f:format.raw>
-                                            {product.name} (id: {product.uid})
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-8">
-                                        <a class="btn btn-default"
-                                           title="{pxa:translate(key: 'be.edit_product', arguments: '{0: product.name}')}"
-                                           href="{pxa:recordEditUrl(uid: product.uid, table: 'tx_pxaproductmanager_domain_model_product')}">
-                                            <core:icon identifier="actions-open"/>
-                                        </a>
+		<div aria-multiselectable="true" class="panel-group" id="category-list" role="tablist">
+			<f:for as="product" each="{products}">
+				<f:alias
+					map="{translations: '{pxa:getRecordTranslations(uid: product.uid, table: \'tx_pxaproductmanager_domain_model_product\')}'}">
+					<div class="panel panel-default">
+						<div class="panel-heading"
+							id="heading-{category.uid}"
+							role="tab">
+							<div class="row panel-title">
+								<div class="col-xs-4">
+									<a class="record-title"
+										href="{pxa:recordEditUrl(uid: product.uid, table: 'tx_pxaproductmanager_domain_model_product')}"
+										title="{pxa:translate(key: 'be.edit_product', arguments: '{0: product.name}')}">
+										<f:format.raw>
+											<pxa:getRecordIcon table="tx_pxaproductmanager_domain_model_product" uid="{product.uid}"/>
+										</f:format.raw>
+										{product.name} (id: {product.uid})
+									</a>
+								</div>
+								<div class="col-xs-8">
+									<a class="btn btn-default"
+										href="{pxa:recordEditUrl(uid: product.uid, table: 'tx_pxaproductmanager_domain_model_product')}"
+										title="{pxa:translate(key: 'be.edit_product', arguments: '{0: product.name}')}">
+										<core:icon identifier="actions-open"/>
+									</a>
 
-                                        <f:render partial="Backend/SortingControls"
-                                                  arguments="{positions: productsPositions, record: product, tableName: 'tx_pxaproductmanager_domain_model_product'}"/>
+									<f:render arguments="{positions: productsPositions, record: product, tableName: 'tx_pxaproductmanager_domain_model_product'}"
+										partial="Backend/SortingControls"/>
 
-                                        <f:render partial="Backend/TranslationsButton" arguments="{uid: product.uid, translations: translations}"/>
-                                    </div>
-                                </div>
-                            </div>
+									<f:render arguments="{uid: product.uid, translations: translations}" partial="Backend/TranslationsButton"/>
+								</div>
+							</div>
+						</div>
 
-                            <f:render partial="Backend/TranslationsPanel" arguments="{uid: product.uid, translations: translations, itemName: 'product', table: 'tx_pxaproductmanager_domain_model_product', titleField: 'name'}"/>
-                        </div>
-                    </f:alias>
-                </f:for>
-            </div>
+						<f:render arguments="{uid: product.uid, translations: translations, itemName: 'product', table: 'tx_pxaproductmanager_domain_model_product', titleField: 'name'}" partial="Backend/TranslationsPanel"/>
+					</div>
+				</f:alias>
+			</f:for>
+		</div>
 
-            <f:render partial="Backend/BackButton" arguments="{activeCategory: activeCategory}"/>
+		<f:render arguments="{activeCategory: activeCategory}" partial="Backend/BackButton"/>
 
-    </f:if>
+	</f:if>
 </f:section>
 </html>

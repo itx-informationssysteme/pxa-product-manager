@@ -24,6 +24,7 @@ namespace Pixelant\PxaProductManager\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 
 /**
@@ -38,16 +39,14 @@ class NavigationController extends AbstractController
     /**
      * Action show
      */
-    public function showAction()
+    public function showAction(): \Psr\Http\Message\ResponseInterface
     {
         if ((int)$this->settings['category']) {
             $this->view->assign('treeData', $this->getNavigationTree());
         } else {
-            $this->addFlashMessage(
-                'Couldn\'t determine category, please check your selection.',
-                'Error',
-                FlashMessage::ERROR
-            );
+            $this->addFlashMessage('Couldn\'t determine category, please check your selection.', 'Error', FlashMessage::ERROR);
         }
+
+        return $this->htmlResponse();
     }
 }
