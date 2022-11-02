@@ -163,7 +163,7 @@ class MainUtility
         if ($activeCategoryUid === null && is_array($args)) {
             // Find latest category argument
             foreach (array_reverse($args) as $argKey => $argValue) {
-                if (StringUtility::beginsWith($argKey, LinkBuilderService::CATEGORY_ARGUMENT_START_WITH)) {
+                if (\str_starts_with($argKey, LinkBuilderService::CATEGORY_ARGUMENT_START_WITH)) {
                     $activeCategoryUid = (int)$argValue;
                     break;
                 }

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Service\Link;
 
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Traits\SignalSlot\DispatcherTrait;
@@ -55,7 +57,7 @@ class LinkBuilderService
      * @param int|null                          $languageUid Provide language to generate urls
      * @param TypoScriptFrontendController|null $typoScriptFrontendController
      *
-     * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
+     * @throws AspectNotFoundException
      */
     public function __construct(int $languageUid = null, TypoScriptFrontendController $typoScriptFrontendController = null)
     {
@@ -81,7 +83,7 @@ class LinkBuilderService
             return false;
         }
 
-        return (bool)(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_FE);
+        return (bool)(TYPO3_REQUESTTYPE & ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend());
     }
 
     /**

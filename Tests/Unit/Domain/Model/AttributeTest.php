@@ -24,7 +24,9 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Pixelant\PxaProductManager\Domain\Model\Option;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 
@@ -151,7 +153,7 @@ class AttributeTest extends UnitTestCase
      */
     public function getOptionsReturnsInitialValueForOption()
     {
-        $newObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $newObjectStorage = new ObjectStorage();
         self::assertEquals($newObjectStorage, $this->fixture->getOptions());
     }
 
@@ -160,8 +162,8 @@ class AttributeTest extends UnitTestCase
      */
     public function setOptionsForObjectStorageContainingOptionSetsOptions()
     {
-        $option = new \Pixelant\PxaProductManager\Domain\Model\Option();
-        $objectStorageHoldingExactlyOneOptions = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $option = new Option();
+        $objectStorageHoldingExactlyOneOptions = new ObjectStorage();
         $objectStorageHoldingExactlyOneOptions->attach($option);
         $this->fixture->setOptions($objectStorageHoldingExactlyOneOptions);
 
@@ -173,8 +175,8 @@ class AttributeTest extends UnitTestCase
      */
     public function addOptionToObjectStorageHoldingOptions()
     {
-        $option = new \Pixelant\PxaProductManager\Domain\Model\Option();
-        $objectStorageHoldingExactlyOneOption = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $option = new Option();
+        $objectStorageHoldingExactlyOneOption = new ObjectStorage();
         $objectStorageHoldingExactlyOneOption->attach($option);
         $this->fixture->addOption($option);
 
@@ -186,8 +188,8 @@ class AttributeTest extends UnitTestCase
      */
     public function removeOptionFromObjectStorageHoldingOptions()
     {
-        $option = new \Pixelant\PxaProductManager\Domain\Model\Option();
-        $localObjectStorage = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $option = new Option();
+        $localObjectStorage = new ObjectStorage();
         $localObjectStorage->attach($option);
         $localObjectStorage->detach($option);
         $this->fixture->addOption($option);
@@ -267,7 +269,7 @@ class AttributeTest extends UnitTestCase
      */
     public function iconCanBeSet()
     {
-        $icon = new \TYPO3\CMS\Extbase\Domain\Model\FileReference();
+        $icon = new FileReference();
         $this->fixture->setIcon($icon);
 
         self::assertSame($icon, $this->fixture->getIcon());

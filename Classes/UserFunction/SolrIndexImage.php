@@ -18,7 +18,7 @@ class SolrIndexImage
     /**
      * @var ContentObjectRenderer
      */
-    public $cObj;
+    protected $cObj;
 
     /**
      * Get public url of thumbnail product image
@@ -155,5 +155,10 @@ class SolrIndexImage
         }
 
         return implode(',', $imagesPaths);
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Backend\FormDataProvider;
 
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 use Pixelant\PxaProductManager\Traits\TranslateBeTrait;
@@ -51,7 +52,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
             return $result;
         }
 
-        $isNew = StringUtility::beginsWith($result['databaseRow']['uid'], 'NEW');
+        $isNew = \str_starts_with((string) $result['databaseRow']['uid'], 'NEW');
 
         if (!$isNew) {
             /** @var AttributeHolderUtility $attributeHolder */
@@ -152,7 +153,9 @@ class ProductEditFormInitialize implements FormDataProviderInterface
 
                         $statement = $queryBuilder->select('uid', 'value')->from('tx_pxaproductmanager_domain_model_option')->where($queryBuilder->expr()->eq('attribute', $queryBuilder->createNamedParameter($attributeUid)))->execute();
 
+                        // we do not want to accumulate options like crazy
                         $options = [];
+                        $options[0] = array('', 0);
                         while ($row = $statement->fetch()) {
                             $options[] = [$row['value'], $row['uid']];
                         }
@@ -187,14 +190,18 @@ class ProductEditFormInitialize implements FormDataProviderInterface
             foreach ($productAttributes as $productAttribute) {
                 if (!empty($productAttribute['fields'])) {
                     $fieldsList = implode(', ', $productAttribute['fields']);
-                    $tca['interface']['showRecordFieldList'] .= ', ' . $fieldsList;
+
+                    if(isset($tca['interface'])) {
+                        $tca['interface']['showRecordFieldList'] .= ', ' . $fieldsList;
+                    }
+
                     $productAttributesShow .= ',--div--;' . ($productAttribute['label'] ?: $defaultLabel) . ',';
                     $productAttributesShow .= $fieldsList;
                 }
             }
 
             foreach ($tca['types'] as &$type) {
-                $type = str_replace(',--palette--;;paletteAttributes', $productAttributesShow, $type);
+                $type = str_replace('--palette--;;paletteAttributes',$productAttributesShow,$type);
             }
         }
     }
@@ -261,7 +268,7 @@ class ProductEditFormInitialize implements FormDataProviderInterface
     protected function showNotificationMessage(string $label)
     {
         /** @var FlashMessage $flashMessage */
-        $flashMessage = GeneralUtility::makeInstance(FlashMessage::class, $this->translate($label), $this->translate('tca.notification_title'), FlashMessage::INFO, true);
+        $flashMessage = GeneralUtility::makeInstance(FlashMessage::class, $this->translate($label), $this->translate('tca.notification_title'), AbstractMessage::INFO, true);
 
         $flashMessageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier('core.template.flashMessages');
         $flashMessageQueue->enqueue($flashMessage);

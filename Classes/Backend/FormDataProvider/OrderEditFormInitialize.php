@@ -28,7 +28,7 @@ class OrderEditFormInitialize implements FormDataProviderInterface
         }
 
         // Nothing to show if order is created manually ??
-        if (StringUtility::beginsWith($result['databaseRow']['uid'], 'NEW')) {
+        if (\str_starts_with($result['databaseRow']['uid'], 'NEW')) {
             return $result;
         }
 

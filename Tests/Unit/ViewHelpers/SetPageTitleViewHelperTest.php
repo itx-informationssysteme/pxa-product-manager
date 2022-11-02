@@ -2,6 +2,7 @@
 
 namespace Pixelant\PxaProductManager\Tests\Unit\ViewHelpers;
 
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Nimut\TestingFramework\TestCase\ViewHelperBaseTestcase;
 use Pixelant\PxaProductManager\ViewHelpers\SetPageTitleViewHelper;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -62,7 +63,7 @@ class SetPageTitleViewHelperTest extends ViewHelperBaseTestcase
         parent::setUp();
         $tsfe = $this->getMockBuilder(TypoScriptFrontendController::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $this->viewHelper = $this->getAccessibleMock(SetPageTitleViewHelper::class, ['buildRenderChildrenClosure']);
-        $this->inject($this->viewHelper, 'renderingContext', $this->createMock(\TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface::class));
+        $this->inject($this->viewHelper, 'renderingContext', $this->createMock(RenderingContextInterface::class));
         $this->viewHelper->initializeArguments();
 
         $GLOBALS['TSFE'] = $tsfe;

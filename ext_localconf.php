@@ -1,35 +1,55 @@
 <?php
-defined('TYPO3_MODE') || die;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use Pixelant\PxaProductManager\Controller\ProductController;
+use Pixelant\PxaProductManager\Controller\NavigationController;
+use Pixelant\PxaProductManager\Controller\AjaxProductsController;
+use Pixelant\PxaProductManager\Controller\AjaxJsonController;
+use Pixelant\PxaProductManager\Controller\FilterController;
+use Pixelant\PxaProductManager\Hook\PageLayoutView;
+use Pixelant\PxaProductManager\Backend\FormDataProvider\ProductEditFormInitialize;
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems;
+use Pixelant\PxaProductManager\Backend\FormDataProvider\OrderEditFormInitialize;
+use Pixelant\PxaProductManager\LinkHandler\LinkHandling;
+use Pixelant\PxaProductManager\LinkHandler\ProductLinkBuilder;
+use Pixelant\PxaProductManager\LinkHandler\LinkHandlingFormData;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Cache\Backend\FileBackend;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Pixelant\PxaProductManager\Task\ProductCustomSortingUpdateTask;
+use Pixelant\PxaProductManager\Backend\FormEngine\FieldControl\AttributeIdentifierControl;
+use Pixelant\PxaProductManager\Backend\Evaluation\LcFirstEvaluation;
+defined('TYPO3') || die;
 $_EXTKEY = "pxa_product_manager";
 call_user_func(
-    function ($_EXTKEY) {
+    function () {
         // @codingStandardsIgnoreStart
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'Pixelant.' . $_EXTKEY,
+        ExtensionUtility::configurePlugin(
+            'PxaProductManager',
             'Pi1',
             [
-                'Product' => 'list, show, wishList, finishOrder, lazyList, comparePreView, compareView, groupedList, promotionList',
-                'Navigation' => 'show',
-                'AjaxProducts' => 'ajaxLazyList, latestVisited',
-                'AjaxJson' => 'toggleWishList, toggleCompareList, loadCompareList, emptyCompareList, loadWishList, addLatestVisitedProduct',
-                'Filter' => 'showFilter'
+                ProductController::class => 'list, show, wishList, finishOrder, lazyList, comparePreView, compareView, groupedList, promotionList',
+                NavigationController::class => 'show',
+                AjaxProductsController::class => 'ajaxLazyList, latestVisited',
+                AjaxJsonController::class => 'toggleWishList, toggleCompareList, loadCompareList, emptyCompareList, loadWishList, addLatestVisitedProduct',
+                FilterController::class => 'showFilter'
             ],
             // non-cacheable actions
             [
-                'Product' => 'wishList, finishOrder, comparePreView, compareView',
-                'AjaxProducts' => 'ajaxLazyList, latestVisited',
-                'AjaxJson' => 'toggleWishList, toggleCompareList, loadCompareList, emptyCompareList, loadWishList, addLatestVisitedProduct'
+                ProductController::class => 'wishList, finishOrder, comparePreView, compareView',
+                AjaxProductsController::class => 'ajaxLazyList, latestVisited',
+                AjaxJsonController::class => 'toggleWishList, toggleCompareList, loadCompareList, emptyCompareList, loadWishList, addLatestVisitedProduct'
             ]
         );
         // @codingStandardsIgnoreEnd
 
         // Register cart as another plugin. Otherwise it has conflict
         // with product single view
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'Pixelant.' . $_EXTKEY,
+        ExtensionUtility::configurePlugin(
+            'PxaProductManager',
             'Pi2',
             [
-                'Product' => 'wishListCart, compareListCart',
+                ProductController::class => 'wishListCart, compareListCart',
             ],
             // non-cacheable actions
             [
@@ -39,19 +59,19 @@ call_user_func(
         // @codingStandardsIgnoreStart
         // Page module hook
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['list_type_Info']['pxaproductmanager_pi1']['pxa_product_manager'] =
-            \Pixelant\PxaProductManager\Hook\PageLayoutView::class . '->getExtensionSummary';
+            PageLayoutView::class . '->getExtensionSummary';
 
         // Form data provider hook, to generate attributes TCA
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][\Pixelant\PxaProductManager\Backend\FormDataProvider\ProductEditFormInitialize::class] = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][ProductEditFormInitialize::class] = [
             'depends' => [
-                \TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew::class,
-                \TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems::class
+                DatabaseRowInitializeNew::class,
+                TcaSelectItems::class
             ]
         ];
 
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][\Pixelant\PxaProductManager\Backend\FormDataProvider\OrderEditFormInitialize::class] = [
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][OrderEditFormInitialize::class] = [
             'depends' => [
-                \TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew::class
+                DatabaseRowInitializeNew::class
             ]
         ];
 
@@ -59,15 +79,15 @@ call_user_func(
         // t3://pxappm?product=[product_id]
         // t3://pxappm?category=[category_id]
         $linkType = 'pxappm';
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['linkHandler'][$linkType] = \Pixelant\PxaProductManager\LinkHandler\LinkHandling::class;
-        $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkType] = \Pixelant\PxaProductManager\LinkHandler\ProductLinkBuilder::class;
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['linkHandler'][$linkType] = \Pixelant\PxaProductManager\LinkHandler\LinkHandlingFormData::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['linkHandler'][$linkType] = LinkHandling::class;
+        $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkType] = ProductLinkBuilder::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['linkHandler'][$linkType] = LinkHandlingFormData::class;
 
         // Register cache
         if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_pxa_pm_categories']['frontend'])) {
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_pxa_pm_categories'] = [
-                'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
-                'backend' => \TYPO3\CMS\Core\Cache\Backend\FileBackend::class,
+                'frontend' => VariableFrontend::class,
+                'backend' => FileBackend::class,
                 'options' => [
                     'defaultLifetime' => 0
                 ],
@@ -77,14 +97,14 @@ call_user_func(
         // @codingStandardsIgnoreEnd
 
         // Include page typoscript
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
+        ExtensionManagementUtility::addPageTSConfig(
             '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:pxa_product_manager/Configuration/TypoScript/PageTS/rteTsConfig.ts">'
         );
 
         $ppmLocalLangBe = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf';
-        $productCustomSortingUpdateTask = Pixelant\PxaProductManager\Task\ProductCustomSortingUpdateTask::class;
+        $productCustomSortingUpdateTask = ProductCustomSortingUpdateTask::class;
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][$productCustomSortingUpdateTask] = [
-            'extension' => $_EXTKEY,
+            'extension' => 'pxa_product_manager',
             'title' => $ppmLocalLangBe . ':task.productCustomSortingUpdate.title',
             'description' => $ppmLocalLangBe . ':task.productCustomSortingUpdate.description'
         ];
@@ -93,11 +113,11 @@ call_user_func(
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1534315213786] = [
             'nodeName' => 'attributeIdentifierControl',
             'priority' => 30,
-            'class' => \Pixelant\PxaProductManager\Backend\FormEngine\FieldControl\AttributeIdentifierControl::class
+            'class' => AttributeIdentifierControl::class
         ];
 
         // Register the class to be available in 'eval' of TCA
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][\Pixelant\PxaProductManager\Backend\Evaluation\LcFirstEvaluation::class] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals'][LcFirstEvaluation::class] = '';
     },
-    $_EXTKEY
+    'pxa_product_manager'
 );

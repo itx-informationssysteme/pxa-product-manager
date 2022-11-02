@@ -2,7 +2,6 @@
 
 namespace Pixelant\PxaProductManager\ViewHelpers\Backend;
 
-use TYPO3\CMS\Lang\LanguageService;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
@@ -30,7 +29,7 @@ class TranslateViewHelper extends AbstractViewHelper
         $key = $arguments['key'];
         $arguments = $arguments['arguments'];
 
-        /** @var LanguageService $lang */
+        /** @var \TYPO3\CMS\Core\Localization\LanguageService $lang */
         $lang = $GLOBALS['LANG'];
         $label = $lang->sL('LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:' . $key) ?? '';
 

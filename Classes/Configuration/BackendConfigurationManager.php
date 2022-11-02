@@ -33,4 +33,9 @@ class BackendConfigurationManager extends ExtbaseBackendConfigurationManager
     {
         $this->currentPageId = $currentPageId;
     }
+
+    protected function getControllerConfiguration($extensionName, $pluginName): array
+    {
+        return $this->getSwitchableControllerActions($extensionName, $pluginName);
+    }
 }

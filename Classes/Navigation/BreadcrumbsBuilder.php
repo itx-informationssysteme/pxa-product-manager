@@ -47,7 +47,7 @@ class BreadcrumbsBuilder
     /**
      * @var ContentObjectRenderer
      */
-    public $cObj;
+    protected $cObj;
 
     /**
      * @var ProductRepository
@@ -92,7 +92,7 @@ class BreadcrumbsBuilder
 
         if (is_array($arguments)) {
             foreach ($arguments as $argument => $value) {
-                if (StringUtility::beginsWith($argument, LinkBuilderService::CATEGORY_ARGUMENT_START_WITH)) {
+                if (\str_starts_with($argument, LinkBuilderService::CATEGORY_ARGUMENT_START_WITH)) {
                     /** @var Category $category */
                     $value = (int)$value;
                     $category = $this->categoryRepository->findByUid($value);
@@ -156,5 +156,10 @@ class BreadcrumbsBuilder
         $parameters[$key] = $value;
 
         return $this->linkBuilder->buildForArguments((int)MainUtility::getTSFE()->id, $parameters);
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

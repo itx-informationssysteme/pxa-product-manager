@@ -25,7 +25,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -45,8 +45,8 @@ class Order extends AbstractEntity
     /**
      * products
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<Product>
+     * @Lazy
      */
     protected $products = null;
 
@@ -58,7 +58,7 @@ class Order extends AbstractEntity
     protected $complete = false;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+     * @var FrontendUser
      */
     protected $feUser = null;
 
@@ -110,17 +110,17 @@ class Order extends AbstractEntity
      */
     protected function initStorageObjects()
     {
-        $this->products = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->products = new ObjectStorage();
     }
 
     /**
      * Adds a Product
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Product $product
+     * @param Product $product
      *
      * @return void
      */
-    public function addProduct(\Pixelant\PxaProductManager\Domain\Model\Product $product)
+    public function addProduct(Product $product)
     {
         $this->products->attach($product);
     }
@@ -128,11 +128,11 @@ class Order extends AbstractEntity
     /**
      * Removes a Product
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Product $productToRemove The Product to be removed
+     * @param Product $productToRemove The Product to be removed
      *
      * @return void
      */
-    public function removeProduct(\Pixelant\PxaProductManager\Domain\Model\Product $productToRemove)
+    public function removeProduct(Product $productToRemove)
     {
         $this->products->detach($productToRemove);
     }
@@ -140,7 +140,7 @@ class Order extends AbstractEntity
     /**
      * Returns the products
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelannt\PxaPixelant\Domain\Model\Product> $products
+     * @return ObjectStorage<\Pixelannt\PxaPixelant\Domain\Model\Product> $products
      */
     public function getProducts(): ObjectStorage
     {
@@ -150,17 +150,17 @@ class Order extends AbstractEntity
     /**
      * Sets the products
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelannt\PxaPixelant\Domain\Model\Product> $products
+     * @param ObjectStorage<\Pixelannt\PxaPixelant\Domain\Model\Product> $products
      *
      * @return void
      */
-    public function setProducts(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $products)
+    public function setProducts(ObjectStorage $products)
     {
         $this->products = $products;
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+     * @return FrontendUser
      */
     public function getFeUser()
     {
@@ -168,7 +168,7 @@ class Order extends AbstractEntity
     }
 
     /**
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $feUser
+     * @param FrontendUser $feUser
      */
     public function setFeUser(FrontendUser $feUser)
     {

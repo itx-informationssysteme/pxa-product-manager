@@ -2,6 +2,9 @@
 
 namespace Pixelant\PxaProductManager\Tests\Utility;
 
+use Pixelant\PxaProductManager\Utility\ConfigurationUtility;
+use Pixelant\PxaProductManager\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Order;
@@ -131,9 +134,9 @@ class ProductUtilityTest extends UnitTestCase
         $category->method('getUid')->will(self::returnValue(33));
         $product->addCategory($category);
 
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);

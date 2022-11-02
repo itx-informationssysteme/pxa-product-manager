@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use Pixelant\PxaProductManager\Utility\MainUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
@@ -24,8 +26,8 @@ class OrderConfiguration extends AbstractEntity
     protected $name = '';
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\OrderFormField>
+     * @Cascade("remove")
+     * @var ObjectStorage<OrderFormField>
      */
     protected $formFields = null;
 
@@ -177,7 +179,7 @@ class OrderConfiguration extends AbstractEntity
      */
     public function getFormFields(): ObjectStorage
     {
-        if (false === $this->orderFormFieldProcessed && defined('TYPO3_MODE') && TYPO3_MODE === 'FE') {
+        if (false === $this->orderFormFieldProcessed && defined('TYPO3') && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             $this->orderFormFieldProcessed = true;
             $this->prepareOrderFormFields();
         }

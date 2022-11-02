@@ -11,7 +11,7 @@ class SolrProductLink
     /**
      * @var ContentObjectRenderer
      */
-    public $cObj = null;
+    protected $cObj = null;
 
     /**
      * Generate link for solr
@@ -44,5 +44,10 @@ class SolrProductLink
     public function getLinkBuilder(int $languageUid): LinkBuilderService
     {
         return GeneralUtility::makeInstance(LinkBuilderService::class, $languageUid);
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

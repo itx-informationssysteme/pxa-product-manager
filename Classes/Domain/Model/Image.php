@@ -2,6 +2,7 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 /***************************************************************
  *  Copyright notice
  *
@@ -24,7 +25,6 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 /**
  *
  *
@@ -32,7 +32,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Image extends \TYPO3\CMS\Extbase\Domain\Model\FileReference
+class Image extends FileReference
 {
 
     /**

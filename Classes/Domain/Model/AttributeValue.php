@@ -2,6 +2,7 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /***************************************************************
  *  Copyright notice
  *
@@ -24,7 +25,6 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 /**
  *
  *
@@ -32,13 +32,13 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class AttributeValue extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class AttributeValue extends AbstractEntity
 {
 
     /**
      * product
      *
-     * @var \Pixelant\PxaProductManager\Domain\Model\Product
+     * @var Product
      */
     protected $product;
 
@@ -52,7 +52,7 @@ class AttributeValue extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * attribute
      *
-     * @var \Pixelant\PxaProductManager\Domain\Model\Attribute
+     * @var Attribute
      */
     protected $attribute;
 

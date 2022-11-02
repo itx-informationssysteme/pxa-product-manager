@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 use Pixelant\PxaProductManager\Domain\Model\Category;
@@ -240,7 +240,7 @@ class CategoryTest extends UnitTestCase
      */
     public function bannerImageCanBeSet()
     {
-        $bannerImage = new \TYPO3\CMS\Extbase\Domain\Model\FileReference();
+        $bannerImage = new FileReference();
         $this->fixture->setBannerImage($bannerImage);
 
         self::assertSame($bannerImage, $this->fixture->getBannerImage());

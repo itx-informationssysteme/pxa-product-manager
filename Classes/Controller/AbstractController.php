@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\DTO\Demand;
@@ -150,7 +150,7 @@ class AbstractController extends ActionController
         $category = $this->categoryRepository->findByUid($categoryUid ?? 0);
 
         if ($category === null) {
-            $this->addFlashMessage('Couldn\'t determine category, please check your selection.', 'Error', FlashMessage::ERROR);
+            $this->addFlashMessage('Couldn\'t determine category, please check your selection.', 'Error', AbstractMessage::ERROR);
         }
 
         return $category;

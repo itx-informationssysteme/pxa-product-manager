@@ -38,19 +38,7 @@ return (function() {
             'sys_language_uid' => [
                 'exclude' => 1,
                 'label' => $llCore . 'locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            $llCore . 'locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple'
-                        ],
-                    ],
-                    'default' => 0,
-                ]
+                'config' => ['type' => 'language']
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',

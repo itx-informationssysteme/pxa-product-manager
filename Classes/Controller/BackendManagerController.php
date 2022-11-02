@@ -2,6 +2,9 @@
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 use Pixelant\PxaProductManager\Domain\Repository\OrderRepository;
@@ -35,20 +38,6 @@ class BackendManagerController extends ActionController
     use TranslateBeTrait;
 
     /**
-     * BackendTemplateContainer
-     *
-     * @var BackendTemplateView
-     */
-    protected $view = null;
-
-    /**
-     * Backend Template Container
-     *
-     * @var BackendTemplateView
-     */
-    protected $defaultViewObjectName = BackendTemplateView::class;
-
-    /**
      * @var ProductRepository
      */
     protected $productRepository = null;
@@ -68,6 +57,9 @@ class BackendManagerController extends ActionController
      * @var int
      */
     protected $pid = 0;
+    public function __construct(private ModuleTemplateFactory $moduleTemplateFactory)
+    {
+    }
 
     /**
      * @param ProductRepository $productRepository
@@ -105,10 +97,13 @@ class BackendManagerController extends ActionController
      * Main view
      *
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $activeOrdersCount = $this->orderRepository->findActive($this->getTreeListArrayForPid($this->pid))->count();
         $this->view->assign('activeOrdersCount', $activeOrdersCount);
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -130,8 +125,9 @@ class BackendManagerController extends ActionController
      *
      * @param string $activeTab - Current active tab
      */
-    public function listOrdersAction(string $activeTab = '')
+    public function listOrdersAction(string $activeTab = ''): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $activeTab = $activeTab ?: $this->settings['listOrders']['tabs']['defaultActive'];
 
         if ($this->pid > 0) {
@@ -141,7 +137,7 @@ class BackendManagerController extends ActionController
             $tabs = $this->settings['listOrders']['tabs']['list'] ?: [];
 
             if (!is_array($tabs) || empty($tabs)) {
-                $this->addFlashMessage($this->translate('be.no_tabs'), $this->translate('be.error'), FlashMessage::ERROR);
+                $this->addFlashMessage($this->translate('be.no_tabs'), $this->translate('be.error'), AbstractMessage::ERROR);
             }
 
             foreach ($tabs as $tab) {
@@ -164,6 +160,8 @@ class BackendManagerController extends ActionController
                                             'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
                                         ]);
         }
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -172,11 +170,14 @@ class BackendManagerController extends ActionController
      * @param int    $order
      * @param string $backUrl
      */
-    public function showOrderAction(int $order, string $backUrl = '')
+    public function showOrderAction(int $order, string $backUrl = ''): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $order = $this->orderRepository->findByIdIgnoreHidden($order);
 
         $this->view->assign('totalPrice', ProductUtility::calculateOrderTotalPrice($order, true))->assign('totalTax', ProductUtility::calculateOrderTotalTax($order, true))->assign('backUrl', $backUrl)->assign('order', $order);
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -186,8 +187,9 @@ class BackendManagerController extends ActionController
      * @param string $state
      * @param string $backUrl
      */
-    public function toggleOrderStateAction(int $order, string $state, string $backUrl = '')
+    public function toggleOrderStateAction(int $order, string $state, string $backUrl = ''): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $order = $this->orderRepository->findByIdIgnoreHidden($order);
         $currentState = ObjectAccess::getProperty($order, $state);
 
@@ -200,6 +202,8 @@ class BackendManagerController extends ActionController
         } else {
             $this->redirectToUri($backUrl);
         }
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -208,12 +212,15 @@ class BackendManagerController extends ActionController
      * @param int    $order
      * @param string $activeTab
      */
-    public function deleteOrderAction(int $order, string $activeTab = 'new')
+    public function deleteOrderAction(int $order, string $activeTab = 'new'): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $order = $this->orderRepository->findByIdIgnoreHidden($order);
         $this->orderRepository->remove($order);
 
         $this->redirect('listOrders', null, null, ['activeTab' => $activeTab]);
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -221,8 +228,9 @@ class BackendManagerController extends ActionController
      *
      * @param Category|null $category
      */
-    public function listCategoriesAction(Category $category = null)
+    public function listCategoriesAction(Category $category = null): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         if ($this->pid > 0) {
             $categories = $this->categoryRepository->findCategoriesByPidAndParentIgnoreHidden($this->pid, $category);
 
@@ -236,6 +244,8 @@ class BackendManagerController extends ActionController
                                             'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
                                         ]);
         }
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -336,8 +346,9 @@ class BackendManagerController extends ActionController
      *
      * @param Category $category
      */
-    public function listProductsAction(Category $category)
+    public function listProductsAction(Category $category): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $products = $this->productRepository->findAllProductsByCategories([$category]);
 
         $this->view->assignMultiple([
@@ -348,6 +359,8 @@ class BackendManagerController extends ActionController
                                         'categoryBreadCrumbs' => $this->buildCategoryBreadCrumbs($category),
                                         'pageTitle' => BackendUtility::getRecord('pages', $this->pid, 'title')['title']
                                     ]);
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -374,13 +387,14 @@ class BackendManagerController extends ActionController
      */
     protected function createMenu()
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         // if view was found
-        if ($this->view->getModuleTemplate() !== null) {
+        if ($moduleTemplate !== null) {
             /** @var UriBuilder $uriBuilder */
             $uriBuilder = $this->objectManager->get(UriBuilder::class);
             $uriBuilder->setRequest($this->request);
 
-            $menu = $this->view->getModuleTemplate()->getDocHeaderComponent()->getMenuRegistry()->makeMenu();
+            $menu = $moduleTemplate->getDocHeaderComponent()->getMenuRegistry()->makeMenu();
             $menu->setIdentifier('pxa_product_manager');
 
             $actions = [
@@ -394,7 +408,7 @@ class BackendManagerController extends ActionController
                 $menu->addMenuItem($item);
             }
 
-            $this->view->getModuleTemplate()->getDocHeaderComponent()->getMenuRegistry()->addMenu($menu);
+            $moduleTemplate->getDocHeaderComponent()->getMenuRegistry()->addMenu($menu);
         }
     }
 
@@ -405,10 +419,11 @@ class BackendManagerController extends ActionController
      */
     protected function createButtons()
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
 
-        if ($this->view->getModuleTemplate() !== null) {
-            $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+        if ($moduleTemplate !== null) {
+            $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
             $uriBuilder = $this->objectManager->get(UriBuilder::class);
             $uriBuilder->setRequest($this->request);
 

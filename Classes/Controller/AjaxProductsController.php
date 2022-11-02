@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Model\DTO\Demand;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -58,7 +58,7 @@ class AjaxProductsController extends ProductController
      *
      * @return string Json formatted string
      */
-    public function ajaxLazyListAction(Demand $demand)
+    public function ajaxLazyListAction(Demand $demand): ResponseInterface
     {
         if ($this->settings['orderByAllowed']) {
             $demand->setOrderByAllowed($this->settings['orderByAllowed']);
@@ -94,7 +94,7 @@ class AjaxProductsController extends ProductController
             'html' => $this->view->render()
         ];
 
-        return json_encode($response);
+        return $this->jsonResponse(json_encode($response));
     }
 
     /**
@@ -102,8 +102,9 @@ class AjaxProductsController extends ProductController
      *
      * @param int $excludeProduct
      */
-    public function latestVisitedAction(int $excludeProduct = 0)
+    public function latestVisitedAction(int $excludeProduct = 0): ResponseInterface
     {
         $this->view->assign('latestVisitedProducts', $this->getProductsFromCookieList(ProductUtility::LATEST_VISITED_COOKIE_NAME, $excludeProduct, (int)$this->settings['latestVisitedProductsLimit']));
+        return $this->htmlResponse();
     }
 }

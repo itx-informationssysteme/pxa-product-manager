@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Domain\Model\OrderFormFields;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
 use Pixelant\PxaProductManager\Domain\Model\Option;
 use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -15,9 +17,9 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 class SelectBoxFormField extends OrderFormField
 {
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<Option>
      */
     protected $options = [];
 
@@ -87,7 +89,7 @@ class SelectBoxFormField extends OrderFormField
     /**
      * Returns the options
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     * @return ObjectStorage<Option> $options
      */
     public function getOptions(): ObjectStorage
     {
@@ -97,7 +99,7 @@ class SelectBoxFormField extends OrderFormField
     /**
      * Sets the options
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     * @param ObjectStorage<Option> $options
      *
      * @return void
      */

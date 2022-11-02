@@ -375,7 +375,7 @@ class ProductControllerTest extends UnitTestCase
      */
     public function createDemandWithClassThatIsNotInstanceOfDemandThrowException()
     {
-        $class = 'stdClass';
+        $class = \stdClass::class;
         $mockedController = $this->getAccessibleMock(ProductController::class, ['dummy'], [], '', false);
         $mockedSignalSlotDispatcher = $this->createMock(Dispatcher::class);
         $this->inject($mockedController, 'signalSlotDispatcher', $mockedSignalSlotDispatcher);

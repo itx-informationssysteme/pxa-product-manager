@@ -25,7 +25,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use Pixelant\PxaProductManager\Utility\AttributeHolderUtility;
 use Pixelant\PxaProductManager\Utility\ConfigurationUtility;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
@@ -48,7 +48,7 @@ class Product extends AbstractEntity
     /**
      * Categories
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @var ObjectStorage<Category>
      */
     protected $categories;
 
@@ -122,55 +122,55 @@ class Product extends AbstractEntity
     /**
      * relatedProducts
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected $relatedProducts;
 
     /**
      * Images
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Image>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<Image>
+     * @Lazy
      */
     protected $images;
 
     /**
      * Attributes files
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeFalFile>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<AttributeFalFile>
+     * @Lazy
      */
     protected $attributeFiles;
 
     /**
      * links
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Link>
+     * @Lazy
+     * @var ObjectStorage<Link>
      */
     protected $links;
 
     /**
      * subProducts
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected $subProducts;
 
     /**
      * Fal links
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<FileReference>
+     * @Lazy
      */
     protected $falLinks;
 
     /**
      * Attributes
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute>
+     * @var ObjectStorage<Attribute>
      */
     protected $attributes;
 
@@ -191,8 +191,8 @@ class Product extends AbstractEntity
     /**
      * attributeValues
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeValue>
+     * @Lazy
+     * @var ObjectStorage<AttributeValue>
      */
     protected $attributeValues;
 
@@ -247,8 +247,8 @@ class Product extends AbstractEntity
     /**
      * Assets
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<FileReference>
+     * @Lazy
      */
     protected $assets;
 
@@ -286,8 +286,8 @@ class Product extends AbstractEntity
     /**
      * accessories
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected $accessories;
 
@@ -526,7 +526,7 @@ class Product extends AbstractEntity
     /**
      * Returns the Attribute files
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeFalFile>
+     * @return ObjectStorage<AttributeFalFile>
      */
     public function getAttributeFiles(): ObjectStorage
     {
@@ -576,7 +576,7 @@ class Product extends AbstractEntity
     /**
      * Returns the categories
      *
-     * @return \Pixelant\PxaProductManager\Domain\Model\Category
+     * @return Category
      */
     public function getFirstCategory()
     {
@@ -586,7 +586,7 @@ class Product extends AbstractEntity
     }
 
     /**
-     * @return ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute> $attributes
+     * @return ObjectStorage<Attribute> $attributes
      */
     public function getAttributes(): ObjectStorage
     {
@@ -601,7 +601,7 @@ class Product extends AbstractEntity
     }
 
     /**
-     * @param ObjectStorage <\Pixelant\PxaProductManager\Domain\Model\Attribute> $attributes
+     * @param ObjectStorage<Attribute> $attributes
      */
     public function setAttributes(ObjectStorage $attributes)
     {
@@ -766,7 +766,7 @@ class Product extends AbstractEntity
     /**
      * Returns the attributeValues
      *
-     * @return ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeValue> $attributeValues
+     * @return ObjectStorage<AttributeValue> $attributeValues
      */
     public function getAttributeValues(): ?ObjectStorage
     {
@@ -776,7 +776,7 @@ class Product extends AbstractEntity
     /**
      * Sets the attributeValues
      *
-     * @param ObjectStorage <\Pixelant\PxaProductManager\Domain\Model\AttributeValue> $attributeValues
+     * @param ObjectStorage<AttributeValue> $attributeValues
      *
      * @return void
      */
@@ -848,7 +848,7 @@ class Product extends AbstractEntity
     /**
      * Returns the links
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Link> links
+     * @return ObjectStorage<Link> links
      */
     public function getLinks(): ObjectStorage
     {
@@ -858,7 +858,7 @@ class Product extends AbstractEntity
     /**
      * Sets the links
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Link> $links
+     * @param ObjectStorage<Link> $links
      */
     public function setLinks(ObjectStorage $links)
     {
@@ -1034,14 +1034,14 @@ class Product extends AbstractEntity
     /**
      * Sorted images
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return ObjectStorage
      */
     public function getImagesSorted(): ObjectStorage
     {
         $images = clone $this->getImages();
 
         if ($images->count() > 1 && ($mainImage = $this->getMainImage())) {
-            $sortedImages = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+            $sortedImages = new ObjectStorage();
 
             /** @var Image $image */
             foreach ($images as $image) {
@@ -1062,7 +1062,7 @@ class Product extends AbstractEntity
     /**
      * Returns the images
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Image> $images
+     * @return ObjectStorage<Image> $images
      */
     public function getImages(): ObjectStorage
     {
@@ -1072,7 +1072,7 @@ class Product extends AbstractEntity
     /**
      * Sets the images
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Image> $images
+     * @param ObjectStorage<Image> $images
      *
      * @return void
      */
@@ -1122,7 +1122,7 @@ class Product extends AbstractEntity
     /**
      * Returns the falLinks
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $falLinks
+     * @return ObjectStorage<FileReference> $falLinks
      */
     public function getFalLinks(): ObjectStorage
     {
@@ -1132,7 +1132,7 @@ class Product extends AbstractEntity
     /**
      * Sets the falLinks
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $falLinks
+     * @param ObjectStorage<FileReference> $falLinks
      *
      * @return void
      */
@@ -1254,11 +1254,11 @@ class Product extends AbstractEntity
     /**
      * Adds an asset
      *
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $asset
+     * @param FileReference $asset
      *
      * @return void
      */
-    public function addAsset(\TYPO3\CMS\Extbase\Domain\Model\FileReference $asset)
+    public function addAsset(FileReference $asset)
     {
         $this->assets->attach($asset);
     }
@@ -1266,11 +1266,11 @@ class Product extends AbstractEntity
     /**
      * Removes an asset
      *
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $asset The asset to be removed
+     * @param FileReference $asset The asset to be removed
      *
      * @return void
      */
-    public function removeAsset(\TYPO3\CMS\Extbase\Domain\Model\FileReference $asset)
+    public function removeAsset(FileReference $asset)
     {
         $this->assets->detach($asset);
     }
@@ -1278,7 +1278,7 @@ class Product extends AbstractEntity
     /**
      * Returns the assets
      *
-     * @return ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $assets
+     * @return ObjectStorage<FileReference> $assets
      */
     public function getAssets(): ObjectStorage
     {
@@ -1288,7 +1288,7 @@ class Product extends AbstractEntity
     /**
      * Sets the assets
      *
-     * @param ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $assets
+     * @param ObjectStorage<FileReference> $assets
      *
      * @return void
      */
@@ -1552,7 +1552,7 @@ class Product extends AbstractEntity
     /**
      * Returns the categories
      *
-     * @return ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category> $categories
+     * @return ObjectStorage<Category> $categories
      */
     public function getCategories(): ?ObjectStorage
     {
@@ -1562,7 +1562,7 @@ class Product extends AbstractEntity
     /**
      * Sets the categories
      *
-     * @param ObjectStorage <\Pixelant\PxaProductManager\Domain\Model\Category> $categories
+     * @param ObjectStorage<Category> $categories
      *
      * @return void
      */
