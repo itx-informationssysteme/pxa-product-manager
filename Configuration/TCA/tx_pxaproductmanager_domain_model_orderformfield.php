@@ -1,5 +1,6 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
+defined('TYPO3') || die('Access denied.');
 
 return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_orderformfield';
@@ -12,7 +13,6 @@ return (function() {
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
             'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
             'languageField' => 'sys_language_uid',
             'transOrigPointerField' => 'l10n_parent',
             'transOrigDiffSourceField' => 'l10n_diffsource',
@@ -28,14 +28,11 @@ return (function() {
             'searchFields' => 'name',
             'iconfile' => 'EXT:pxa_product_manager/Resources/Public/Icons/Svg/form-field.svg'
         ],
-        'interface' => [
-            'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, name, label, user_email_field, additional_text, type',
-        ],
         'types' => [
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_INPUT => ['showitem' => '--palette--;;core, --palette--;;input'],
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_TEXTAREA => ['showitem' => '--palette--;;core, --palette--;;textarea'],
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_SELECTBOX => ['showitem' => '--palette--;;core, --palette--;;selectbox'],
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_CHECKBOX => ['showitem' => '--palette--;;core, --palette--;;checkbox']
+            OrderFormField::FIELD_INPUT => ['showitem' => '--palette--;;core, --palette--;;input'],
+            OrderFormField::FIELD_TEXTAREA => ['showitem' => '--palette--;;core, --palette--;;textarea'],
+            OrderFormField::FIELD_SELECTBOX => ['showitem' => '--palette--;;core, --palette--;;selectbox'],
+            OrderFormField::FIELD_CHECKBOX => ['showitem' => '--palette--;;core, --palette--;;checkbox']
         ],
         'palettes' => [
             'core' => ['showitem' => 'hidden, --linebreak--, type'],
@@ -48,23 +45,10 @@ return (function() {
             'sys_language_uid' => [
                 'exclude' => true,
                 'label' => $llCore . 'locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            $llCore . 'locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple'
-                        ]
-                    ],
-                    'default' => 0,
-                ],
+                'config' => ['type' => 'language'],
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
-                'exclude' => true,
                 'label' => $llCore . 'locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'select',
@@ -147,10 +131,10 @@ return (function() {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        [$ll . '.type.1', \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_INPUT],
-                        [$ll . '.type.2', \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_TEXTAREA],
-                        [$ll . '.type.3', \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_SELECTBOX],
-                        [$ll . '.type.4', \Pixelant\PxaProductManager\Domain\Model\OrderFormField::FIELD_CHECKBOX]
+                        [$ll . '.type.1', OrderFormField::FIELD_INPUT],
+                        [$ll . '.type.2', OrderFormField::FIELD_TEXTAREA],
+                        [$ll . '.type.3', OrderFormField::FIELD_SELECTBOX],
+                        [$ll . '.type.4', OrderFormField::FIELD_CHECKBOX]
                     ]
                 ]
             ],

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Service\Mail;
 
+use Pixelant\PxaProductManager\Exception\OrderEmailException;
 use Pixelant\PxaProductManager\Utility\MainUtility;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
 
@@ -19,7 +20,7 @@ class OrderMailService extends AbstractMailService
      * @param mixed ...$variables
      *
      * @return OrderMailService
-     * @throws \Pixelant\PxaProductManager\Exception\OrderEmailException
+     * @throws OrderEmailException
      */
     public function generateMailBody(...$variables)
     {

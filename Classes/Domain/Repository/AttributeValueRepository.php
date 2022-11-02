@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\OrInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -75,7 +75,7 @@ class AttributeValueRepository extends Repository
      * @param                $field
      * @param                $value
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\OrInterface
+     * @return OrInterface
      */
     protected function createInRowQuery(QueryInterface $query, $field, $value)
     {

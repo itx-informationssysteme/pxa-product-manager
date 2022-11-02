@@ -2,6 +2,10 @@
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\AttributeSet;
 use Pixelant\PxaProductManager\Domain\Model\Category;
@@ -86,7 +90,7 @@ class ProductController extends AbstractController
      *
      * @return void
      */
-    public function listAction()
+    public function listAction(): ResponseInterface
     {
         $category = $this->determinateCategory(MainUtility::getActiveCategoryFromRequest());
 
@@ -98,7 +102,7 @@ class ProductController extends AbstractController
             if (count($subCategories) > 0 && (bool)$this->settings['navigationHideCategoriesWithoutProducts']) {
                 $subCategories = array_filter($subCategories, function($subCategory) {
                     // Show category in case it has subcategories or products
-                    return $subCategory->getSubCategories()->count() > 0 || $this->productRepository->countByCategory($subCategory) > 0;
+                    return $this->htmlResponse($subCategory->getSubCategories()->count() > 0 || $this->productRepository->countByCategory($subCategory) > 0);
                 });
             }
 
@@ -121,6 +125,7 @@ class ProductController extends AbstractController
         }
 
         $this->view->assign('products', $products ?? []);
+        return $this->htmlResponse();
     }
 
     /**
@@ -133,7 +138,7 @@ class ProductController extends AbstractController
      */
     protected function createDemandFromSettings(array $settings, string $class = null): DemandInterface
     {
-        $class = $class ?? (!empty($settings['demandClass']) ? $settings['demandClass'] : 'Pixelant\\PxaProductManager\\Domain\\Model\\DTO\\Demand');
+        $class = $class ?? (!empty($settings['demandClass']) ? $settings['demandClass'] : Demand::class);
 
         /** @var Demand $demand */
         $demand = GeneralUtility::makeInstance($class);
@@ -183,7 +188,7 @@ class ProductController extends AbstractController
      *
      * @return void
      */
-    public function lazyListAction()
+    public function lazyListAction(): ResponseInterface
     {
         $this->settings['demandCategories'] = $this->getDemandCategories(GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true), GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true));
 
@@ -214,6 +219,7 @@ class ProductController extends AbstractController
                                         'filters' => $filters ?? [],
                                         'filtersAvailableOptions' => $filtersAvailableOptions ?? []
                                     ]);
+        return $this->htmlResponse();
     }
 
     /**
@@ -250,11 +256,11 @@ class ProductController extends AbstractController
     /**
      * action show
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Product $product
+     * @param Product $product
      *
      * @return void
      */
-    public function showAction(Product $product = null)
+    public function showAction(Product $product = null): ResponseInterface
     {
         $isPreviewMode = false;
         if ($product === null) {
@@ -282,7 +288,7 @@ class ProductController extends AbstractController
             }
 
             // add navigation if enabled in list view
-            if ($this->settings['showNavigationListView'] && !$this->settings['hideNavigationListViewOnDetailMode']) {
+            if (isset($this->settings['showNavigationListView']) && !$this->settings['hideNavigationListViewOnDetailMode']) {
                 $this->view->assign('treeData', $this->getNavigationTree());
             }
 
@@ -299,6 +305,7 @@ class ProductController extends AbstractController
         } else {
             $this->handleNoProductFoundError();
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -345,11 +352,11 @@ class ProductController extends AbstractController
      */
     protected function buildProductCanonicalUrl(Product $product)
     {
-        $url = $this->linkBuilderService->buildForProduct($this->settings['pageUid'] ?: MainUtility::getTSFE()->id, $product, $product->getFirstCategory(), false, true // absolute
+        $url = $this->linkBuilderService->buildForProduct($this->settings['pageUid'] ?? MainUtility::getTSFE()->id, $product, $product->getFirstCategory(), false, true // absolute
         );
 
         // add only absolute links
-        if (!empty($url)) {
+        if (!empty($url) && !empty($this->response)) {
             /** @noinspection PhpUndefinedMethodInspection */
             $this->response->addAdditionalHeaderData('<link rel="canonical" href="' . $url . '">');
         }
@@ -407,24 +414,25 @@ class ProductController extends AbstractController
     /**
      * Error handling if no product entry is found
      *
-     * @return void
+     *
      */
-    protected function handleNoProductFoundError()
+    protected function handleNoProductFoundError(): ResponseInterface
     {
         // If configured, show custom message instead of standard 404
         if ((int)$this->settings['enableMessageInsteadOfPage404'] !== 0) {
-            $this->forward('notFound');
+            return new ForwardResponse('notFound');
         } else {
-            $this->forward('notFound');
+            return new ForwardResponse('notFound');
         }
     }
 
     /**
      * Wish list cart
      */
-    public function wishListCartAction()
+    public function wishListCartAction(): ResponseInterface
     {
         // Nothing to do. Products are counted by JS to make action cacheable
+        return $this->htmlResponse();
     }
 
     /**
@@ -432,8 +440,8 @@ class ProductController extends AbstractController
      *
      * @param bool $sendOrder
      *
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
      */
     public function wishListAction(bool $sendOrder = false)
     {
@@ -729,33 +737,36 @@ class ProductController extends AbstractController
      * Finish order text
      * Show some successful texts
      */
-    public function finishOrderAction()
+    public function finishOrderAction(): ResponseInterface
     {
         ProductUtility::cleanOngoingOrderInfo();
+        return $this->htmlResponse();
     }
 
     /**
      * Compare list cart
      */
-    public function compareListCartAction()
+    public function compareListCartAction(): ResponseInterface
     {
         // Nothing to do. Products are counted by JS to make action cacheable
+        return $this->htmlResponse();
     }
 
     /**
      * Compare list of products
      */
-    public function comparePreViewAction()
+    public function comparePreViewAction(): ResponseInterface
     {
         $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME) ?? [];
 
         $this->view->assign('products', $this->getProductByUidsList($compareList));
+        return $this->htmlResponse();
     }
 
     /**
      * Create compare view for products
      */
-    public function compareViewAction()
+    public function compareViewAction(): ResponseInterface
     {
         $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME) ?? [];
 
@@ -779,6 +790,7 @@ class ProductController extends AbstractController
         }
 
         $this->view->assign('products', $this->getProductByUidsList($compareList))->assign('diffData', $productAttributeSets);
+        return $this->htmlResponse();
     }
 
     /**
@@ -868,7 +880,7 @@ class ProductController extends AbstractController
      *
      * @return void
      */
-    public function promotionListAction()
+    public function promotionListAction(): ResponseInterface
     {
         $this->settings['demandCategories'] = $this->getDemandCategories(GeneralUtility::intExplode(',', $this->settings['allowedCategories'], true));
 
@@ -877,13 +889,15 @@ class ProductController extends AbstractController
         $products = $this->productRepository->findDemanded($demand);
 
         $this->view->assign('products', $products);
+        return $this->htmlResponse();
     }
 
     /**
      * No found page
      */
-    public function notFoundAction()
+    public function notFoundAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /**
@@ -891,7 +905,7 @@ class ProductController extends AbstractController
      *
      * @return void
      */
-    public function groupedListAction()
+    public function groupedListAction(): ResponseInterface
     {
         $groupedList = [];
         $excludeCategories = GeneralUtility::intExplode(',', $this->settings['excludeCategories'], true);
@@ -962,6 +976,7 @@ class ProductController extends AbstractController
         }
 
         $this->view->assign('groupedList', $groupedList ?? []);
+        return $this->htmlResponse();
     }
 
     /**
@@ -969,7 +984,7 @@ class ProductController extends AbstractController
      *
      * @return void
      */
-    public function customProductsListAction()
+    public function customProductsListAction(): ResponseInterface
     {
         $mode = $this->settings['customProductsList']['mode'];
         $products = [];
@@ -995,5 +1010,6 @@ class ProductController extends AbstractController
         }
 
         $this->view->assign('products', $products);
+        return $this->htmlResponse();
     }
 }

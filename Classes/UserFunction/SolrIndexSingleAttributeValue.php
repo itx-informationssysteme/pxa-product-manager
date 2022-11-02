@@ -23,7 +23,7 @@ class SolrIndexSingleAttributeValue
     /**
      * @var ContentObjectRenderer
      */
-    public $cObj;
+    protected $cObj;
 
     /**
      * Get attribute value for product by identifier
@@ -103,5 +103,10 @@ class SolrIndexSingleAttributeValue
     protected function isFalType(int $type): bool
     {
         return $type === Attribute::ATTRIBUTE_TYPE_FILE || $type === Attribute::ATTRIBUTE_TYPE_IMAGE;
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

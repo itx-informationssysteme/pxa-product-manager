@@ -1,5 +1,7 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+use Pixelant\PxaProductManager\Domain\Model\Filter;
+use Pixelant\PxaProductManager\Domain\Model\Attribute;
+defined('TYPO3') || die('Access denied.');
 
 return (function() {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
@@ -13,7 +15,6 @@ return (function() {
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
             'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
             'versioningWS' => true,
 
             'languageField' => 'sys_language_uid',
@@ -31,9 +32,6 @@ return (function() {
             'searchFields' => 'name,parent_category,attribute,',
             'iconfile' => 'EXT:pxa_product_manager/Resources/Public/Icons/Svg/filter.svg'
         ],
-        'interface' => [
-            'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, type, name, label, parent_category, inverse_conjunction, attribute, starttime, endtime',
-        ],
         'types' => [
             '1' => ['showitem' => '--palette--;;core, --palette--;;common, --palette--;;categories, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,--palette--;;lang'],
             '2' => ['showitem' => '--palette--;;core, --palette--;;common, --palette--;;attributes, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,--palette--;;lang'],
@@ -50,23 +48,10 @@ return (function() {
             'sys_language_uid' => [
                 'exclude' => 1,
                 'label' => $llCore . 'locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            $llCore . 'locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple'
-                        ],
-                    ],
-                    'default' => 0,
-                ]
+                'config' => ['type' => 'language']
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
-                'exclude' => 1,
                 'label' => $llCore . 'locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'select',
@@ -137,11 +122,11 @@ return (function() {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        ['Categories', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_CATEGORIES],
-                        ['Attribute', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES],
+                        ['Categories', Filter::TYPE_CATEGORIES],
+                        [\Attribute::class, Filter::TYPE_ATTRIBUTES],
                         [
                             'Attribute min-max (if applicable, require only numeric attribute values)',
-                            \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES_MINMAX
+                            Filter::TYPE_ATTRIBUTES_MINMAX
                         ],
                     ],
                     'size' => 1,
@@ -197,7 +182,7 @@ return (function() {
                     'disableNoMatchingValueElement' => true,
                     'renderType' => 'selectSingle',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attribute',
-                    'foreign_table_where' => ' AND tx_pxaproductmanager_domain_model_attribute.type IN (' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN . ',' . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' . ' AND (tx_pxaproductmanager_domain_model_attribute.sys_language_uid = 0 OR tx_pxaproductmanager_domain_model_attribute.l10n_parent = 0) ORDER BY tx_pxaproductmanager_domain_model_attribute.sorting',
+                    'foreign_table_where' => ' AND tx_pxaproductmanager_domain_model_attribute.type IN (' . Attribute::ATTRIBUTE_TYPE_DROPDOWN . ',' . Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' . ' AND (tx_pxaproductmanager_domain_model_attribute.sys_language_uid = 0 OR tx_pxaproductmanager_domain_model_attribute.l10n_parent = 0) ORDER BY tx_pxaproductmanager_domain_model_attribute.sorting',
                     'minitems' => 1,
                     'maxitems' => 1,
                 ]

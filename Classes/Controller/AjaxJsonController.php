@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Utility\MainUtility;
 use Pixelant\PxaProductManager\Utility\ProductUtility;
@@ -49,7 +49,7 @@ class AjaxJsonController extends AbstractController
      *
      * @param Product $wishProduct
      */
-    public function toggleWishListAction(Product $wishProduct = null)
+    public function toggleWishListAction(Product $wishProduct = null): ResponseInterface
     {
         $response = [
             'success' => false
@@ -77,6 +77,7 @@ class AjaxJsonController extends AbstractController
         $response['message'] = $message ?? $this->translate('fe.error_request');
 
         $this->view->assign('value', $response);
+        return $this->htmlResponse();
     }
 
     /**
@@ -84,7 +85,7 @@ class AjaxJsonController extends AbstractController
      *
      * @param Product|null $compareProduct
      */
-    public function toggleCompareListAction(Product $compareProduct = null)
+    public function toggleCompareListAction(Product $compareProduct = null): ResponseInterface
     {
         $response = [
             'success' => false,
@@ -118,36 +119,40 @@ class AjaxJsonController extends AbstractController
         $response['updatedList'] = $compareList ?? [];
 
         $this->view->assign('value', $response);
+        return $this->htmlResponse();
     }
 
     /**
      * Compare list
      */
-    public function loadCompareListAction()
+    public function loadCompareListAction(): ResponseInterface
     {
         $compareList = MainUtility::getTSFE()->fe_user->getKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME);
 
         $this->view->assign('value', ['compareList' => $compareList ?? []]);
+        return $this->htmlResponse();
     }
 
     /**
      * Compare list
      */
-    public function emptyCompareListAction()
+    public function emptyCompareListAction(): ResponseInterface
     {
         MainUtility::getTSFE()->fe_user->setKey('ses', ProductUtility::COMPARE_LIST_SESSION_NAME, []);
 
         $this->view->assign('value', ['success' => true]);
+        return $this->htmlResponse();
     }
 
     /**
      * Load whishlist action
      */
-    public function loadWishListAction()
+    public function loadWishListAction(): ResponseInterface
     {
         $wishList = ProductUtility::getWishList();
 
         $this->view->assign('value', ['wishList' => $wishList ?? []]);
+        return $this->htmlResponse();
     }
 
     /**
@@ -155,10 +160,11 @@ class AjaxJsonController extends AbstractController
      *
      * @param Product $product
      */
-    public function addLatestVisitedProductAction(Product $product)
+    public function addLatestVisitedProductAction(Product $product): ResponseInterface
     {
         MainUtility::addValueToListCookie(ProductUtility::LATEST_VISITED_COOKIE_NAME, $product->getUid(), ((int)$this->settings['latestVisitedProductsLimit'] + 1));
 
         $this->view->assign('value', ['success' => true]);
+        return $this->htmlResponse();
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\ViewHelpers\Widget;
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 use Pixelant\PxaProductManager\ViewHelpers\Widget\Controller\PaginateController;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
@@ -31,7 +32,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     /**
      * Initialize arguments.
      *
-     * @throws \TYPO3Fluid\Fluid\Core\ViewHelper\Exception
+     * @throws Exception
      * @api
      */
     public function initializeArguments()

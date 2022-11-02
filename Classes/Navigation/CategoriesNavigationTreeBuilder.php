@@ -25,7 +25,7 @@ namespace Pixelant\PxaProductManager\Navigation;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Core\Http\ApplicationType;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
@@ -179,7 +179,7 @@ class CategoriesNavigationTreeBuilder
     protected function findSubCategories(Category $parentCategory)
     {
         if (in_array($parentCategory->getUid(), $this->parentCategoriesUids)) {
-            if (TYPO3_MODE === 'BE' || MainUtility::isBackendLogin()) {
+            if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend() || MainUtility::isBackendLogin()) {
                 throw new \RuntimeException(// @codingStandardsIgnoreStart
                     'Same parent with UID "' . $parentCategory->getUid() . '" was met second time, that should never happen. Check you categories relation.', // @codingStandardsIgnoreEnd
                     1527148858571);

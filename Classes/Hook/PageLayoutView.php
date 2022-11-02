@@ -553,7 +553,7 @@ class PageLayoutView
             return $this->translate('be.extension_info.none');
         }
 
-        if (GeneralUtility::isFirstPartOfStr($typoLink, 't3://page?uid=')) {
+        if (\str_starts_with($typoLink, 't3://page?uid=')) {
             $pageUid = (int)substr($typoLink, 14);
             $pageRecord = BackendUtility::readPageAccess($pageUid, '1=1');
             // Is this a real page

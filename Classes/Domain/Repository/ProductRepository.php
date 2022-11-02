@@ -24,7 +24,8 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\DTO\Demand;
 use Pixelant\PxaProductManager\Domain\Model\DTO\DemandInterface;
@@ -53,7 +54,7 @@ class ProductRepository extends AbstractDemandRepository
     protected $attributeValueRepository;
 
     /**
-     * @var \Pixelant\PxaProductManager\Domain\Repository\FilterRepository
+     * @var FilterRepository
      */
     protected $filterRepository = null;
 
@@ -177,7 +178,7 @@ class ProductRepository extends AbstractDemandRepository
      * @param int    $limit
      *
      * @return array|QueryResultInterface
-     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
+     * @throws InvalidQueryException
      */
     public function findProductsByCategories(array $categories, array $orderings = ['sorting' => QueryInterface::ORDER_ASCENDING], string $conjunction = 'and', int $limit = 0)
     {
@@ -213,7 +214,7 @@ class ProductRepository extends AbstractDemandRepository
      * @param string $conjunction
      *
      * @return array|QueryResultInterface
-     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
+     * @throws InvalidQueryException
      */
     public function findAllProductsByCategories(array $categories, string $conjunction = 'or')
     {
@@ -336,7 +337,7 @@ class ProductRepository extends AbstractDemandRepository
      *
      * @param QueryInterface $query
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
+     * @return ConstraintInterface
      */
     protected function createDiscontinuedConstraints(QueryInterface $query)
     {
@@ -357,7 +358,7 @@ class ProductRepository extends AbstractDemandRepository
      * @param array          $categories
      * @param string         $conjunction
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface
+     * @return ConstraintInterface
      */
     protected function createCategoryConstraints(QueryInterface $query, array $categories, string $conjunction = 'or')
     {

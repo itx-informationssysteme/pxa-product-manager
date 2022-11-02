@@ -24,7 +24,9 @@ namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use Pixelant\PxaProductManager\Utility\ConfigurationUtility;
+use Pixelant\PxaProductManager\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
@@ -1003,9 +1005,9 @@ class ProductTest extends UnitTestCase
      */
     public function getIsNewCanBeFetched()
     {
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);
@@ -1037,9 +1039,9 @@ class ProductTest extends UnitTestCase
         $category->method('getUid')->will(self::returnValue(33));
         $this->fixture->addCategory($category);
 
-        $configurationUtilityMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Utility\ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
-        $configurationManagerMock = $this->getMockBuilder(\Pixelant\PxaProductManager\Configuration\ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
-        $environmentServiceMock = $this->getMockBuilder(\TYPO3\CMS\Extbase\Service\EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
+        $configurationUtilityMock = $this->getMockBuilder(ConfigurationUtility::class)->setMethods(['getSettings'])->getMock();
+        $configurationManagerMock = $this->getMockBuilder(ConfigurationManager::class)->setMethods(['getConfiguration'])->getMock();
+        $environmentServiceMock = $this->getMockBuilder(EnvironmentService::class)->setMethods(['isEnvironmentInFrontendMode'])->getMock();
 
         ObjectAccess::setProperty($configurationUtilityMock, 'configurationManager', $configurationManagerMock, true);
         ObjectAccess::setProperty($configurationManagerMock, 'environmentService', $environmentServiceMock, true);

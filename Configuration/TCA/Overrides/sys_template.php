@@ -1,8 +1,9 @@
 <?php
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 defined('TYPO3') || die;
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript', 'Products Manager');
+ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript', 'Products Manager');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript/Solr', 'Products Manager: Solr Configuration');
+ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript/Solr', 'Products Manager: Solr Configuration');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript/Sitemap', 'Products Manager: Xml Sitemap');
+ExtensionManagementUtility::addStaticFile('pxa_product_manager', 'Configuration/TypoScript/Sitemap', 'Products Manager: Xml Sitemap');

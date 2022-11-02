@@ -15,8 +15,11 @@ namespace Pixelant\PxaProductManager\Configuration;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager as ExtbaseConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * A configuration manager following the strategy pattern (GoF315). It hides the concrete
@@ -26,6 +29,7 @@ use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
  */
 class ConfigurationManager extends ExtbaseConfigurationManager
 {
+
     /**
      * Set the current page ID for BackendConfiguration
      *
@@ -33,32 +37,10 @@ class ConfigurationManager extends ExtbaseConfigurationManager
      *
      * @return void
      */
-    public function setCurrentPageId(int $currentPageId)
+    public function setCurrentPageId(int $currentPageId): void
     {
         if ($this->concreteConfigurationManager instanceof BackendConfigurationManager) {
             $this->concreteConfigurationManager->setCurrentPageId($currentPageId);
-        }
-    }
-
-    /**
-     * check if environment is FrontentMode in ConfigurationManager
-     *
-     * @return bool
-     */
-    public function isEnvironmentInFrontendMode(): bool
-    {
-        return $this->environmentService->isEnvironmentInFrontendMode();
-    }
-
-    /**
-     * Initialize
-     */
-    protected function initializeConcreteConfigurationManager(): void
-    {
-        if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $this->concreteConfigurationManager = $this->objectManager->get(FrontendConfigurationManager::class);
-        } else {
-            $this->concreteConfigurationManager = $this->objectManager->get(BackendConfigurationManager::class);
         }
     }
 }

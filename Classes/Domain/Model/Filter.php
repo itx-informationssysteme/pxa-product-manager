@@ -26,7 +26,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 
@@ -73,16 +73,16 @@ class Filter extends AbstractEntity
     /**
      * parentCategory
      *
-     * @var \Pixelant\PxaProductManager\Domain\Model\Category
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var Category
+     * @Lazy
      */
     protected $parentCategory;
 
     /**
      * attribute
      *
-     * @var \Pixelant\PxaProductManager\Domain\Model\Attribute
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var Attribute
+     * @Lazy
      */
     protected $attribute;
 
@@ -123,7 +123,7 @@ class Filter extends AbstractEntity
     /**
      * Returns the parentCategory
      *
-     * @return \Pixelant\PxaProductManager\Domain\Model\Category parentCategory
+     * @return Category parentCategory
      */
     public function getParentCategory()
     {
@@ -137,11 +137,11 @@ class Filter extends AbstractEntity
     /**
      * Sets the parentCategory
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Category $parentCategory
+     * @param Category $parentCategory
      *
      * @return void
      */
-    public function setParentCategory(\Pixelant\PxaProductManager\Domain\Model\Category $parentCategory)
+    public function setParentCategory(Category $parentCategory)
     {
         $this->parentCategory = $parentCategory;
     }
@@ -171,7 +171,7 @@ class Filter extends AbstractEntity
     /**
      * Returns the attribute
      *
-     * @return \Pixelant\PxaProductManager\Domain\Model\Attribute $attribute
+     * @return Attribute $attribute
      */
     public function getAttribute()
     {
@@ -185,11 +185,11 @@ class Filter extends AbstractEntity
     /**
      * Sets the attribute
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Attribute $attribute
+     * @param Attribute $attribute
      *
      * @return void
      */
-    public function setAttribute(\Pixelant\PxaProductManager\Domain\Model\Attribute $attribute)
+    public function setAttribute(Attribute $attribute)
     {
         $this->attribute = $attribute;
     }

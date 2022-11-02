@@ -2,6 +2,8 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 /***************************************************************
  *  Copyright notice
  *
@@ -24,7 +26,6 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 /**
  *
  *
@@ -32,7 +33,7 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class AttributeSet extends AbstractEntity
 {
 
     /**
@@ -45,7 +46,7 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * attributes
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute>
+     * @var ObjectStorage<Attribute>
      */
     protected $attributes;
 
@@ -71,17 +72,17 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
          * It will be rewritten on each save in the extension builder
          * You may modify the constructor of this class instead
          */
-        $this->attributes = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->attributes = new ObjectStorage();
     }
 
     /**
      * Adds a Attribute
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Attribute $attribute
+     * @param Attribute $attribute
      *
      * @return void
      */
-    public function addAttribute(\Pixelant\PxaProductManager\Domain\Model\Attribute $attribute)
+    public function addAttribute(Attribute $attribute)
     {
         $this->attributes->attach($attribute);
     }
@@ -89,21 +90,20 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Removes a Attribute
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\Attribute $attributeToRemove The Attribute to be removed
+     * @param Attribute $attributeToRemove The Attribute to be removed
      *
      * @return void
      */
-    public function removeAttribute(\Pixelant\PxaProductManager\Domain\Model\Attribute $attributeToRemove)
+    public function removeAttribute(Attribute $attributeToRemove)
     {
         $this->attributes->detach($attributeToRemove);
     }
 
     // @codingStandardsIgnoreStart
-
     /**
      * Returns the attributes
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute> $attributes
+     * @return ObjectStorage<Attribute> $attributes
      */
     public function getAttributes()
     {
@@ -113,11 +113,11 @@ class AttributeSet extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the attributes
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute> $attributes
+     * @param ObjectStorage<Attribute> $attributes
      *
      * @return void
      */
-    public function setAttributes(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $attributes)
+    public function setAttributes(ObjectStorage $attributes)
     {
         $this->attributes = $attributes;
     }

@@ -15,7 +15,7 @@ namespace Pixelant\PxaProductManager\Utility;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use Pixelant\PxaProductManager\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -23,6 +23,7 @@ use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Core\Http\ApplicationType;
 
 /**
  * Class ConfigurationUtility
@@ -59,7 +60,7 @@ class ConfigurationUtility
      * @param int|null $currentPageId
      *
      * @return mixed|null
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      */
     public static function getSettingsByPath(string $path, int $currentPageId = null)
     {
@@ -93,7 +94,7 @@ class ConfigurationUtility
      * @param int|null $currentPageId
      *
      * @return array
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      * @internal
      * @see getSettingsByPath
      */
@@ -113,7 +114,7 @@ class ConfigurationUtility
      * @param int $currentPageId Optional current page id when in BE
      *
      * @return array
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      */
     public static function getTSConfig(int $currentPageId = null): array
     {
@@ -121,14 +122,14 @@ class ConfigurationUtility
             self::$configurationManager = MainUtility::getObjectManager()->get(ConfigurationManager::class);
         }
 
-        if (self::$configurationManager->isEnvironmentInFrontendMode()) {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             $configurationKey = 'FE';
         } else {
             $configurationKey = $currentPageId ?? 'BE';
         }
 
         if (empty(self::$config[$configurationKey])) {
-            if ($currentPageId !== null && !self::$configurationManager->isEnvironmentInFrontendMode()) {
+            if ($currentPageId !== null && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
                 self::$configurationManager->setCurrentPageId($currentPageId);
             }
 

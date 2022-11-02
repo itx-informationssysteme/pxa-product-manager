@@ -1,4 +1,5 @@
 <?php
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 defined('TYPO3') || die;
 
 call_user_func(function() {
@@ -32,9 +33,9 @@ call_user_func(function() {
         ],
     ];
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('sys_file_reference', $newSysFileReferenceColumns);
+    ExtensionManagementUtility::addTCAcolumns('sys_file_reference', $newSysFileReferenceColumns);
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('sys_file_reference', $newSysFileReferenceColumnsForAttribute);
+    ExtensionManagementUtility::addTCAcolumns('sys_file_reference', $newSysFileReferenceColumnsForAttribute);
 
     // add special product manager palette
     $GLOBALS['TCA']['sys_file_reference']['palettes']['pxaProductManagerPalette'] = [

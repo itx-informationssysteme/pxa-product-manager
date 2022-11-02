@@ -24,9 +24,8 @@ namespace Pixelant\PxaProductManager\Backend\Tree;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Backend\Tree\View\ElementBrowserPageTreeView;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class BrowserTreeView

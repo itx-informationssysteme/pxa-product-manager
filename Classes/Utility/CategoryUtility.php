@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Utility;
 
+use TYPO3\CMS\Core\Http\ApplicationType;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 
@@ -85,7 +86,7 @@ class CategoryUtility
         if (is_object($parent)) {
             $parentMet = array_key_exists($parent->getUid(), $results);
 
-            if ($parentMet && (TYPO3_MODE === 'BE' || MainUtility::isBackendLogin())) {
+            if ($parentMet && (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend() || MainUtility::isBackendLogin())) {
                 throw new \RuntimeException(// @codingStandardsIgnoreStart
                     'Same parent with UID "' . $parent->getUid() . '" was met second time, that should never happen. Check you categories relation.', // @codingStandardsIgnoreEnd
                     1527151818303);

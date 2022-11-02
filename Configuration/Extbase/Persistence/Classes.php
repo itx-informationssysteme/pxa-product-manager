@@ -2,8 +2,17 @@
 
 declare(strict_types=1);
 
+use Pixelant\PxaProductManager\Domain\Model\Image;
+use Pixelant\PxaProductManager\Domain\Model\AttributeFalFile;
+use Pixelant\PxaProductManager\Domain\Model\Category;
+use Pixelant\PxaProductManager\Domain\Model\OrderFormField;
+use Pixelant\PxaProductManager\Domain\Model\OrderFormFields\InputFormField;
+use Pixelant\PxaProductManager\Domain\Model\OrderFormFields\TextAreaFormField;
+use Pixelant\PxaProductManager\Domain\Model\OrderFormFields\SelectBoxFormField;
+use Pixelant\PxaProductManager\Domain\Model\OrderFormFields\CheckBoxFormField;
+
 return [
-    \Pixelant\PxaProductManager\Domain\Model\Image::class => [
+    Image::class => [
         'tableName' => 'sys_file_reference',
         'properties' => [
             'useInListing' => [
@@ -14,7 +23,7 @@ return [
             ],
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\AttributeFalFile::class => [
+    AttributeFalFile::class => [
         'tableName' => 'sys_file_reference',
         'properties' => [
             'attribute' => [
@@ -22,7 +31,7 @@ return [
             ],
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\Category::class => [
+    Category::class => [
         'tableName' => 'sys_category',
         'properties' => [
             'attributeSets' => [
@@ -54,24 +63,24 @@ return [
             ],
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\OrderFormField::class => [
+    OrderFormField::class => [
         'subclasses' => [
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\InputFormField::class,
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\TextAreaFormField::class,
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\SelectBoxFormField::class,
-            \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\CheckBoxFormField::class
+            InputFormField::class,
+            TextAreaFormField::class,
+            SelectBoxFormField::class,
+            CheckBoxFormField::class
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\InputFormField::class => [
+    InputFormField::class => [
         'tableName' => 'tx_pxaproductmanager_domain_model_orderformfield'
     ],
-    \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\TextAreaFormField::class => [
+    TextAreaFormField::class => [
         'tableName' => 'tx_pxaproductmanager_domain_model_orderformfield'
     ],
-    \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\SelectBoxFormField::class => [
+    SelectBoxFormField::class => [
         'tableName' => 'tx_pxaproductmanager_domain_model_orderformfield'
     ],
-    \Pixelant\PxaProductManager\Domain\Model\OrderFormFields\CheckBoxFormField::class => [
+    CheckBoxFormField::class => [
         'tableName' => 'tx_pxaproductmanager_domain_model_orderformfield'
     ],
 ];

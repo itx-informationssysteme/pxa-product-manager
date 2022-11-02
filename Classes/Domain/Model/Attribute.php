@@ -24,7 +24,10 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
@@ -34,7 +37,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Attribute extends AbstractEntity
 {
 
     /**
@@ -106,9 +109,9 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * options
      *
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<Option>
      */
     protected $options;
 
@@ -141,8 +144,8 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Icon
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $icon;
 
@@ -168,7 +171,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
          * It will be rewritten on each save in the extension builder
          * You may modify the constructor of this class instead
          */
-        $this->options = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->options = new ObjectStorage();
     }
 
     /**
@@ -344,7 +347,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Returns the options
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     * @return ObjectStorage<Option> $options
      */
     public function getOptions(): ObjectStorage
     {
@@ -354,7 +357,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the options
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option> $options
+     * @param ObjectStorage<Option> $options
      *
      * @return void
      */
@@ -490,7 +493,7 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Gets the icon value
      *
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @return FileReference
      * @api
      */
     public function getIcon()
@@ -501,11 +504,11 @@ class Attribute extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the icon value
      *
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $icon
+     * @param FileReference $icon
      *
      * @api
      */
-    public function setIcon(\TYPO3\CMS\Extbase\Domain\Model\FileReference $icon)
+    public function setIcon(FileReference $icon)
     {
         $this->icon = $icon;
     }

@@ -2,6 +2,8 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Domain\Model\Category as CategoryExtbase;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -42,7 +44,7 @@ class Category extends CategoryExtbase
      * parent
      *
      * @var \Pixelant\PxaProductManager\Domain\Model\Category|NULL
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @Lazy
      */
     protected $parent;
 
@@ -69,8 +71,8 @@ class Category extends CategoryExtbase
     /**
      * Image
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $image;
 
@@ -87,16 +89,16 @@ class Category extends CategoryExtbase
     /**
      * Attribute sets
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeSet>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<AttributeSet>
+     * @Lazy
      */
     protected $attributeSets;
 
     /**
      * Banner Image
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $bannerImage;
 
@@ -118,8 +120,8 @@ class Category extends CategoryExtbase
     protected $singleViewTemplate = '';
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @Lazy
      */
     protected $subCategories;
 
@@ -156,7 +158,7 @@ class Category extends CategoryExtbase
     /**
      * getImage alias
      *
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @return FileReference
      */
     public function getImage()
     {
@@ -166,11 +168,11 @@ class Category extends CategoryExtbase
     /**
      * setImage alias
      *
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $image
+     * @param FileReference $image
      *
      * @return void
      */
-    public function setImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image)
+    public function setImage(FileReference $image)
     {
         $this->image = $image;
     }
@@ -310,7 +312,7 @@ class Category extends CategoryExtbase
     /**
      * Returns the Attributes
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeSet>
+     * @return ObjectStorage<AttributeSet>
      */
     public function getAttributeSets(): ObjectStorage
     {
@@ -321,12 +323,12 @@ class Category extends CategoryExtbase
     /**
      * Sets the Attributes
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeSet> $attributeSets
+     * @param ObjectStorage<AttributeSet> $attributeSets
      *
      * @return void
      */
     // @codingStandardsIgnoreEnd
-    public function setAttributeSets(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $attributeSets)
+    public function setAttributeSets(ObjectStorage $attributeSets)
     {
         $this->attributeSets = $attributeSets;
     }
@@ -334,11 +336,11 @@ class Category extends CategoryExtbase
     /**
      * Adds a pxapmAttribute
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet
+     * @param AttributeSet $attributeSet
      *
      * @return void
      */
-    public function addAttributeSet(\Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet)
+    public function addAttributeSet(AttributeSet $attributeSet)
     {
         $this->attributeSets->attach($attributeSet);
     }
@@ -346,11 +348,11 @@ class Category extends CategoryExtbase
     /**
      * Removes a AttributeSet
      *
-     * @param \Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet
+     * @param AttributeSet $attributeSet
      *
      * @return void
      */
-    public function removeAttributeSet(\Pixelant\PxaProductManager\Domain\Model\AttributeSet $attributeSet)
+    public function removeAttributeSet(AttributeSet $attributeSet)
     {
         $this->attributeSets->detach($attributeSet);
     }
@@ -358,7 +360,7 @@ class Category extends CategoryExtbase
     /**
      * getBannerImage
      *
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @return FileReference
      */
     public function getBannerImage()
     {
@@ -368,11 +370,11 @@ class Category extends CategoryExtbase
     /**
      * setBannerImage
      *
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $bannerImage
+     * @param FileReference $bannerImage
      *
      * @return void
      */
-    public function setBannerImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $bannerImage)
+    public function setBannerImage(FileReference $bannerImage)
     {
         $this->bannerImage = $bannerImage;
     }
@@ -444,7 +446,7 @@ class Category extends CategoryExtbase
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @return ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
      */
     public function getSubCategories()
     {

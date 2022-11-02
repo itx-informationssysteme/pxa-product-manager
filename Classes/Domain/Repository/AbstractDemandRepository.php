@@ -43,7 +43,7 @@ abstract class AbstractDemandRepository extends Repository implements DemandRepo
     /**
      * @param DemandInterface $demand
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findDemanded(DemandInterface $demand): QueryResultInterface
     {
