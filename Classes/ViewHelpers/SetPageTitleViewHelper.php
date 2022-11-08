@@ -25,6 +25,7 @@ namespace Pixelant\PxaProductManager\ViewHelpers;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Pixelant\PxaProductManager\Seo\PageTitle\ProductPageTitleProvider;
 use Pixelant\PxaProductManager\Utility\MainUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -55,9 +56,8 @@ class SetPageTitleViewHelper extends AbstractViewHelper
         $title = empty($arguments['title']) ? $renderChildrenClosure() : $arguments['title'];
         $title = strip_tags(trim($title));
 
-        GeneralUtility::makeInstance(PageRenderer::class)->setTitle($title);
-        MainUtility::getTSFE()->altPageTitle = $title;
-        MainUtility::getTSFE()->indexedDocTitle = $title;
+        $titleProvider = GeneralUtility::makeInstance(ProductPageTitleProvider::class);
+        $titleProvider->setTitle($title);
     }
 
     /**
