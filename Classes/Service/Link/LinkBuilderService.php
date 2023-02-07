@@ -131,6 +131,11 @@ class LinkBuilderService
         }
 
         $categories = ProductUtility::getProductCategoriesUids(intval($product));
+        
+        if (count($categories) > 1) {
+            return $categories[1];
+        }
+        
         if (count($categories) > 0) {
             return $categories[0];
         }
