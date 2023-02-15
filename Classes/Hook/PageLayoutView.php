@@ -150,7 +150,7 @@ class PageLayoutView
             }
             $checkboxLowerCase = GeneralUtility::camelCaseToLowerCaseUnderscored($checkbox);
 
-            $info .= sprintf('<b>%s</b>: %s<br>', $this->translate('flexform.' . $checkboxLowerCase), $this->translate('be.extension_info.checkbox_' . ($settings[$checkbox] ? 'yes' : 'no')));
+            $info .= sprintf('<b>%s</b>: %s<br>', $this->translate('flexform.' . $checkboxLowerCase), $this->translate('be.extension_info.checkbox_' . (($settings[$checkbox] ?? false) ? 'yes' : 'no')));
         }
 
         if ((int)$settings['showNavigationListView'] === 1) {
