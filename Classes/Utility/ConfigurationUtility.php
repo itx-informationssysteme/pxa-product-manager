@@ -122,7 +122,7 @@ class ConfigurationUtility
             self::$configurationManager = MainUtility::getObjectManager()->get(ConfigurationManager::class);
         }
 
-        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        if (isset($GLOBALS['TYPO3_REQUEST']) && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             $configurationKey = 'FE';
         } else {
             $configurationKey = $currentPageId ?? 'BE';
