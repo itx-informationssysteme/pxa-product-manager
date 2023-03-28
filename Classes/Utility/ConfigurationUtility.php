@@ -129,7 +129,7 @@ class ConfigurationUtility
         }
 
         if (empty(self::$config[$configurationKey])) {
-            if ($currentPageId !== null && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
+            if ($currentPageId !== null && $configurationKey == 'BE') {
                 self::$configurationManager->setCurrentPageId($currentPageId);
             }
 
