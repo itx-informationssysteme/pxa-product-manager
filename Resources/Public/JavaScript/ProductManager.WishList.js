@@ -46,11 +46,7 @@
 			initButtons($buttons);
 			let currentList = ProductManager.Main.getCookie('pxa_pm_wish_list');
 
-			ProductManager.Main.updateCartCounter(
-				$mainCartCounter,
-				$cartCounters,
-				currentList !== false ? currentList.split(',').length : 0
-			);
+			ProductManager.Main.updateCartCounter($cartCounters);
 			ajaxLoadingInProgress = false;
 
 			_updatePriceAndTax();
