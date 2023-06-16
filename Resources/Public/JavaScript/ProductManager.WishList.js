@@ -138,7 +138,7 @@
 						});
 					}
 
-					ProductManager.Main.updateCartCounter($mainCartCounter, $cartCounters, data.inList ? 1 : -1);
+					ProductManager.Main.updateCartCounter($cartCounters);
 					ProductManager.Messanger.showSuccessMessage(data.message);
 				}
 				else
