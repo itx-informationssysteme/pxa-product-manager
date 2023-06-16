@@ -49,7 +49,8 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('pageUid', 'int', 'Target page uid', false, null);
         $this->registerArgument('excludeCategories', 'bool', 'Exclude categories from path', false, false);
         $this->registerArgument('target', 'string', 'Link target', false, null);
-        $this->registerArgument('absolute', 'string', 'Force absolute link', false, false);
+        $this->registerArgument('absolute', 'bool', 'Force absolute link', false, false);
+        $this->registerArgument('urlOnly', 'bool', 'Return only the url, not markup', false, false);
     }
 
     /**
@@ -65,6 +66,7 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         $target = $this->arguments['target'];
         $excludeCategories = $this->arguments['excludeCategories'];
         $absolute = $this->arguments['absolute'];
+        $urlOnly = $this->arguments['urlOnly'];
 
         $content = (string)$this->renderChildren();
 
@@ -73,6 +75,10 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
                 $uri = $this->linkBuilderService->buildForProduct($pageUid, $product, $category, $excludeCategories, $absolute);
             } else {
                 $uri = $this->linkBuilderService->buildForCategory($pageUid, $category, $absolute);
+            }
+            
+            if ($urlOnly === true) {
+                return $uri;
             }
 
             if (!empty($target)) {
