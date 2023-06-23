@@ -81,6 +81,10 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
                 return $uri;
             }
 
+            if ($urlOnly === true) {
+                return $uri;
+            }
+
             if (!empty($target)) {
                 $this->tag->addAttribute('target', $target);
             }
