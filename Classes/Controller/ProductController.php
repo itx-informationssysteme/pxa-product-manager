@@ -456,8 +456,13 @@ class ProductController extends AbstractController
 
         // If order form enabled
         if ($this->isOrderFormAllowed()) {
-            /** @var OrderConfiguration $orderConfiguration */
-            $orderConfiguration = $this->orderConfigurationRepository->findByUid((int)$this->settings['orderFormConfiguration']);
+            $orderConfiguration = null;
+            $orderFormConfigurationUid = $this->settings['orderFormConfiguration'] ?? null;
+
+            if ($orderFormConfigurationUid !== null) {
+                /** @var OrderConfiguration $orderConfiguration */
+                $orderConfiguration = $this->orderConfigurationRepository->findByUid((int)$orderFormConfigurationUid);
+            }
 
             $this->view->assign('orderConfiguration', $orderConfiguration);
 

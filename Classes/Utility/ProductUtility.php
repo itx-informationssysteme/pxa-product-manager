@@ -215,7 +215,7 @@ class ProductUtility
      */
     public static function getWishList(): array
     {
-        $list = $_COOKIE[self::WISH_LIST_COOKIE_NAME] ?: '';
+        $list = $_COOKIE[self::WISH_LIST_COOKIE_NAME] ?? '';
 
         return GeneralUtility::intExplode(',', $list, true);
     }
@@ -229,7 +229,7 @@ class ProductUtility
      */
     public static function isProductInWishList($product): bool
     {
-        $list = $_COOKIE[self::WISH_LIST_COOKIE_NAME] ?: '';
+        $list = $_COOKIE[self::WISH_LIST_COOKIE_NAME] ?? '';
 
         return GeneralUtility::inList($list, is_object($product) ? $product->getUid() : (int)$product);
     }
